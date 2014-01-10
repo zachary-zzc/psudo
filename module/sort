@@ -1,0 +1,10 @@
+a = [5,3,4,6,8,2]
+function bubble_sort(arr)
+    for i = 1 to len(arr) - 1
+        for j = i to len(arr) - 1
+            if arr[j] > arr[j+1]
+                tmp = arr[j]
+                arr[j] = arr[j+1]
+                arr[j+1] = tmp
+bubble_sort(a)
+print(a)

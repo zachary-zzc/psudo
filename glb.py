@@ -1,0 +1,3 @@
+
+globalVarList = {}
+globalFuncList = {}
