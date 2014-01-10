@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import sys
 sys.path.append('..')
 
@@ -308,8 +309,8 @@ def parse(block, module):
                 if tokens[2][1] == 'in':
                     if tokens[3][1] in module.varList:
                         paramList.append((varName, module.varList[tokens[3][1]]))
-                    elif tokens[3][1] in module.globalVarList:
-                        paramList.append((varName, module.globalVarList[tokens[3][1]]))
+                    elif tokens[3][1] in module.varList:
+                        paramList.append((varName, module.varList[tokens[3][1]]))
                     else:
                         pass
                     #    raise VarNotDefinedError
@@ -319,9 +320,7 @@ def parse(block, module):
                     while tokens[expInd][1] != 'to':
                         startExp += tokens[expInd][1]
                         expInd += 1
-                    execute('__startpos__ = ' + startExp,
-                           module.globalVarList,
-                           module.varList)
+                    execute('__startpos__ = ' + startExp, module)
                     # skip 'to'
                     expInd += 1
                     endExp = ''
@@ -331,9 +330,7 @@ def parse(block, module):
                             expInd += 1
                         else:
                             break
-                    execute('__endpos__ = ' + endExp,
-                           module.globalVarList,
-                           module.varList)
+                    execute('__endpos__ = ' + endExp, module)
                     if expInd >= len(tokens):
                         module.varList['__step__'] = 1
                     else:
@@ -343,9 +340,7 @@ def parse(block, module):
                         while expInd < len(tokens):
                             stepExp += tokens[expInd][1]
                             expInd += 1
-                        execute('__step__ = ' + stepExp,
-                               module.globalVarList,
-                               module.varList)
+                        execute('__step__ = ' + stepExp, module)
                     paramList.append((varName,
                                      tuple([i for i in range(module.varList['__startpos__'],
                                                              module.varList['__endpos__'],
@@ -379,8 +374,8 @@ def runFuncs(tokens, module):
             funcName, paramList = getFunc(token[1])
             if funcName in module.funcList:
                 func = module.funcList[funcName]
-            elif funcName in module.globalFuncList:
-                func = module.globalFuncList[funcName]
+            elif funcName in module.funcList:
+                func = module.funcList[funcName]
             else:
                 func = None
 
@@ -391,13 +386,13 @@ def runFuncs(tokens, module):
                 for param in paramList:
                     if param in module.varList:
                         actParamValue.append(module.varList[param])
-                    elif param in module.globalVarList:
-                        actParamValue.append(module.globalVarList[param])
+                    elif param in module.varList:
+                        actParamValue.append(module.varList[param])
                     # else:
                     #     raise ParamUndefinedError
-                module.globalVarList.update(module.varList)
-                module.globalFuncList.update(module.funcList)
-                func.passParam(actParamValue, module.globalVarList, module.globalFuncList)
+                module.varList.update(module.varList)
+                module.funcList.update(module.funcList)
+                func.passParam(actParamValue, module.varList, module.funcList)
                 func.run()
                 returnValue = func.get_returnVar()
                 newTokens.append((3, str(returnValue)))

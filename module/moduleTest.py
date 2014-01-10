@@ -27,29 +27,30 @@ class moduleTest(unittest.TestCase):
 
     forContent1 = '\tfor c = 1 to 10 step 2\n\t\tprint(c)'
     forContent2 = '\telem = 10\n\tlist = [1,2,3]\n\tfor elem in list\n\t\tprint(elem)'
+
     """
     def test_funcModule(self):
         content = self.funcContent.split('\n')
-        import sys
-        sys.path.append('..')
-        import utils.recursive
         funcModule = funcmodule(self.funcName, self.funcFormalParamList, content)
         funcModule.passParam(self.funcActParamList, self.funcVarList, self.funcList)
         funcModule.run()
         self.assertEqual(funcModule.get_returnVar(), 5)
-
+    """
+    """
     def test_ifModule(self):
         content = self.ifContent.split('\n')
         ifModule = commodule(self.varList, self.funcList, content)
         ifModule.run()
-        self.assertEqual(ifModule.globalVarList['c'], 5)
-
+        self.assertEqual(ifModule.varList['c'], 5)
+    """
+    """
     def test_whileModule(self):
         content = self.whileContent.split('\n')
         whileModule = commodule(self.varList, self.funcList, content)
         whileModule.run()
-        self.assertEqual(whileModule.globalVarList['c'], 1)
-
+        self.assertEqual(whileModule.varList['c'], 1)
+    """
+    """
     def test_forModule(self):
         content1 = self.forContent1.split('\n')
         content2 = self.forContent2.split('\n')
@@ -57,16 +58,17 @@ class moduleTest(unittest.TestCase):
         forModule2 = commodule(self.varList, self.funcList, content2)
         forModule1.run()
         forModule2.run()
-        self.assertEqual(forModule1.globalVarList['c'], 9)
-        self.assertEqual(forModule2.globalVarList['elem'], 3)
+        self.assertEqual(forModule1.varList['c'], 9)
+        self.assertEqual(forModule2.varList['elem'], 3)
     """
+
     def test_wholeModule(self):
-        infile = open(r'test', 'r')
+        infile = open(r'sort', 'r')
         content = infile.readlines()
         infile.close()
         wholeModule = commodule({}, {}, content)
         wholeModule.run()
-        self.assertEqual(wholeModule.globalVarList['d'], 5)
+        #self.assertEqual(wholeModule.varList['d'], 5)
 
 
 if __name__ == '__main__':

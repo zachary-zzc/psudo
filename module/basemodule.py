@@ -3,40 +3,49 @@
 class basemodule:
 
     def __init__(self, varList, funcList, content):
-        self.globalVarList = varList
-        self.globalfuncList = funcList
-        self.varList = {}
-        self.funcList = {}
+        self.varList = varList
+        self.funcList = funcList
+        self.localVarList = []
+        self.localFuncList = []
         self.content = content
 
     def _var_inc(self, varName, varValue):
-        if (varName not in self.varList and
-            varName not in self.globalVarList):
+        if varName not in self.varList:
+            self.localVarList.append(varName)
             self.varList[varName] = varValue
         # else:
         #    raise(DeclareError)
 
     def _func_inc(self, funcName, funcModule):
-        if (funcName not in self.funcList or self.globalVarList):
+        if funcName not in self.funcList:
+            self.localFuncList.append(funcName)
             self.funcList[funcName] = funcModule
 
     def _end_module(self):
-        for key in self.varList:
-            if key in self.globalVarList:
-                self.globalVarList.pop(key)
-        for key in self.funcList:
-            if key in self.globalFuncList:
-                self.globalFuncList.pop(key)
+        for key in self.localVarList:
+            if key in self.varList:
+                self.varList.pop(key)
+        for key in self.localFuncList:
+            if key in self.funcList:
+                self.funcList.pop(key)
 
     def get_localFuncList(self):
-        return self.funcList
+        localFuncList = {}
+        for key in self.localFuncList:
+            localFuncList[key] = self.funcList[key]
+        return localFuncList
 
     def get_localVar(self):
-        return self.varList
+        localVarList = {}
+        for key in self.localVarList:
+            localVarList[key] = self.varList[key]
+        return localVarList
 
     def get_returnVar(self):
-        returnList = self.varList['__returnList__']
-        self.varList.pop('__returnList__')
+        returnList = []
+        if '__returnList__' in self.varList:
+            returnList = self.varList['__returnList__']
+            self.varList.pop('__returnList__')
         return returnList
 
 

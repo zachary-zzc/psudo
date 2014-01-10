@@ -8,6 +8,7 @@ from whilemodule import whilemodule
 from funcmodule import funcmodule
 
 import utils.parser as parser
+import utils.refresh as refresh
 import glb
 
 def recursive(content, index, module):
@@ -39,17 +40,17 @@ def recursive(content, index, module):
             else:
                 varName = paramList[0]
                 module._var_inc(varName, 0)
-                execute(extoken, module.globalVarList, module.varList)
+                execute(extoken, module)
                 index += 1
         #---------EXPRESSION----------
         elif grammType == 'exp':
-            execute(extoken, module.globalVarList, module.varList)
+            execute(extoken, module)
             index += 1
         #---------STATEMENT----------
         elif grammType == 'statement':
             # continue, break, and return
             if tokens[0][1] == 'return':
-                execute('__returnList__ = '+extoken, module.globalVarList, module.varList)
+                execute('__returnList__ = '+extoken, module)
                     # else:
                     #     raise VarNotDefinedError
                 return
@@ -79,29 +80,23 @@ def recursive(content, index, module):
                             break
                         grammType, tokens, extoken, paramList = parser.parse(content[index],
                                                                              module)
-                module.globalVarList.update(module.varList)
-                module.globalFuncList.update(module.funcList)
-                ifModule = ifelsemodule(module.globalVarList,
-                                        module.globalFuncList,
+                ifModule = ifelsemodule(module.varList,
+                                        module.funcList,
                                         exps,
                                         contents)
                 ifModule.run()
                 index -= count
 
             elif tokens[0][1] == 'for':
-                module.globalVarList.update(module.varList)
-                module.globalFuncList.update(module.funcList)
-                forModule = formodule(module.globalVarList,
-                                      module.globalFuncList,
+                forModule = formodule(module.varList,
+                                      module.funcList,
                                       exp,
                                       moduleContent)
                 forModule.run()
 
             elif tokens[0][1] == 'while':
-                module.globalVarList.update(module.varList)
-                module.globalFuncList.update(module.funcList)
-                whileModule = whilemodule(module.globalVarList,
-                                          module.globalFuncList,
+                whileModule = whilemodule(module.varList,
+                                          module.funcList,
                                           exp,
                                           moduleContent)
                 whileModule.run()
@@ -122,18 +117,15 @@ def getModuleIndx(content, index):
             break
     return count
 
-def execute(extoken, globalVarList, localVarList):
+@refresh.printVar
+def execute(extoken, module):
     # due to exec mechanism
-    localVarList_bak = {}
-    localVarList_bak.update(localVarList)
-    exec(extoken, globalVarList, localVarList)
+    varList_bak = {}
+    varList_bak.update(module.varList)
+    exec(extoken, module.varList)
     # syn
-    keys = []
-    for key in localVarList.keys():
-        if (key not in localVarList_bak) and (key in globalVarList):
-            keys.append(key)
-    for key in keys:
-        globalVarList[key] = localVarList[key]
-        localVarList.pop(key)
-    if '__builtins__' in globalVarList:
-        globalVarList.pop('__builtins__')
+    if '__builtins__' in module.varList:
+        module.varList.pop('__builtins__')
+    for key in module.varList.keys():
+        if (key not in varList_bak) and (key.find('__') != 0):
+            module.localVarList.append(key)

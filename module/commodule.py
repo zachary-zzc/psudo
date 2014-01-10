@@ -2,19 +2,23 @@
 import sys
 sys.path.append('..')
 
-import utils.recursive as recursive
+import glb
 
 from basemodule import basemodule
 
 class commodule(basemodule):
 
     def __init__(self, varList, funcList, content):
-        self.globalVarList = varList
-        self.globalFuncList = funcList
-        self.varList = {}
-        self.funcList = {}
+        self.varList = varList
+        self.funcList = funcList
+        self.localVarList = []
+        self.localFuncList = []
         self.content = content
         self.returnList = []
 
     def run(self):
+        import utils.recursive as recursive
+        glb.moduleStack.append(self)
+
         recursive.recursive(self.content, 0, self)
+        glb.moduleStack.pop()

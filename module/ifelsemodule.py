@@ -2,25 +2,28 @@
 
 import sys
 sys.path.append('..')
+import glb
 
 from basemodule import basemodule
 
 class ifelsemodule(basemodule):
     def __init__(self, varList, funcList, exps, contents):
         assert(len(exps) == len(contents))
-        self.globalVarList = varList
-        self.globalFuncList = funcList
-        self.varList = {}
-        self.funcList = {}
+        self.varList = varList
+        self.funcList = funcList
+        self.localVarList = []
+        self.localFuncList = []
         self.exps = exps
         self.contents = contents
 
     def run(self):
         from utils.recursive import recursive, execute
+        glb.moduleStack.append(self)
 
         for i in range(len(self.exps)):
-            execute('__judge__ = ' + self.exps[i], self.globalVarList, self.varList)
+            execute('__judge__ = ' + self.exps[i], self)
             if self.varList['__judge__']:
                 recursive(self.contents[i], 0, self)
                 break
         self._end_module()
+        glb.moduleStack.pop()
