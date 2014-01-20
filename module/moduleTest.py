@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 # unit test for modules
+import sys
+sys.path.append('..')
+import structure
 
 from commodule import commodule
 from funcmodule import funcmodule

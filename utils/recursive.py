@@ -8,7 +8,7 @@ from whilemodule import whilemodule
 from funcmodule import funcmodule
 
 import utils.parser as parser
-import utils.refresh as refresh
+import visualize.plot as plot
 import glb
 
 def recursive(content, index, module):
@@ -117,8 +117,9 @@ def getModuleIndx(content, index):
             break
     return count
 
-@refresh.printVar
+@plot.refresh
 def execute(extoken, module):
+    import structure
     # due to exec mechanism
     varList_bak = {}
     varList_bak.update(module.varList)

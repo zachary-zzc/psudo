@@ -11,6 +11,9 @@ class funcmodule(basemodule):
         self.content = content
         self.formalParamList = formalParamList
 
+    def get_FuncName(self):
+        return self.funcName
+
     def passParam(self, actParamList, varList, funcList):
         self.varList = varList
         self.funcList = funcList

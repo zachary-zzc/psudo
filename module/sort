@@ -7,4 +7,3 @@ function bubble_sort(arr)
                 arr[j] = arr[j+1]
                 arr[j+1] = tmp
 bubble_sort(a)
-print(a)
