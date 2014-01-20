@@ -19,6 +19,14 @@ class whilemodule(basemodule):
         self.localFuncList = []
         self.exp = exp
         self.content = content
+        self.endRecursive = False
+        self.continueFlag = False
+
+    def setContinue(self):
+        self.continueFlag = True
+
+    def resetContinue(self):
+        self.continueFalg = False
 
     def run(self):
         from utils.recursive import recursive, execute
@@ -28,6 +36,8 @@ class whilemodule(basemodule):
         while self.varList['__judge__']:
             recursive(self.content, 0, self)
             execute('__judge__ = ' + self.exp, self)
-
+            if self.continueFlag:
+                self.resetEnd()
+                self.resetContinue()
         self._end_module()
         glb.moduleStack.pop()

@@ -10,6 +10,7 @@ class funcmodule(basemodule):
         self.funcName = funcName
         self.content = content
         self.formalParamList = formalParamList
+        self.endRecursive = False
 
     def get_FuncName(self):
         return self.funcName

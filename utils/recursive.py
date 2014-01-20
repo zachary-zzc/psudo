@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 import sys
 sys.path.append('..')
 
@@ -10,6 +10,11 @@ from funcmodule import funcmodule
 import utils.parser as parser
 import visualize.plot as plot
 import glb
+
+# module type
+function = (funcmodule, )
+loop = (whilemodule, formodule, )
+branch = (ifelsemodule, )
 
 def recursive(content, index, module):
     """
@@ -24,7 +29,7 @@ def recursive(content, index, module):
     Statement: Including if, while, for and repeat/until, break, continue, return.
     """
 
-    if index < len(content):
+    if (index < len(content)) and (module.isEnd() == False):
         # preprocess should remove all annotations and useless whitespaces as well as blank lines
         grammType, tokens, extoken, paramList = parser.parse(content[index], module)
         #----------DEFINATION---------
@@ -48,16 +53,31 @@ def recursive(content, index, module):
             index += 1
         #---------STATEMENT----------
         elif grammType == 'statement':
+            moduleIndx = len(glb.moduleStack) - 1
             # continue, break, and return
             if tokens[0][1] == 'return':
                 execute('__returnList__ = '+extoken, module)
                     # else:
                     #     raise VarNotDefinedError
+                while moduleIndx >= 0:
+                    if isinstance(glb.moduleStack[moduleIndx], function) == False:
+                        glb.moduleStack[moduleIndx].setEnd()
+                    else:
+                        glb.moduleStack[moduleIndx].setEnd()
+                        break
+                    moduleIndx -= 1
                 return
-            if tokens[0][1] == 'continue':
-                pass
-            if tokens[0][1] == 'break':
-                pass
+            if (tokens[0][1] == 'continue') or (tokens[0][1] == 'break'):
+                while moduleIndx >= 0:
+                    if isinstance(glb.moduleStack[moduleIndx], loop) == False:
+                        glb.moduleStack[moduleIndx].setEnd()
+                    else:
+                        glb.moduleStack[moduleIndx].setEnd()
+                        if tokens[0][1] == 'continue':
+                            glb.moduleStack[moduleIndx].setContinue()
+                        break
+                    moduleIndx -= 1
+                return
             # if, while, and for
             count = getModuleIndx(content, index)
             moduleContent = [content[index+i] for i in range(1, count)]
@@ -72,7 +92,7 @@ def recursive(content, index, module):
                                                                          module)
                     while tokens[0][1] == 'else':
                         count = getModuleIndx(content, index)
-                        contents.append([content[index+1] for i in range(1, count)])
+                        contents.append([content[index+i] for i in range(1, count)])
                         index += count
                         exp = paramList[0]
                         exps.append(exp)

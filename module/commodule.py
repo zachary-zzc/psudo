@@ -15,6 +15,7 @@ class commodule(basemodule):
         self.localFuncList = []
         self.content = content
         self.returnList = []
+        self.endRecursive = False
 
     def run(self):
         import utils.recursive as recursive

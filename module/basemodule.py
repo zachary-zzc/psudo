@@ -8,6 +8,7 @@ class basemodule:
         self.localVarList = []
         self.localFuncList = []
         self.content = content
+        self.endRecursive = False
 
     def _var_inc(self, varName, varValue):
         if varName not in self.varList:
@@ -28,6 +29,15 @@ class basemodule:
         for key in self.localFuncList:
             if key in self.funcList:
                 self.funcList.pop(key)
+
+    def isEnd(self):
+        return self.endRecursive
+
+    def setEnd(self):
+        self.endRecursive = True
+
+    def resetEnd(self):
+        self.endRecursive = False
 
     def get_localFuncList(self):
         localFuncList = {}

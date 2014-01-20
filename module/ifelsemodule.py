@@ -15,6 +15,7 @@ class ifelsemodule(basemodule):
         self.localFuncList = []
         self.exps = exps
         self.contents = contents
+        self.endRecursive = False
 
     def run(self):
         from utils.recursive import recursive, execute
