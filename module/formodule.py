@@ -4,7 +4,7 @@ import sys
 sys.path.append('..')
 import glb
 
-from basemodule import basemodule
+from module.basemodule import basemodule
 
 class formodule(basemodule):
     def __init__(self, varList, funcList, exp, content):

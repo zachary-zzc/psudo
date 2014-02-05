@@ -1,15 +1,25 @@
 # -*- coding: utf-8 -*-
 
-import utils
-import module
+import utils.parser as parser
+import module.commodule as commodule
 import structure
+import glb
 
-def psudo(context):
-    globalVarList, mainContext = preprocess(context)
+def psudo(contents):
+    contents = parser.preprocess(contents)
+    globalModule = commodule.commodule(glb.globalVarList, glb.globalFuncList, contents)
+    globalModule.run()
 
-    if len(mainContext) != 0:
-        mainFunc = module.main(context = mainContext, varList = globalVarList)
-    else:
-        mainFunc = module.main(context = context)
+    hasMainFunc = 0
+    for func in glb.globalFuncList:
+        if func == 'Main':
+            hasMainFunc = 1
+            glb.globalFuncList[func].run()
+    return 'success'
 
-    mainFunc.run()
+
+if __name__ == '__main__':
+    fin = open('psudo.txt', "r")
+    contents = fin.readlines()
+    psudo("".join(contents))
+

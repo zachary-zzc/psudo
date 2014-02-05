@@ -4,7 +4,7 @@ sys.path.append('..')
 
 import glb
 
-from basemodule import basemodule
+from module.basemodule import basemodule
 
 class commodule(basemodule):
 

@@ -2,10 +2,10 @@
 import sys
 sys.path.append('..')
 
-from ifelsemodule import ifelsemodule
-from formodule import formodule
-from whilemodule import whilemodule
-from funcmodule import funcmodule
+from module.ifelsemodule import ifelsemodule
+from module.formodule import formodule
+from module.whilemodule import whilemodule
+from module.funcmodule import funcmodule
 
 import utils.parser as parser
 import visualize.plot as plot
