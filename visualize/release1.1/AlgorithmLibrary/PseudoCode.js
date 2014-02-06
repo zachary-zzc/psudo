@@ -36,47 +36,28 @@ PseudoCode.superclass = Algorithm.prototype;
 
 // Various constants
 
-PseudoCode.HIGHLIGHT_LABEL_COLOR = "#FF0000"
-PseudoCode.HIGHLIGHT_LINK_COLOR = "#0FF0000"
-
-PseudoCode.HIGHLIGHT_COLOR = "#007700"
-PseudoCode.HEIGHT_LABEL_COLOR = "#0x00AA00"
-
-
-PseudoCode.LINK_COLOR = "#007700";
-PseudoCode.HIGHLIGHT_CIRCLE_COLOR = "#007700";
-PseudoCode.FOREGROUND_COLOR = "0x007700";
-PseudoCode.BACKGROUND_COLOR = "#DDFFDD";
-PseudoCode.PRINT_COLOR = PseudoCode.FOREGROUND_COLOR;
-
-PseudoCode.WIDTH_DELTA  = 50;
-PseudoCode.HEIGHT_DELTA = 50;
-PseudoCode.STARTING_Y = 50;
-
-PseudoCode.FIRST_PRINT_POS_X  = 50;
-PseudoCode.PRINT_VERTICAL_GAP  = 20;
-PseudoCode.PRINT_HORIZONTAL_GAP = 50;
-PseudoCode.EXPLANITORY_TEXT_X = 10;
-PseudoCode.EXPLANITORY_TEXT_Y = 10;
-
-
+var ANIMATOR_INITIAL_X = 20;
+var ANIMATOR_INITIAL_Y = 20;
+var LABEL_DATA_INSTANCE = 50;
+var SINGLE_TYPE_HEIGHT = 50;
 
 PseudoCode.prototype.init = function(am, w, h)
 {
 	var sc = PseudoCode.superclass;
 	var fn = sc.init;
-	this.first_print_pos_y  = h - 2 * PseudoCode.PRINT_VERTICAL_GAP;
-	this.print_max = w - 10;
 	
 	fn.call(this, am, w, h);
-	this.startingX = w / 2;
 	this.addControls();
-	this.nextIndex = 1;
+	this.nextIndex = 0;
 	this.commands = [];
-	this.cmd("CreateLabel", 0, "", PseudoCode.EXPLANITORY_TEXT_X, PseudoCode.EXPLANITORY_TEXT_Y, 0);
-	this.animationManager.StartNewAnimation(this.commands);
-	this.animationManager.skipForward();
-	this.animationManager.clearHistory();
+    this.pos_x = ANIMATOR_INITIAL_X;
+    this.pos_y = ANIMATOR_INITIAL_Y;
+	//this.animationManager.StartNewAnimation(this.commands);
+	//this.animationManager.skipForward();
+	//this.animationManager.clearHistory();
+
+    this.setup();
+    // var id = window.setInterval(PseudoCode.prototype.refresh(curInfo), 100);
 }
 
 PseudoCode.prototype.addControls =  function()
@@ -89,7 +70,9 @@ PseudoCode.prototype.addControls =  function()
 
 PseudoCode.prototype.reset = function()
 {
-	this.nextIndex = 1;
+	this.nextIndex = 0;
+    this.pos_x = ANIMATOR_INITIAL_X;
+    this.pos_y = ANIMATOR_INITIAL_Y;
 	//this.treeRoot = null;
 }
 
@@ -106,34 +89,29 @@ PseudoCode.prototype.runCallback = function(event)
 	}
 }
 		
-PseudoCode.prototype.refresh = function()
-{
-    // this function response to python compiler execution call
-	return this.commands;
-}
 
 PseudoCode.prototype.run = function(pseudoCode)
 {
     // call python function here
-    var xmlhttp;
-    if(window.XMLHttpRequest)
-    {// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp = new XMLHttpRequest();
-    }
-    else
-    {// code for IE6, IE5
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xmlhttp.onreadystatechange = function()
-    {
-        if(xmlhttp.readyState==4 && xmlhttp.status==200)
-        {
-            // document.getElementById("Run").innerHTML = xmlhttp.responseText;
-            alert(xmlhttp.responseText);
-        }
-    }
-    xmlhttp.open("POST", "../../server.py", true);
-    xmlhttp.send(pseudoCode);
+    // var xmlhttp;
+    // if(window.XMLHttpRequest)
+    // {// code for IE7+, Firefox, Chrome, Opera, Safari
+    //     xmlhttp = new XMLHttpRequest();
+    // }
+    // else
+    // {// code for IE6, IE5
+    //     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    // }
+    // xmlhttp.onreadystatechange = function()
+    // {
+    //     if(xmlhttp.readyState==4 && xmlhttp.status==200)
+    //     {
+    //         // document.getElementById("Run").innerHTML = xmlhttp.responseText;
+    //         alert(xmlhttp.responseText);
+    //     }
+    // }
+    // xmlhttp.open("POST", "../../server.py", true);
+    // xmlhttp.send(pseudoCode);*/
 }
 
 PseudoCode.prototype.disableUI = function(event)
@@ -148,36 +126,29 @@ PseudoCode.prototype.enableUI = function(event)
 	this.runButton.disabled = false;
 }
 
-		
-/*function PseudoCodeNode(val, id, hid, initialX, initialY)
+PseudoCode.prototype.setup = function()
 {
-	this.data = val;
-	this.x = initialX;
-	this.y = initialY;
-	this.heightLabelID= hid;
-	this.height = 1;
-	
-	this.graphicID = id;
-	this.left = null;
-	this.right = null;
-	this.parent = null;
-}*/
-
-function info(initialID, initialX, initialY)
-{
-    this.id = initialID;
-    this.x = initialX;
-    this.y = initialY;
-}
-
-function Refresh(curInfo, varList)
-{
-    this.curInfo = clearAnimator(curInfo); 
     // read varlist from server
     // varLine format: varName, varType, varValue...
     //           e.g.: a, SingleType, 3,
     //               : b, ArrayType, 3, 4, 5, 6,
-    var varLines = varList.split("\n");
+
+    // read file
+    // var rawFile = new XMLHttpRequest();
+    // rawFile.open("GET", "varList", false);
+    // rawFile.send(null);
+    // var varList = rawFile.responseText;
+    // this.cmd("CreateLabel", 100, "help!", 100, 100);
+    var varList = "a,SingleType,5";
+    if (varList.indexOf("\n") >= 0)
+    {
+        var varLines = varList.split("\n");
+    }
+    else
+    {
+        var varLines = [varList];
+    }
+
     for (var i = 0; i < varLines.length; i++)
     {
         var varInfo = varLines[i].split(",");
@@ -186,8 +157,8 @@ function Refresh(curInfo, varList)
         if (varType == "SingleType")
         {
             var varValue = varInfo[2];
-            this.curInfo = SingleTypeVar(varName, varValue, this.curInfo);
-            this.curInfo.y += SINGLE_TYPE_HEIGHT;
+            this.singleTypeVar(varName, varValue);
+            this.pos_y += SINGLE_TYPE_HEIGHT;
         }
         else if (varType == "ArrayType")
         {
@@ -196,8 +167,8 @@ function Refresh(curInfo, varList)
             {
                 varValue.push(varInfo[i]);
             }
-            this.curInfo = ArrayTypeVar(varName, varValue, this.curInfo);
-            this.curInfo.y += ARRAY_TYPE_HEIGHT;
+            this.arrayTypeVar(varName, varValue);
+            this.pos_y += ARRAY_TYPE_HEIGHT;
         }
         // else if (varType == "TreeType")
         // {
@@ -210,55 +181,51 @@ function Refresh(curInfo, varList)
         // }
         else
         {
-            alert("error!");
+            // alert("error!");
         }
-        this.curInfo.id += 1;
+        this.nextIndex ++;
     }
+    this.animationManager.StartNewAnimation(this.commands);
+    this.animationManager.skipForward();
+    this.animationManager.clearHistory();
 }
 
-function clearAnimator(curInfo)
+PseudoCode.prototype.clearAnimator = function()
 {
-    this.curInfo = new info(curInfo.id, ANIMATOR_INITIAL_X, ANIMATOR_INITIAL_Y);
-    for(this.curInfo.id; this.curIndo.id >= 0; this.curInfo.id --)
+    for(var i = this.nextIndex; i >= 0; i --)
     {
-        this.cmd("Delete", this.curInfo.id);
+        this.cmd("Delete", i);
     }
-    return this.curInfo;
+    this.reset();
 }
     
 
-function SingleTypeVar(varName, varValue, curInfo)
+PseudoCode.prototype.singleTypeVar = function(varName, varValue)
 {
-   this.data = varValue;
-   this.name = varName;
-   this.curInfo = new info(curInfo.id, curInfo.x, curInfo.y);
+    this.data = varValue;
+    this.name = varName;
 
-   this.cmd("CreateLabel", this.curInfo.id, this.name, this.curInfo.x, this.curInfo.y);
-   this.curInfo.x += LABEL_DATA_INSTANCE;
-   this.curInfo.id += 1;
-   this.cmd("CreateCircle", this.id, this.data, this.x, this.y);
-   
-   return this.curInfo;
+    this.cmd("CreateLabel", this.nextIndex, this.name, this.pos_x, this.pos_y);
+    this.pos_x += LABEL_DATA_INSTANCE;
+    this.nextIndex ++;
+    this.cmd("CreateCircle", this.nextIndex, this.data, this.pos_x, this.pos_y);
 }
 
-function ArrayTypeVar(varName, varValue, curInfo)
+PseudoCode.prototype.arrayTypeVar = function(varName, varValue)
 {
     this.data = varValue;
     this.name - varName;
-    this.curInfo = new info(curInfo.id, curInfo.x, curInfo.y);
 
-    this.cmd("CreateLabel", this.curInfo.id, this.name, this.curInfo.x, this.curInfo.y);
-    this.curInfo.x += LABEL_DATA_INSTANCE;
-    this.curInfo.id += 1;
+    this.cmd("CreateLabel", this.nextIndex, this.name, this.pos_x, this.pos_y);
+    this.pos_x += LABEL_DATA_INSTANCE;
+    this.nextIndex ++;
 
     for (var i = 0; i < this.data.length; i++)
     {
-        this.cmd("CreateRectangle", this.curInfo.id, this.data[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.curInfo.x, this.curInfo.y);
-        this.curInfo.id += 1;
-        this.curInfo.x += ARRAY_ELEM_WIDTH_SMALL;
+        this.cmd("CreateRectangle", this.nextIndex, this.data[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
+        this.nextIndex ++;
+        this.pos_x += ARRAY_ELEM_WIDTH_SMALL;
     }
-
-    return this.curInfo;
 }
 
 /*
