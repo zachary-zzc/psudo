@@ -19,7 +19,7 @@ def psudo(contents):
 
 
 if __name__ == '__main__':
-    fin = open('psudo.txt', "r")
+    fin = open('bubble.txt', "r")
     contents = fin.readlines()
     psudo("".join(contents))
 

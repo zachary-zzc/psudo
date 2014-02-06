@@ -7,6 +7,8 @@ from module.formodule import formodule
 from module.whilemodule import whilemodule
 from module.funcmodule import funcmodule
 
+import structure
+
 import utils.parser as parser
 import visualize.plot as plot
 import glb
@@ -139,7 +141,6 @@ def getModuleIndx(content, index):
 
 @plot.refresh
 def execute(extoken, module):
-    import structure
     # due to exec mechanism
     varList_bak = {}
     varList_bak.update(module.varList)

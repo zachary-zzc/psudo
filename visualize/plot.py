@@ -46,10 +46,12 @@ def refresh(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ret = func(*args, **kwargs)
+        print('\n')
         for module in glb.moduleStack:
             for key in module.localVarList:
                 outputVar = '{}: {}'.format(key, module.varList[key])
                 print(outputVar)
+        print('\n')
         plot()
         time.sleep(0.5)
         #input()
