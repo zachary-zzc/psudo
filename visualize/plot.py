@@ -23,24 +23,43 @@ TREETYPE = ()
 GRAPHTYPE = ()
 DIGRAPHTYPE = ()
 
-def plot():
-    varFile = open(r'varList.txt', 'w')
+def record():
+    varFile = open(r'visualize/release1.1/varList', 'w')
     for i in range(len(glb.moduleStack)):
         for varName in glb.moduleStack[i].localVarList:
             var = eval(varName, glb.moduleStack[i].varList)
             if isinstance(var, SINGLETYPE):
-                var_type = 'single'
+                var_type = 'SingleType'
             elif isinstance(var, ARRAYTYPE):
-                var_type = 'array'
+                var_type = 'ArrayType'
             elif isinstance(var, TREETYPE):
-                var_type = 'tree'
+                var_type = 'TreeType'
             elif isinstance(var, GRAPHTYPE):
-                var_type = 'graph'
+                var_type = 'GraphType'
             elif isinstance(var, DIGRAPHTYPE):
-                var_type = 'digraph'
-            line = varName + ', ' + var_type + ', ' + str(var) + '\n'
+                var_type = 'DigraphType'
+            strVar = toString(var, var_type)
+            line = varName + ',' + var_type + ',' + strVar + '\n'
             varFile.write(line)
     varFile.close()
+
+def toString(var, var_type):
+    strVar = ""
+    if var_type == "SingleType":
+        strVar = str(var)
+    elif var_type == "ArrayType":
+        if len(var) > 0:
+            strVar = str(var[0])
+            for i in range(1, len(var)):
+                strVar += ',' + str(var[i])
+    elif var_type == "TreeType":
+        strVar = str(var)
+    elif var_type == "GraphType":
+        strVar = str(var)
+    elif var_type == "DiGraphType":
+        strVar = str(var)
+    return strVar
+
 
 def refresh(func):
     @functools.wraps(func)
@@ -52,7 +71,7 @@ def refresh(func):
                 outputVar = '{}: {}'.format(key, module.varList[key])
                 print(outputVar)
         print('\n')
-        plot()
+        record()
         time.sleep(0.5)
         #input()
         return ret

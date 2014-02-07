@@ -38,8 +38,17 @@ PseudoCode.superclass = Algorithm.prototype;
 
 var ANIMATOR_INITIAL_X = 20;
 var ANIMATOR_INITIAL_Y = 20;
-var LABEL_DATA_INSTANCE = 50;
+
 var SINGLE_TYPE_HEIGHT = 50;
+var ARRAY_TYPE_HEIGHT = 50;
+
+var LABEL_DATA_INSTANCE = 30;
+
+var ARRAY_ELEM_WIDTH_SMALL = 30;
+var ARRAY_ELEM_HEIGHT_SMALL = 30;
+
+// Global Variable
+varList = ""
 
 PseudoCode.prototype.init = function(am, w, h)
 {
@@ -52,12 +61,15 @@ PseudoCode.prototype.init = function(am, w, h)
 	this.commands = [];
     this.pos_x = ANIMATOR_INITIAL_X;
     this.pos_y = ANIMATOR_INITIAL_Y;
-	//this.animationManager.StartNewAnimation(this.commands);
-	//this.animationManager.skipForward();
-	//this.animationManager.clearHistory();
 
-    this.setup();
-    // var id = window.setInterval(PseudoCode.prototype.refresh(curInfo), 100);
+	this.animationManager.StartNewAnimation(this.commands);
+	this.animationManager.skipForward();
+	this.animationManager.clearHistory();
+
+    // this.implementAction(this.refresh.bind(this), "");
+    var t = this;
+    setInterval(function(){t.implementAction(t.refresh.bind(t), "")}, 50);
+    
 }
 
 PseudoCode.prototype.addControls =  function()
@@ -71,9 +83,9 @@ PseudoCode.prototype.addControls =  function()
 PseudoCode.prototype.reset = function()
 {
 	this.nextIndex = 0;
+    this.commands = [];
     this.pos_x = ANIMATOR_INITIAL_X;
     this.pos_y = ANIMATOR_INITIAL_Y;
-	//this.treeRoot = null;
 }
 
 PseudoCode.prototype.runCallback = function(event)
@@ -90,56 +102,34 @@ PseudoCode.prototype.runCallback = function(event)
 }
 		
 
-PseudoCode.prototype.run = function(pseudoCode)
-{
-    // call python function here
-    // var xmlhttp;
-    // if(window.XMLHttpRequest)
-    // {// code for IE7+, Firefox, Chrome, Opera, Safari
-    //     xmlhttp = new XMLHttpRequest();
-    // }
-    // else
-    // {// code for IE6, IE5
-    //     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    // }
-    // xmlhttp.onreadystatechange = function()
-    // {
-    //     if(xmlhttp.readyState==4 && xmlhttp.status==200)
-    //     {
-    //         // document.getElementById("Run").innerHTML = xmlhttp.responseText;
-    //         alert(xmlhttp.responseText);
-    //     }
-    // }
-    // xmlhttp.open("POST", "../../server.py", true);
-    // xmlhttp.send(pseudoCode);*/
-}
-
 PseudoCode.prototype.disableUI = function(event)
 {
-	this.insertField.disabled = true;
-	this.runButton.disabled = true;
+	//this.insertField.disabled = true;
+	//this.runButton.disabled = true;
 }
 
 PseudoCode.prototype.enableUI = function(event)
 {
-	this.insertField.disabled = false;
-	this.runButton.disabled = false;
+	//this.insertField.disabled = false;
+	//this.runButton.disabled = false;
 }
 
-PseudoCode.prototype.setup = function()
+PseudoCode.prototype.refresh = function()
 {
     // read varlist from server
+    this.clearAnimator();
     // varLine format: varName, varType, varValue...
     //           e.g.: a, SingleType, 3,
     //               : b, ArrayType, 3, 4, 5, 6,
 
     // read file
-    // var rawFile = new XMLHttpRequest();
-    // rawFile.open("GET", "varList", false);
-    // rawFile.send(null);
-    // var varList = rawFile.responseText;
-    // this.cmd("CreateLabel", 100, "help!", 100, 100);
-    var varList = "a,SingleType,5";
+    readTextFile("varList");
+
+    if (varList == "")
+    {
+        return this.commands;
+    }
+
     if (varList.indexOf("\n") >= 0)
     {
         var varLines = varList.split("\n");
@@ -151,103 +141,114 @@ PseudoCode.prototype.setup = function()
 
     for (var i = 0; i < varLines.length; i++)
     {
-        var varInfo = varLines[i].split(",");
-        var varName = varInfo[0];
-        var varType = varInfo[1];
-        if (varType == "SingleType")
+        var varInfo = varLines[i].trim().split(",");
+        if (varInfo.length < 3)
         {
-            var varValue = varInfo[2];
-            this.singleTypeVar(varName, varValue);
-            this.pos_y += SINGLE_TYPE_HEIGHT;
+            continue;
         }
-        else if (varType == "ArrayType")
-        {
-            var varValue = new Array();
-            for (var i = 2; i < varInfo.length; i++)
-            {
-                varValue.push(varInfo[i]);
-            }
-            this.arrayTypeVar(varName, varValue);
-            this.pos_y += ARRAY_TYPE_HEIGHT;
-        }
-        // else if (varType == "TreeType")
-        // {
-        // }
-        // else if (varType == "GraphType")
-        // {
-        // }
-        // else if (varType == "DiGraphType")
-        // {
-        // }
-        else
-        {
-            // alert("error!");
-        }
-        this.nextIndex ++;
+        this.pos_x = ANIMATOR_INITIAL_X;
+        this.plotVar(varInfo);
     }
-    this.animationManager.StartNewAnimation(this.commands);
-    this.animationManager.skipForward();
-    this.animationManager.clearHistory();
+    return this.commands;
 }
 
 PseudoCode.prototype.clearAnimator = function()
 {
-    for(var i = this.nextIndex; i >= 0; i --)
+    var tmpIndex = this.nextIndex;
+    this.reset();
+    var alertMsg = "";
+    for(var i = 0; i < tmpIndex; i ++)
     {
+        alertMsg = "Delete: " + String(i);
+        //console.log(alertMsg);
         this.cmd("Delete", i);
     }
-    this.reset();
 }
     
-
-PseudoCode.prototype.singleTypeVar = function(varName, varValue)
+PseudoCode.prototype.plotVar = function(varInfo)
 {
-    this.data = varValue;
-    this.name = varName;
+    // assert varInfo.length >= 3
+    var alertMsg = ""
+    this.name = varInfo[0].trim();
+    this.varType = varInfo[1].trim();
 
+    alertMsg = "CreateLabel: " + this.name + ", Index: " + String(this.nextIndex);
+    //console.log(alertMsg);
     this.cmd("CreateLabel", this.nextIndex, this.name, this.pos_x, this.pos_y);
     this.pos_x += LABEL_DATA_INSTANCE;
     this.nextIndex ++;
-    this.cmd("CreateCircle", this.nextIndex, this.data, this.pos_x, this.pos_y);
-}
-
-PseudoCode.prototype.arrayTypeVar = function(varName, varValue)
-{
-    this.data = varValue;
-    this.name - varName;
-
-    this.cmd("CreateLabel", this.nextIndex, this.name, this.pos_x, this.pos_y);
-    this.pos_x += LABEL_DATA_INSTANCE;
-    this.nextIndex ++;
-
-    for (var i = 0; i < this.data.length; i++)
+    if (this.varType == "SingleType")
     {
-        this.cmd("CreateRectangle", this.nextIndex, this.data[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
+        this.data = varInfo[2].trim();
+        alertMsg = "CreateCircle: " + this.data + ", Index: " + String(this.nextIndex);
+        //console.log(alertMsg);
+        this.cmd("CreateCircle", this.nextIndex, this.data, this.pos_x, this.pos_y);
+        this.pos_y += SINGLE_TYPE_HEIGHT;
         this.nextIndex ++;
-        this.pos_x += ARRAY_ELEM_WIDTH_SMALL;
+    }
+    else if (this.varType == "ArrayType")
+    {
+        this.data = new Array();
+        for (var i = 2; i < varInfo.length; i++)
+        {
+            this.data.push(varInfo[i].trim());
+        }
+        for (var i = 0; i < this.data.length; i ++)
+        {
+            alertMsg = "CreateRectangle: " + this.data[i] + ", Index: " + String(this.nextIndex);
+            //console.log(alertMsg);
+            this.cmd("CreateRectangle", this.nextIndex, this.data[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
+            this.nextIndex ++;
+            this.pos_x += ARRAY_ELEM_WIDTH_SMALL;
+        }
+        this.pos_y += ARRAY_TYPE_HEIGHT;
+    }
+    /*
+    else if (this.varType == "TreeType")
+    {
+    }
+    /*
+    else if (this.varType == "GraphType")
+    {
+    }
+    else if (this.varType == "DiGraphType")
+    {
+    }*/
+    else
+    {
+        var errorMsg = "error!";
+        for (var i = 0; i < varInfo.length; i ++)
+        {
+            errorMsg += varInfo[i] + " ";
+        }
+        alert(errorMsg);
     }
 }
 
-/*
-function TreeTypeVar()
-{
-
-}
-
-function GraphTypeVar()
-{
-
-}
-
-function DiGraphTypeVar()
-{
-
-}*/
 
 ////////////////////////////////////////////////////////////
 // Script to start up your function, called from the webapge:
 ////////////////////////////////////////////////////////////
 var currentAlg;
+
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    // rawFile.open("GET", file, true);
+    // rawFile.onreadystatechange = function()
+    // {
+    //     if (rawFile.readyState == 4)
+    //     {
+    //         if (rawFile.status == 200 || rawFile.status == 0)
+    //         {
+    //             varList = rawFile.responseText;
+    //         }
+    //     }
+    // }
+    rawFile.send(null);
+    varList = rawFile.responseText;
+}
 
 function init()
 {

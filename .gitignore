@@ -8,6 +8,10 @@ test*
 # C extensions
 *.so
 
+#js
+._*
+_*
+
 # Packages
 *.egg
 *.egg-info
@@ -39,3 +43,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Vim
+*~
