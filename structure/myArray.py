@@ -1,4 +1,4 @@
-class array:
+class myArray(list):
 
     def __init__(self, array=None, *args, **kwargs):
         self.__array = array or []
