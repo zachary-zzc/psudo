@@ -18,7 +18,8 @@ SINGLETYPE = (str,
 ARRAYTYPE = (list,
              tuple,
              dict,
-             set, )
+             set,
+             )
 TREETYPE = ()
 GRAPHTYPE = ()
 DIGRAPHTYPE = ()

@@ -276,21 +276,19 @@ def parse(block, module):
         tokens = runFuncs(tokens, module)
         if tokens[0][0] == 1:
             if tokens[1][0] == 1:
+                grammType = 'defination'
+                varType = tokens[0][1]
+                varName = tokens[1][1]
+                paramList.append(varName)
+                token = varName + '=' + varType
                 if len(tokens) == 2:
-                    grammType = 'defination'
-                    varType = tokens[0][1]
-                    varName = tokens[1][1]
-                    paramList.append(varName)
-                    token = varName + ' = ' + varType + '()'
+                    token += '()'
                 else:
                     if tokens[2][1] == '=':
-                        grammType = 'defination'
-                        varType = tokens[0][1]
-                        varName = tokens[1][1]
-                        paramList.append(varName)
-                        token = varName
-                        for indx in range(2, len(tokens)):
-                            token = token + tokens[indx][1] + ' '
+                        token += '('
+                        for indx in range(3, len(tokens)):
+                            token = token + tokens[indx][1]
+                        token += ')'
             # elif tokens[1][1] == '=':
             #     grammType = 'defination'
             #     varName = tokens[0][1]
@@ -355,14 +353,14 @@ def parse(block, module):
                 for indx in range(len(tokens)):
                     if tokens[indx][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
                         continue
-                    token = token + tokens[indx][1] + ' '
+                    token = token + tokens[indx][1]
                 if token == '':
                     token = 'True'
                 paramList.append(token)
         else:
             grammType = 'exp'
             for indx in range(len(tokens)):
-                token = token + tokens[indx][1] + ' '
+                token = token + tokens[indx][1]
     return grammType, tokens, token, paramList
 
 def runFuncs(tokens, module):
