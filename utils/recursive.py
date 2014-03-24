@@ -144,10 +144,9 @@ def execute(extoken, module):
     # due to exec mechanism
     varList_bak = {}
     varList_bak.update(module.varList)
-    exec(extoken, module.varList)
-    # syn
-    if '__builtins__' in module.varList:
-        module.varList.pop('__builtins__')
+    exec(extoken, globals(), module.varList)
+    # if '__buildins__' in module.varList:
+    #     module.varList.pop('__buildins__')
     for key in module.varList.keys():
         if (key not in varList_bak) and (key.find('__') != 0):
             module.localVarList.append(key)

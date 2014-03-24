@@ -10,8 +10,6 @@ import glb
 import time
 import functools
 
-from PIL import Image
-
 SINGLETYPE = (str,
               int,
               )
