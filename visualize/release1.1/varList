@@ -1,3 +1,4 @@
-a,ArrayType,5,3,4,6,8,2
+a,ArrayType,3,5,4,6,8,2
 i,SingleType,1
-j,SingleType,0
+j,SingleType,1
+tmp,SingleType,5

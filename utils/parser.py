@@ -49,6 +49,7 @@ opts = {'+':            41,
         '>>':           62,
         '<<':           63,
         ',':            64,
+        '//':           65,
         }
 
 def preprocess(strContent):
@@ -74,7 +75,7 @@ def lexical(block):
         1. key words:
             for, if, else, repeat, until, while, function, is, in, or, and
         2. opts:
-            +, -, *, /, <, <=, >, >=, <>, !=, =, ==, ;, (, ), &, &&, ^, %, |, ||, >>, <<,
+            +, -, *, /, <, <=, >, >=, <>, !=, =, ==, ;, (, ), &, &&, ^, %, |, ||, >>, <<, //
         3. var ID:
             VarName
         4. func ID:
@@ -94,6 +95,7 @@ def lexical(block):
     block = block.split('#')[0]
 
     indx = 0
+    bracket_stack = []
     while indx < len(block):
         ch = block[indx]
         if ch == ' ' or ch == '\t' or ch == '\n':
@@ -108,15 +110,25 @@ def lexical(block):
                 else:
                     break
             if ch == '(':
-                while (ch != ')'):
+                bracket_stack.append(ch)
+                if token in keywords:
+                    tokens.append((keywords.get(token), token))
+                    tokens.append((opts.get(ch), ch))
+                    bracket_stack.pop()
+                else:
+                    while bracket_stack:
+                        token += ch
+                        indx += 1
+                        if indx < len(block):
+                            ch = block[indx]
+                        else:
+                            break
+                        if ch == '(':
+                            bracket_stack.append(ch)
+                        elif ch == ')':
+                            bracket_stack.pop()
                     token += ch
-                    indx += 1
-                    if indx < len(block):
-                        ch = block[indx]
-                    else:
-                        break
-                token += ch
-                tokens.append((2, token))
+                    tokens.append((2, token))
             elif ch == '[':
                 while (ch != ']'):
                     token += ch
@@ -228,6 +240,13 @@ def lexical(block):
                 indx += 1
                 ch = block[indx]
                 if ch == '>':
+                    token += ch
+                else:
+                    indx -= 1
+            elif ch == '/':
+                indx += 1
+                ch = block[indx]
+                if ch == '/':
                     token += ch
                 else:
                     indx -= 1

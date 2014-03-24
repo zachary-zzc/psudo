@@ -1,6 +1,7 @@
 a = [5,3,4,6,8,2]
 function bubble_sort(arr)
-    for i = 1 to len(arr)
+    i = 1
+    while(i < len(arr))
         for j = 0 to len(arr) - i
             if arr[j] < arr[j+1]
                 continue
@@ -8,4 +9,5 @@ function bubble_sort(arr)
                 tmp = arr[j]
                 arr[j] = arr[j+1]
                 arr[j+1] = tmp
+        i += 1
 bubble_sort(a)

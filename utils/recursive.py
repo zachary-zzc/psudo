@@ -34,6 +34,7 @@ def recursive(content, index, module):
     if (index < len(content)) and (module.isEnd() == False):
         # preprocess should remove all annotations and useless whitespaces as well as blank lines
         grammType, tokens, extoken, paramList = parser.parse(content[index], module)
+        print(tokens)
         #----------DEFINATION---------
         if grammType == 'defination':
             if tokens[0][1] == 'function':
@@ -142,6 +143,7 @@ def getModuleIndx(content, index):
 @plot.refresh
 def execute(extoken, module):
     # due to exec mechanism
+    print(extoken)
     varList_bak = {}
     varList_bak.update(module.varList)
     exec(extoken, globals(), module.varList)

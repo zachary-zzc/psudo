@@ -15,7 +15,7 @@ class parserTest(unittest.TestCase):
     block.append('function A(x, y)')
     # Statement
     block.append('if a == 1')
-    block.append('while a >= 10')
+    block.append('while (a >= 10)')
     block.append('for a = 1 to 10, step 2')
     # PsudoExp
     # block.append('swap a[1], a[2]')
