@@ -2,7 +2,7 @@
 
 import utils.parser as parser
 import module.commodule as commodule
-import structure
+from structure.config import *
 import glb
 
 import threading
@@ -47,18 +47,16 @@ class monitor(threading.Thread):
         threading.Thread.__init__(self)
         self.lock = lock
         self.pseudoCompiler = psudo(contents, self.lock)
-        self.task = [] # task queue
+        # task queue in glb.py
 
-    def add_task(self, task):
-        self.task.append(task) # task enqueue
+    # def add_task(self, task):
+    #     self.task.append(task) # task enqueue
 
     def run(self):
         while True:
             with self.lock:
-                print('monitor thread running!')
-                self.add_task('get_status')
-                while self.task:
-                    task = self.task.pop(0)
+                while glb.taskQueue:
+                    task = glb.taskQueue.pop(0)
                     if task == 'start':
                         self.pseudoCompiler.start()
                     elif task == 'get_status':
@@ -73,5 +71,5 @@ if __name__ == '__main__':
     with open('bubble.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
-    monitor.add_task('start')
+    glb.taskQueue.append('start')
     monitor.start()

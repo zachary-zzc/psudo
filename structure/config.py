@@ -1,7 +1,10 @@
+import sys
+sys.path.append('..')
+
 # list type
-from stack import Stack
-from queue import Queue
-from linklist import LinkList
+from structure.stack import Stack
+from structure.queue import Queue
+from structure.linklist import LinkList
 
 # Tree
-from tree import Tree
+from structure.tree import Tree

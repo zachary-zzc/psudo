@@ -3,3 +3,5 @@ globalVarList = {}
 globalFuncList = {}
 
 moduleStack = []
+
+taskQueue = []

@@ -5,7 +5,7 @@ sys.path.append('..')
 
 from module.funcmodule import funcmodule
 
-import structure
+from structure.config import *
 import glb
 import time
 import functools
@@ -83,7 +83,6 @@ def refresh(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ret = func(*args, **kwargs)
-        print('\n')
         for module in glb.moduleStack:
             for key in module.localVarList:
                 outputVar = '{}: {}'.format(key, module.varList[key])

@@ -1,7 +1,5 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="a" type="list">[3, 5, 4, 6, 8, 2]</var>
+<var name="a" type="list">[5, 3, 4, 6, 8, 2]</var>
 <var name="i" type="int">1</var>
-<var name="j" type="int">0</var>
-<var name="tmp" type="int">5</var>
 </Params>
