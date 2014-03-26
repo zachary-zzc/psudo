@@ -22,6 +22,7 @@ TREETYPE = ()
 GRAPHTYPE = ()
 DIGRAPHTYPE = ()
 
+"""
 def record():
     varFile = open(r'visualize/release1.1/varList', 'w')
     for i in range(len(glb.moduleStack)):
@@ -58,7 +59,25 @@ def toString(var, var_type):
     elif var_type == "DiGraphType":
         strVar = str(var)
     return strVar
+"""
 
+def record_to_xml():
+    from xml.dom import minidom, Node
+
+    doc = minidom.Document()
+    params = doc.createElement('Params')
+    doc.appendChild(params)
+    for module in glb.moduleStack:
+        for varName in module.localVarList:
+            var = eval(varName, module.varList)
+            xmlVar = doc.createElement('var')
+            xmlVar.setAttribute('name', varName)
+            xmlVar.setAttribute('type', type(var).__name__)
+            xmlVar.appendChild(doc.createTextNode(str(var)))
+            params.appendChild(xmlVar)
+
+    with open(r'visualize/release1.1/varList.xml', 'w') as f:
+        f.write(doc.toprettyxml(indent = ''))
 
 def refresh(func):
     @functools.wraps(func)
@@ -70,7 +89,7 @@ def refresh(func):
                 outputVar = '{}: {}'.format(key, module.varList[key])
                 print(outputVar)
         print('\n')
-        record()
+        record_to_xml()
         time.sleep(0.5)
         #input()
         return ret
