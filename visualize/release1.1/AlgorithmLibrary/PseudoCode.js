@@ -24,6 +24,86 @@
 // authors and should not be interpreted as representing official policies, either expressed
 // or implied, of the University of San Francisco
 
+// Data Structure 
+// Tree
+//------------------------------------------------------------------------------------------
+
+/*function Node()
+{
+
+}
+
+Node.prototype.init = function(value, children=[])
+{
+    this.value = value;
+    this.children = children;
+}
+
+Node.prototype.setValue = function(value)
+{
+    this.value = value;
+}
+
+Node.prototype.setChildren = function(children)
+{
+    this.children = children;
+}
+
+Node.prototype.setChild = function(child, indx)
+{
+    this.children[indx] = child;
+}
+
+Node.prototype.getValue = function()
+{
+    return this.value;
+}
+
+Node.prototype.getChildren = function(indx=null)
+{
+    if (indx === null)
+    {
+        return this.children;
+    }
+    else
+    {
+        return this.children[indx];
+    }
+}
+
+function Tree(value=null, children=[])
+{
+    this.init(value, children)
+}
+
+Tree.prototype = new Node();
+Tree.prototype.constructor = Tree;
+Tree.superclass = Node.prototype;
+
+Tree.prototype.init(value, children)
+{
+   var sc = Tree.superclass;
+   var fn = sc.init;
+   fn.call(this, value, children)
+}
+
+Tree.prototype.preorderTraversal(func)
+{
+
+}
+
+Tree.prototype.inorderTraversal(func)
+{
+
+}
+
+Tree.prototype.postorderTraversal(func)
+{
+
+}*/
+
+//------------------------------------------------------------------------------------------
+
 function PseudoCode(am, w, h)
 {
 	this.init(am, w, h);
@@ -47,6 +127,9 @@ var LABEL_DATA_INSTANCE = 30;
 var ARRAY_ELEM_WIDTH_SMALL = 30;
 var ARRAY_ELEM_HEIGHT_SMALL = 30;
 
+var SINGLE_TYPE = ['int', 'str', 'double', 'float']
+var ARRAY_TYPE = ['list', 'tuple', 'dict', 'set', 'Stack', 'Queue']
+var TREE_TYPE = ['Tree']
 // Global Variable
 varList = ""
 
@@ -123,29 +206,16 @@ PseudoCode.prototype.refresh = function()
     //               : b, ArrayType, 3, 4, 5, 6,
 
     // read file
-    readTextFile("varList");
+    var xmldoc = readTextFile("varList.xml");
+    
+    var varList = xmldoc.getElementsByTagName("var");
 
-    if (varList == "")
+    for (var i = 0; i < varList.length; i ++)
     {
-        return this.commands;
-    }
-
-    if (varList.indexOf("\n") >= 0)
-    {
-        var varLines = varList.split("\n");
-    }
-    else
-    {
-        var varLines = [varList];
-    }
-
-    for (var i = 0; i < varLines.length; i++)
-    {
-        var varInfo = varLines[i].trim().split(",");
-        if (varInfo.length < 3)
-        {
-            continue;
-        }
+        var varNode = varList[i].childNodes[0];
+        var varInfo = [varList[i].getAttribute("name"),
+                       varList[i].getAttribute("type"),
+                       varNode.nodeValue]
         this.pos_x = ANIMATOR_INITIAL_X;
         this.plotVar(varInfo);
     }
@@ -169,35 +239,53 @@ PseudoCode.prototype.plotVar = function(varInfo)
 {
     // assert varInfo.length >= 3
     var alertMsg = ""
-    this.name = varInfo[0].trim();
-    this.varType = varInfo[1].trim();
+    var varName = varInfo[0].trim();
+    var varType = varInfo[1].trim();
 
-    alertMsg = "CreateLabel: " + this.name + ", Index: " + String(this.nextIndex);
-    //console.log(alertMsg);
-    this.cmd("CreateLabel", this.nextIndex, this.name, this.pos_x, this.pos_y);
+    if (SINGLE_TYPE.indexOf(varType) != -1)
+    {
+        varType = "SINGLE_TYPE";
+    }
+    else if (ARRAY_TYPE.indexOf(varType) != -1)
+    {
+        varType = "ARRAY_TYPE";
+    }
+    else if (TREE_TYPE.indexOf(varType) != -1)
+    {
+        varType = "TREE_TYPE";
+    }
+    else if (GRAPH_TYPE.indexOf(varType) != -1)
+    {
+        varType = "GRAPH_TYPE";
+    }
+    else if (DIGRAPH_TYPE.indexOf(varType) != -1)
+    {
+        varType = "DIGRAPH_TYPE";
+    }
+
+    alertMsg = "CreateLabel: " + varName + ", Index: " + String(this.nextIndex);
+    console.log(alertMsg);
+    this.cmd("CreateLabel", this.nextIndex, varName, this.pos_x, this.pos_y);
     this.pos_x += LABEL_DATA_INSTANCE;
     this.nextIndex ++;
-    if (this.varType == "SingleType")
+    if (varType == "SINGLE_TYPE")
     {
-        this.data = varInfo[2].trim();
+        var varValue = varInfo[2].trim();
         alertMsg = "CreateCircle: " + this.data + ", Index: " + String(this.nextIndex);
-        //console.log(alertMsg);
-        this.cmd("CreateCircle", this.nextIndex, this.data, this.pos_x, this.pos_y);
+        console.log(alertMsg);
+        this.cmd("CreateCircle", this.nextIndex, varValue, this.pos_x, this.pos_y);
         this.pos_y += SINGLE_TYPE_HEIGHT;
         this.nextIndex ++;
     }
-    else if (this.varType == "ArrayType")
+    else if (varType == "ARRAY_TYPE")
     {
-        this.data = new Array();
-        for (var i = 2; i < varInfo.length; i++)
+        var varValue = varInfo[2].slice(1, varInfo[2].length-2) // remove '[' in first space and ']' in last space
+        varValue = varValue.split(", ")
+        for (var i = 0; i < varValue.length; i ++)
         {
-            this.data.push(varInfo[i].trim());
-        }
-        for (var i = 0; i < this.data.length; i ++)
-        {
-            alertMsg = "CreateRectangle: " + this.data[i] + ", Index: " + String(this.nextIndex);
+            alertMsg = "CreateRectangle: " + varValue[i] + ", Index: " + String(this.nextIndex);
             //console.log(alertMsg);
-            this.cmd("CreateRectangle", this.nextIndex, this.data[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
+            this.cmd("CreateRectangle", this.nextIndex, varValue[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
             this.nextIndex ++;
             this.pos_x += ARRAY_ELEM_WIDTH_SMALL;
         }
@@ -233,8 +321,8 @@ var currentAlg;
 
 function readTextFile(file)
 {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
+    var xmlFile = new XMLHttpRequest();
+    xmlFile.open("GET", file, false);
     // rawFile.open("GET", file, true);
     // rawFile.onreadystatechange = function()
     // {
@@ -246,8 +334,9 @@ function readTextFile(file)
     //         }
     //     }
     // }
-    rawFile.send(null);
-    varList = rawFile.responseText;
+    xmlFile.send(null);
+    var responsexml = xmlFile.responseXML;
+    return responsexml
 }
 
 function init()
