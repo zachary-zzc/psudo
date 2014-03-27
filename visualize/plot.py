@@ -13,7 +13,6 @@ import functools
 SINGLETYPE = (str,
               int,
               float,
-              double,
               )
 ARRAYTYPE = (list,
              tuple,
