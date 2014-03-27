@@ -5,16 +5,14 @@ class Node:
     __class__ = 'Node'
 
     def __init__(self, value=None, children=[]):
-        self._val = value
+        self._value = value
         self._children = children
 
-    def __str__(self, level=0):
-        ret = '\t' * level + str(self._val) + '\n'
+    def __str__(self):
+        ret = '[' + str(self._value)
         for child in self._children:
-            if isinstance(child, Node):
-                ret += child.__str__(level+1)
-            else:
-                ret += '\t' * (level+1) + str(child) + '\n'
+            ret += str(child)
+        ret += ']'
         return ret
 
     __repr__ = __str__
@@ -26,11 +24,11 @@ class Node:
             yield child
 
     def __del__(self):
-        self._val = None
+        self._value = None
         self._children = []
 
     def __eq__(self, obj):
-        return ((self._val == obj.value) and (self._children == obj.children))
+        return ((self._value == obj.value) and (self._children == obj.children))
 
     def __len__(self):
         return len(self._children)
@@ -56,7 +54,7 @@ class Node:
 
     @property
     def value(self):
-        return self._val
+        return self._value
 
     @property
     def children(self):
@@ -64,7 +62,7 @@ class Node:
 
     @value.setter
     def value(self, value):
-        self._val = value
+        self._value = value
 
     @children.setter
     def children(self, children):
@@ -73,7 +71,7 @@ class Node:
         else:
             raise Exception('Children should be list type')
 
-    def append(self, child):
+    def add_child(self, child):
         self._children.append(child)
 
 class Tree(Node):

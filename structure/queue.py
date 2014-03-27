@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 class Queue(list):
-    __name__ = 'queue'
-    __class__ = 'queue'
+    __name__ = 'Queue'
+    __class__ = 'Queue'
 
     @property
     def front(self):

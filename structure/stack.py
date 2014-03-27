@@ -1,8 +1,8 @@
 # -*-coding: utf-8 -*-
 
 class Stack(list):
-    __name__ = 'stack'
-    __class__ = 'stack'
+    __name__ = 'Stack'
+    __class__ = 'Stack'
 
     @property
     def top(self):
