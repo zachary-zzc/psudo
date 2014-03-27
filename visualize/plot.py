@@ -12,13 +12,17 @@ import functools
 
 SINGLETYPE = (str,
               int,
+              float,
+              double,
               )
 ARRAYTYPE = (list,
              tuple,
              dict,
              set,
+             Stack,
+             Queue,
              )
-TREETYPE = ()
+TREETYPE = (Tree,)
 GRAPHTYPE = ()
 DIGRAPHTYPE = ()
 
