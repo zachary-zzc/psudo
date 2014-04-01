@@ -28,15 +28,17 @@
 // Tree
 //------------------------------------------------------------------------------------------
 
-/*function Node()
+function Node(value=null, children=[], objID=-1, parentID=-1)
 {
-
+    this.init(value, children, objID, parentID)
 }
 
-Node.prototype.init = function(value, children=[])
+Node.prototype.init = function(value, children, objID, parentID)
 {
     this.value = value;
     this.children = children;
+    this.objID = objID;
+    this.parentID = parentID;
 }
 
 Node.prototype.setValue = function(value)
@@ -54,54 +56,104 @@ Node.prototype.setChild = function(child, indx)
     this.children[indx] = child;
 }
 
+Node.prototype.setID = function(objID)
+{
+    this.objID = objID;
+}
+
+Node.prototype.setParentID = function(parentID)
+{
+    this.parentID = objID;
+}
+
+Node.prototype.addChild = function(child)
+{
+    this.children.push(child)
+}
+
 Node.prototype.getValue = function()
 {
     return this.value;
 }
 
-Node.prototype.getChildren = function(indx=null)
+Node.prototype.getChildren = function()
 {
-    if (indx === null)
+    return this.children;
+}
+
+Node.prototype.getChild = function(indx)
+{
+    return this.children[indx];
+}
+
+Node.prototype.getID = function()
+{
+    return this.objID;
+}
+
+Node.prototype.getParentID = function()
+{
+    return this.parentID;
+}
+
+Node.prototype.getHeight = function()
+{
+    if (this.children.length == 0)
     {
-        return this.children;
+        return 1;
     }
-    else
+    var childHeight = new Array(this.children.length);
+    for (var i = 0; i < this.children.length; i ++)
     {
-        return this.children[indx];
+        childHeight[i] = this.children[i].getHeight();
     }
+    // console.log(Math.max.apply(null, childHeight) + 1);
+    return Math.max.apply(null, childHeight) + 1;
 }
 
-function Tree(value=null, children=[])
+Node.prototype.toString = function()
 {
-    this.init(value, children)
+    var ret = '[' + this.value;
+    for (var i = 0; i < this.children.length; i ++)
+    {
+        ret += this.children[i].toString();
+    }
+    ret += ']';
+    return ret;
 }
 
-Tree.prototype = new Node();
-Tree.prototype.constructor = Tree;
-Tree.superclass = Node.prototype;
-
-Tree.prototype.init(value, children)
-{
-   var sc = Tree.superclass;
-   var fn = sc.init;
-   fn.call(this, value, children)
-}
-
-Tree.prototype.preorderTraversal(func)
-{
-
-}
-
-Tree.prototype.inorderTraversal(func)
-{
-
-}
-
-Tree.prototype.postorderTraversal(func)
-{
-
-}*/
-
+// function Tree(value=null, children=[], objID=0)
+// {
+//     this.init(value, children, objID)
+// }
+// 
+// Tree.prototype = new Node();
+// Tree.prototype.constructor = Tree;
+// Tree.superclass = Node.prototype;
+// 
+// 
+// Tree.prototype.init = function(value, children, objID)
+// {
+//    var sc = Tree.superclass;
+//    var fn = sc.init;
+//    fn.call(this, value, children, objID);
+// }
+// 
+// 
+// Tree.prototype.preorderTraversal(func, level=0)
+// {
+//     func(this.value, this.children, level);
+//     for (var i = 0; i < this.children.length, i ++)
+//     {
+//         this.children[i].preorderTraversal(func, ++level);
+//     }
+// }
+// 
+// Tree.prototype.postorderTraversal(func)
+// {
+// 
+// }
+// 
 //------------------------------------------------------------------------------------------
 
 function PseudoCode(am, w, h)
@@ -119,19 +171,31 @@ PseudoCode.superclass = Algorithm.prototype;
 var ANIMATOR_INITIAL_X = 20;
 var ANIMATOR_INITIAL_Y = 20;
 
+var LABEL_DATA_INSTANCE = 50;
+
 var SINGLE_TYPE_HEIGHT = 50;
+
 var ARRAY_TYPE_HEIGHT = 50;
-
-var LABEL_DATA_INSTANCE = 30;
-
 var ARRAY_ELEM_WIDTH_SMALL = 30;
 var ARRAY_ELEM_HEIGHT_SMALL = 30;
 
+var TREE_ROOT_MIDDLE_X = 200;
+var TREE_TYPE_HEIGHT = 50;
+var TREE_TYPE_FLOOR_HEIGHT = 50;
+var TREE_TYPE_FLOOR_WIDTH = 400;
+var TREE_ELEM_WIDTH_SMALL = 30;
+var TREE_ELEM_HEIGHT_SMALL = 30;
+var TREE_TYPE_NODE_INTERVAL_WIDTH = 50;
+
+var LINK_COLOR = "#007700";
+var HIGHLIGHT_CIRCLE_COLOR = "#007700";
+var FOREGROUND_COLOR = "#007700";
+var BACKGROUND_COLOR = "EEFFEE";
+var PRINT_COLOR = FOREGROUND_COLOR;
+
 var SINGLE_TYPE = ['int', 'str', 'double', 'float']
 var ARRAY_TYPE = ['list', 'tuple', 'dict', 'set', 'Stack', 'Queue']
-var TREE_TYPE = ['Tree']
-// Global Variable
-varList = ""
+var TREE_TYPE = ['Tree', 'Node', 'BTree']
 
 PseudoCode.prototype.init = function(am, w, h)
 {
@@ -152,6 +216,7 @@ PseudoCode.prototype.init = function(am, w, h)
     // this.implementAction(this.refresh.bind(this), "");
     var t = this;
     setInterval(function(){t.implementAction(t.refresh.bind(t), "")}, 50);
+    // this.refresh();
     
 }
 
@@ -201,9 +266,6 @@ PseudoCode.prototype.refresh = function()
 {
     // read varlist from server
     this.clearAnimator();
-    // varLine format: varName, varType, varValue...
-    //           e.g.: a, SingleType, 3,
-    //               : b, ArrayType, 3, 4, 5, 6,
 
     // read file
     var xmldoc = readTextFile("varList.xml");
@@ -264,7 +326,7 @@ PseudoCode.prototype.plotVar = function(varInfo)
     }
 
     alertMsg = "CreateLabel: " + varName + ", Index: " + String(this.nextIndex);
-    console.log(alertMsg);
+    // console.log(alertMsg);
     this.cmd("CreateLabel", this.nextIndex, varName, this.pos_x, this.pos_y);
     this.pos_x += LABEL_DATA_INSTANCE;
     this.nextIndex ++;
@@ -272,36 +334,99 @@ PseudoCode.prototype.plotVar = function(varInfo)
     {
         var varValue = varInfo[2].trim();
         alertMsg = "CreateCircle: " + this.data + ", Index: " + String(this.nextIndex);
-        console.log(alertMsg);
+        // console.log(alertMsg);
         this.cmd("CreateCircle", this.nextIndex, varValue, this.pos_x, this.pos_y);
         this.pos_y += SINGLE_TYPE_HEIGHT;
         this.nextIndex ++;
     }
     else if (varType == "ARRAY_TYPE")
     {
-        var varValue = varInfo[2].slice(1, varInfo[2].length-2) // remove '[' in first space and ']' in last space
+        var varValue = varInfo[2].slice(1, varInfo[2].length-1) 
+        // remove '[' in first space and ']' in last space
         varValue = varValue.split(", ")
         for (var i = 0; i < varValue.length; i ++)
         {
             alertMsg = "CreateRectangle: " + varValue[i] + ", Index: " + String(this.nextIndex);
-            //console.log(alertMsg);
+            // console.log(alertMsg);
             this.cmd("CreateRectangle", this.nextIndex, varValue[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
             this.nextIndex ++;
             this.pos_x += ARRAY_ELEM_WIDTH_SMALL;
         }
         this.pos_y += ARRAY_TYPE_HEIGHT;
     }
-    /*
-    else if (this.varType == "TreeType")
+    else if (varType == "TREE_TYPE")
     {
+        //generate tree
+        var optStack = [];
+        var nodeStack = [];
+        var strValue = varInfo[2];
+        var tree = new Node();
+        var token = "";
+        // for (var indx = 0; indx < strValue.length; indx ++)
+        var indx = 0;
+        while (indx < strValue.length)
+        {  
+            var ch = strValue[indx];
+            if (ch == "[")
+            {
+                // start of a node
+                optStack.push(ch);
+                token = "";
+                ch = strValue[++indx];
+                while(ch != '[' && ch != ']')
+                {
+                    token += ch;
+                    ch = strValue[++indx];
+                }
+                var parentID = -1;
+                if (nodeStack.length > 0)
+                {
+                    parentID = nodeStack[nodeStack.length-1].getID();
+                }
+                nodeStack.push(new Node(token, [], this.nextIndex, parentID));
+                this.nextIndex ++;
+            }
+            else if (ch == "]")
+            {
+                // end of a node
+                optStack.pop();
+                if (optStack.length == 0)
+                {
+                    // last node in nodeStack, root node
+                    tree = nodeStack.pop();
+                }
+                else
+                {
+                    // pop as subnode of prev node
+                    var node = nodeStack.pop();
+                    nodeStack[nodeStack.length-1].addChild(node);
+                }
+                ++indx;
+            }
+            else
+            {
+                ++indx;
+            }
+        }
+        // check if strVar is legal
+        if ((nodeStack.length != 0) || (optStack.length != 0))
+        {
+            alert('var value illegal!');
+        }
+        alertMsg = "Get tree : " + tree.toString();
+        console.log(alertMsg);
+        // plot tree
+        this.pos_x += TREE_ROOT_MIDDLE_X;
+        this.plotTree(tree, 0, this.pos_x+TREE_ROOT_MIDDLE_X);
+        this.pos_y += (tree.getHeight()-1) * TREE_TYPE_FLOOR_HEIGHT + TREE_TYPE_HEIGHT;
+        console.log("Height : " + tree.getHeight());
     }
-    /*
     else if (this.varType == "GraphType")
     {
     }
     else if (this.varType == "DiGraphType")
     {
-    }*/
+    }
     else
     {
         var errorMsg = "error!";
@@ -313,6 +438,41 @@ PseudoCode.prototype.plotVar = function(varInfo)
     }
 }
 
+
+PseudoCode.prototype.plotTree = function(tree, level, pos_x)
+{
+    var pos_y = this.pos_y + level * TREE_TYPE_FLOOR_HEIGHT;
+    if (tree.getParentID() == -1)
+        // root node
+    {
+        this.cmd("CreateRectangle", tree.objID, tree.value, TREE_ELEM_WIDTH_SMALL, TREE_ELEM_HEIGHT_SMALL, pos_x, pos_y);
+    }
+    else
+    {
+        this.cmd("CreateRectangle", tree.objID, tree.value, TREE_ELEM_WIDTH_SMALL, TREE_ELEM_HEIGHT_SMALL, pos_x, pos_y);
+        this.cmd("Connect", 
+                 tree.getParentID(), 
+                 tree.objID, 
+                 FOREGROUND_COLOR,
+                 0, // curve
+                 0, // directed
+                 "", //label
+                 0);
+    }
+    level ++;
+    var thisFloorWidth = TREE_TYPE_FLOOR_WIDTH * Math.pow(0.25, level-1);
+    pos_x = pos_x - thisFloorWidth / 2;
+    for (var i = 0; i < tree.children.length; i ++)
+    {
+        var node_x = pos_x 
+        if (tree.children.length > 1)
+        {
+            node_x += i * thisFloorWidth / (tree.children.length-1);
+        }
+        this.plotTree(tree.children[i], level, node_x, pos_y);
+    }
+}
+        
 
 ////////////////////////////////////////////////////////////
 // Script to start up your function, called from the webapge:

@@ -23,22 +23,27 @@ class psudo(threading.Thread):
         if self.globalModule is None:
             raise Exception('Psuedo code compiler haven\' started yet!')
         else:
-            return self.globalModule.varList
+            ret = {}
+            for module in glb.moduleStack:
+                for key in module.localVarList:
+                    ret[key] = module.varList[key]
+            return ret
 
     def run(self):
         self.status = True
         try:
             self.contents = parser.preprocess(self.contents)
-            self.globalModule = commodule.commodule(glb.globalVarList,
+            self.globalModule = commodule.commodule({},
                                                     glb.globalFuncList,
                                                     contents)
+            self.globalModule.setGlobal()
             self.globalModule.run()
 
             for func in glb.globalFuncList:
                 if func == 'Main':
                     glb.globalFuncList[func].run()
-        # except Exception as e:
-            # print('Run compiler fail: {}'.format(e))
+        except Exception as e:
+            print('Run compiler fail: {}'.format(e))
         finally:
             self.status = False
 
@@ -55,6 +60,14 @@ class monitor(threading.Thread):
     def run(self):
         while True:
             with self.lock:
+                """
+                import os
+                if os.path.exists(r'tasks.txt'):
+                    with open(r'tasks.txt', 'r') as f:
+                        glb.taskQueue = (''.join(f.readlines())).split('\n')
+                with open(r'tasks.txt', 'w') as f:
+                    f.write('')
+                """
                 while glb.taskQueue:
                     task = glb.taskQueue.pop(0)
                     if task == 'start':
@@ -68,8 +81,8 @@ class monitor(threading.Thread):
 
 if __name__ == '__main__':
     lock = threading.Lock()
-    with open('bubble.txt', 'r') as f:
+    glb.taskQueue.append('start')
+    with open('demo/btree.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
-    glb.taskQueue.append('start')
     monitor.start()

@@ -3,6 +3,8 @@
 import sys
 sys.path.append('..')
 
+import glb
+
 import string
 
 STATEMENTRANGE = (4, 13)
@@ -70,6 +72,8 @@ def lexical(block):
     lexical analysis:
         input: sentence, e.g., 'for i = 1 to 9, step = 10'
         output: syn, token pair (syn, token) list.
+    else:
+        exec(extoken, globals())
 
         4 kinds of syn:
         1. key words:
@@ -390,9 +394,8 @@ def runFuncs(tokens, module):
         if token[0] == 2:
             funcName, paramList = getFunc(token[1])
             if funcName in module.funcList:
-                func = module.funcList[funcName]
-            elif funcName in module.funcList:
-                func = module.funcList[funcName]
+                import copy
+                func = copy.deepcopy(module.funcList[funcName])
             else:
                 func = None
 
@@ -401,15 +404,10 @@ def runFuncs(tokens, module):
             else:
                 actParamValue = []
                 for param in paramList:
-                    if param in module.varList:
-                        actParamValue.append(module.varList[param])
-                    elif param in module.varList:
-                        actParamValue.append(module.varList[param])
+                    actParamValue.append( eval(param, globals(), module.varList) )
                     # else:
                     #     raise ParamUndefinedError
-                module.varList.update(module.varList)
-                module.funcList.update(module.funcList)
-                func.passParam(actParamValue, module.varList, module.funcList)
+                func.passParam(actParamValue, module.funcList)
                 func.run()
                 returnValue = func.get_returnVar()
                 newTokens.append((3, str(returnValue)))

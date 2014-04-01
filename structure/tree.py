@@ -4,14 +4,19 @@ class Node:
     __name__ = 'Node'
     __class__ = 'Node'
 
-    def __init__(self, value=None, children=[]):
+    def __init__(self, value='default', children=[]):
         self._value = value
         self._children = children
 
     def __str__(self):
-        ret = '[' + str(self._value)
-        for child in self._children:
-            ret += str(child)
+        ret = '['
+        if self.value != None:
+            ret += str(self.value)
+        else:
+            ret += 'None'
+        if self.hasChild:
+            for child in self.children:
+                ret += str(child)
         ret += ']'
         return ret
 
@@ -20,7 +25,7 @@ class Node:
     def __iter__(self):
         """
         """
-        for child in children:
+        for child in self._children:
             yield child
 
     def __del__(self):
@@ -28,7 +33,11 @@ class Node:
         self._children = []
 
     def __eq__(self, obj):
-        return ((self._value == obj.value) and (self._children == obj.children))
+        if isinstance(obj, Node):
+            return ((self._value == obj._value) and \
+                    (self._children == obj._children))
+        else:
+            return (self.value == obj)
 
     def __len__(self):
         return len(self._children)
@@ -71,18 +80,34 @@ class Node:
         else:
             raise Exception('Children should be list type')
 
+    @property
+    def hasChild(self):
+        return (len(self._children) != 0)
+
+    @property
+    def getHeight(self):
+        if not self.hasChild:
+            return 1
+        childHeight = []
+        for child in self._children:
+            if isinstance(child, Node):
+                childHeight.append(child.getHeight)
+            else:
+                childHeight.append(0)
+        return (max(childHeight) + 1)
+
     def add_child(self, child):
         self._children.append(child)
 
 class Tree(Node):
-    def __init__(self, tree=None, value=None, children=[]):
-        if tree is not None:
-            if (isinstance(tree, Tree)):
-                self = tree
-            else:
-                raise Exception('tree should be Tree type')
-        else:
-            self.root = Node(value, children)
+    __name__ = 'Tree'
+    __class__ = 'Tree'
+    def __init__(self, value=None, children=[]):
+        self._value = value
+        self._children = children
+
+    def get_root(self):
+        return self
 
     def preorder_traversal(self, func):
         pass

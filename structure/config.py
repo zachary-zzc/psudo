@@ -7,4 +7,5 @@ from structure.queue import Queue
 from structure.linklist import LinkList
 
 # Tree
-from structure.tree import Tree
+from structure.tree import Tree, Node
+from structure.btree import BTree

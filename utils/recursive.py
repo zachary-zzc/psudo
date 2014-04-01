@@ -31,7 +31,7 @@ def recursive(content, index, module):
     Statement: Including if, while, for and repeat/until, break, continue, return.
     """
 
-    if (index < len(content)) and (module.isEnd() == False):
+    if (index < len(content)) and (module.isEnd() == False) and (content[index]):
         # preprocess should remove all annotations and useless whitespaces as well as blank lines
         grammType, tokens, extoken, paramList = parser.parse(content[index], module)
         #----------DEFINATION---------
@@ -141,12 +141,19 @@ def getModuleIndx(content, index):
 
 @plot.refresh
 def execute(extoken, module):
-    # due to exec mechanism
+    # first module is global module
+    glb.moduleStack[0].varList.update(globals())
     varList_bak = {}
     varList_bak.update(module.varList)
-    exec(extoken, globals(), module.varList)
-    # if '__buildins__' in module.varList:
-    #     module.varList.pop('__buildins__')
+    try:
+        if module.isGlobal():
+            exec(extoken, module.varList)
+        else:
+            exec(extoken, glb.moduleStack[0].varList, module.varList)
+    except NameError:
+        pass
     for key in module.varList.keys():
         if (key not in varList_bak) and (key.find('__') != 0):
             module.localVarList.append(key)
+
+    return module

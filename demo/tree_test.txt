@@ -1,0 +1,4 @@
+a = Node('a')
+b = Node('b')
+c = Node('c')
+r = Tree('root', [a, b, c])

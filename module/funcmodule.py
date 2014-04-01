@@ -7,16 +7,20 @@ from module.basemodule import basemodule
 class funcmodule(basemodule):
 
     def __init__(self, funcName, formalParamList, content):
+        self.varList = {}
         self.funcName = funcName
         self.content = content
         self.formalParamList = formalParamList
         self.endRecursive = False
+        self.hasVarList = True
 
     def get_FuncName(self):
         return self.funcName
 
-    def passParam(self, actParamList, varList, funcList):
-        self.varList = varList
+    def passParam(self, actParamList, funcList):
+        glb.moduleStack.append(self)
+        print('act param list : {}'.format(actParamList))
+        print('formal param list : {}'.format(self.formalParamList))
         self.funcList = funcList
         self.localVarList = []
         self.localFuncList = []
@@ -26,11 +30,10 @@ class funcmodule(basemodule):
 
     def run(self):
         from utils.recursive import recursive
-        glb.moduleStack.append(self)
 
         recursive(self.content, 0, self)
-        for formalParam in self.formalParamList:
-            self.varList.pop(formalParam)
+        # for formalParam in self.formalParamList:
+        #     self.varList.pop(formalParam)
         self._end_module()
 
         glb.moduleStack.pop()

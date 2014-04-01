@@ -72,7 +72,7 @@ def record_to_xml():
     doc.appendChild(params)
     for module in glb.moduleStack:
         for varName in module.localVarList:
-            var = eval(varName, module.varList)
+            var = eval(varName, globals(), module.varList)
             xmlVar = doc.createElement('var')
             xmlVar.setAttribute('name', varName)
             xmlVar.setAttribute('type', type(var).__name__)
@@ -85,14 +85,15 @@ def record_to_xml():
 def refresh(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        ret = func(*args, **kwargs)
+        module = func(*args, **kwargs)
         for module in glb.moduleStack:
             for key in module.localVarList:
-                outputVar = '{}: {}'.format(key, module.varList[key])
+                outputVar = '{}: {}'.format(key,
+                        eval(key, globals(), module.varList))
                 print(outputVar)
         print('\n')
         record_to_xml()
         time.sleep(0.5)
         #input()
-        return ret
+        return module
     return wrapper

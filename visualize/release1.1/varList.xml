@@ -1,5 +1,10 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="a" type="list">[5, 3, 4, 6, 8, 2]</var>
-<var name="i" type="int">1</var>
+<var name="node_a" type="Node">[a]</var>
+<var name="node_b" type="Node">[b]</var>
+<var name="node_c" type="Node">[c[a][b]]</var>
+<var name="btree" type="BTree">[root[c[a][b]]None]</var>
+<var name="preorder" type="Stack">['root', 'c', 'a', 'b']</var>
+<var name="inorder" type="Stack">['a', 'c', 'b', 'root']</var>
+<var name="postorder" type="Stack">['a', 'b', 'c', 'root']</var>
 </Params>

@@ -1,5 +1,3 @@
-
-globalVarList = {}
 globalFuncList = {}
 
 moduleStack = []

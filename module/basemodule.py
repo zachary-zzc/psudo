@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 
 class basemodule:
-
-    def __init__(self, varList, funcList, content):
-        self.varList = varList
-        self.funcList = funcList
-        self.localVarList = []
-        self.localFuncList = []
-        self.content = content
-        self.endRecursive = False
+    __global__ = False
+    def __init__(self):
+        pass
 
     def _var_inc(self, varName, varValue):
         if varName not in self.varList:
@@ -23,12 +18,22 @@ class basemodule:
             self.funcList[funcName] = funcModule
 
     def _end_module(self):
-        for key in self.localVarList:
-            if key in self.varList:
-                self.varList.pop(key)
-        for key in self.localFuncList:
-            if key in self.funcList:
-                self.funcList.pop(key)
+        if not self.isGlobal():
+            for key in self.localVarList:
+                if key in self.varList:
+                    self.varList.pop(key)
+            for key in self.localFuncList:
+                if key in self.funcList:
+                    self.funcList.pop(key)
+
+    def setGlobal(self):
+        self.__global__ = True
+
+    def resetGlobal(self):
+        self.__global__ = False
+
+    def isGlobal(self):
+        return self.__global__
 
     def isEnd(self):
         return self.endRecursive
