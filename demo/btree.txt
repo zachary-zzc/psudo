@@ -3,23 +3,30 @@ function PREORDER_TREE_WALK(tree)
         preorder.push(tree.value)
         PREORDER_TREE_WALK(tree.left)
         PREORDER_TREE_WALK(tree.right)
+
+
 function INORDER_TREE_WALK(tree)
     if tree != None
         INORDER_TREE_WALK(tree.left)
         inorder.push(tree.value)
         INORDER_TREE_WALK(tree.right)
+
+
 function POSTORDER_TREE_WALK(tree)
     if tree != None
         POSTORDER_TREE_WALK(tree.left)
         POSTORDER_TREE_WALK(tree.right)
         postorder.push(tree.value)
-node_a = Node('a')
-node_b = Node('b')
-node_c = Node('c', [node_a, node_b])
-btree = BTree('root', node_c)
+
+
+node_a = Node('c', [Node('d'), Node('e')])
+node_b = Node('b', [Node('f')])
+btree = BTree('root', node_a, node_b)
+
 preorder = Stack()
 inorder = Stack()
 postorder = Stack()
+
 PREORDER_TREE_WALK(btree)
 INORDER_TREE_WALK(btree)
 POSTORDER_TREE_WALK(btree)

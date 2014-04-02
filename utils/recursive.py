@@ -30,8 +30,8 @@ def recursive(content, index, module):
 
     Statement: Including if, while, for and repeat/until, break, continue, return.
     """
-
     if (index < len(content)) and (module.isEnd() == False) and (content[index]):
+        print('compile content : {}'.format(content[index]))
         # preprocess should remove all annotations and useless whitespaces as well as blank lines
         grammType, tokens, extoken, paramList = parser.parse(content[index], module)
         #----------DEFINATION---------

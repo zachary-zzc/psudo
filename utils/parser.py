@@ -57,12 +57,12 @@ opts = {'+':            41,
 def preprocess(strContent):
     orig = strContent.split('\n')
     contents = []
-    for i in range(len(orig)):
-        content = orig[i].rstrip()
-        if '#' in content:
-            content = content.split('#')[0]
-        if len(content) > 0:
-            contents.append(content)
+    for line in orig:
+        line = line.rstrip()
+        if '#' in line:
+            line = line.split('#')[0]
+        if line:
+            contents.append(line)
     return contents
 
 

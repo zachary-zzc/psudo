@@ -32,7 +32,7 @@ class psudo(threading.Thread):
     def run(self):
         self.status = True
         try:
-            self.contents = parser.preprocess(self.contents)
+            contents = parser.preprocess(self.contents)
             self.globalModule = commodule.commodule({},
                                                     glb.globalFuncList,
                                                     contents)
