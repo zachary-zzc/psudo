@@ -31,7 +31,11 @@ class funcmodule(basemodule):
     def run(self):
         from utils.recursive import recursive
 
+        # one line can only deliver one function... should be fixed later
+        glb.globalVarList['__return__'] = None
         recursive(self.content, 0, self)
+        for formalParam in self.formalParamList:
+            self.localVarList.append(formalParam)
         # for formalParam in self.formalParamList:
         #     self.varList.pop(formalParam)
         self._end_module()

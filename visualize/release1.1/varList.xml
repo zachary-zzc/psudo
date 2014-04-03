@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="node_a" type="Node">[c[d][e]]</var>
-<var name="node_b" type="Node">[b[f]]</var>
-<var name="btree" type="BTree">[root[c[d][e]][b[f]None]]</var>
-<var name="preorder" type="Stack">['root', 'c', 'd', 'e', 'b', 'f']</var>
-<var name="inorder" type="Stack">['d', 'c', 'e', 'root', 'f', 'b']</var>
-<var name="postorder" type="Stack">['d', 'e', 'c', 'f', 'b', 'root']</var>
+<var name="elem" type="list">[12, 5, 9, 2, 18, 15, 13, 17, 19]</var>
+<var name="btree" type="BTree">[12[5[2][9]][18[15[13][17]]None]]</var>
+<var name="value" type="int">19</var>
+<var name="node" type="BTree">[19]</var>
+<var name="y" type="BTree">[18[15[13][17]]None]</var>
+<var name="x" type="BTree">[18[15[13][17]]None]</var>
 </Params>

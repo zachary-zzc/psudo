@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append('..')
+
+import glb
 
 class basemodule:
     __global__ = False
@@ -57,11 +61,10 @@ class basemodule:
         return localVarList
 
     def get_returnVar(self):
-        returnList = []
-        if '__returnList__' in self.varList:
-            returnList = self.varList['__returnList__']
-            self.varList.pop('__returnList__')
-        return returnList
+        if '__return__' in glb.globalVarList:
+            return glb.globalVarList.pop('__return__')
+        else:
+            return None
 
 
     def run(self):

@@ -409,8 +409,7 @@ def runFuncs(tokens, module):
                     #     raise ParamUndefinedError
                 func.passParam(actParamValue, module.funcList)
                 func.run()
-                returnValue = func.get_returnVar()
-                newTokens.append((3, str(returnValue)))
+                newTokens.append((3, '__return__'))
         else:
             newTokens.append(token)
     return tuple(newTokens)

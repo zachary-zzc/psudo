@@ -58,7 +58,8 @@ def recursive(content, index, module):
             moduleIndx = len(glb.moduleStack) - 1
             # continue, break, and return
             if tokens[0][1] == 'return':
-                execute('__returnList__ = '+extoken, module)
+                glb.globalVarList['__return__'] = eval(extoken, glb.globalVarList, module.varList)
+                # execute('__returnList__ = '+extoken, module)
                     # else:
                     #     raise VarNotDefinedError
                 while moduleIndx >= 0:
@@ -142,14 +143,11 @@ def getModuleIndx(content, index):
 @plot.refresh
 def execute(extoken, module):
     # first module is global module
-    glb.moduleStack[0].varList.update(globals())
+    print(extoken)
     varList_bak = {}
     varList_bak.update(module.varList)
     try:
-        if module.isGlobal():
-            exec(extoken, module.varList)
-        else:
-            exec(extoken, glb.moduleStack[0].varList, module.varList)
+        exec(extoken, glb.globalVarList, module.varList)
     except NameError:
         pass
     for key in module.varList.keys():

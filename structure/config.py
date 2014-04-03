@@ -9,3 +9,7 @@ from structure.linklist import LinkList
 # Tree
 from structure.tree import Tree, Node
 from structure.btree import BTree
+
+# Graph
+from structure.graph import Graph
+from structure.digraph import DiGraph

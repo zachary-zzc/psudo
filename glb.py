@@ -1,3 +1,4 @@
+globalVarList = {}
 globalFuncList = {}
 
 moduleStack = []

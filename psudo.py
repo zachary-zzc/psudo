@@ -33,7 +33,8 @@ class psudo(threading.Thread):
         self.status = True
         try:
             contents = parser.preprocess(self.contents)
-            self.globalModule = commodule.commodule({},
+            glb.globalVarList.update(globals())
+            self.globalModule = commodule.commodule(glb.globalVarList,
                                                     glb.globalFuncList,
                                                     contents)
             self.globalModule.setGlobal()
