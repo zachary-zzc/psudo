@@ -5,7 +5,6 @@ sys.path.append('..')
 
 class Graph():
     __name__ = 'Graph'
-    __class__ = 'Graph'
 
 
     def __init__(self, vexs=[], edges=[], weights=[]):

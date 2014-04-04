@@ -2,7 +2,6 @@
 
 class Queue(list):
     __name__ = 'Queue'
-    __class__ = 'Queue'
 
     @property
     def front(self):

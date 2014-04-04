@@ -1,9 +1,12 @@
-list a = [5, 3, 4, 6, 8, 2]
-function bubble_sort(arr)
+function BUBBLE_SORT(arr)
     for i = 1 to len(arr)
         for j = 0 to len(arr)-1
             if arr[j] > arr[j+1]
                 tmp = arr[j]
                 arr[j] = arr[j+1]
                 arr[j+1] = tmp
-bubble_sort(a)
+
+
+a = [5, 12, 4, 9, 6, 15, 19, 3]
+
+BUBBLE_SORT(a)

@@ -7,7 +7,6 @@ from structure.graph import Graph
 
 class DiGraph(Graph):
     __name__ = 'DiGraph'
-    __class__ = 'DiGraph'
 
 
     def getTailList(self, vex, withWeight=False):

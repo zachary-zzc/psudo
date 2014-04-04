@@ -2,7 +2,6 @@
 
 class Stack(list):
     __name__ = 'Stack'
-    __class__ = 'Stack'
 
     @property
     def top(self):

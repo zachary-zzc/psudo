@@ -45,14 +45,10 @@ for value in elem
     node = BTree(value)
     btree = TREE_INSERT(btree, node)
 
-# node_a = Node('c', [Node('d'), Node('e')])
-# node_b = Node('b', [Node('f')])
-# btree = BTree('root', node_a, node_b)
+preorder = Stack()
+inorder = Stack()
+postorder = Stack()
 
-# preorder = Stack()
-# inorder = Stack()
-# postorder = Stack()
-
-# PREORDER_TREE_WALK(btree)
-# INORDER_TREE_WALK(btree)
-# POSTORDER_TREE_WALK(btree)
+PREORDER_TREE_WALK(btree)
+INORDER_TREE_WALK(btree)
+POSTORDER_TREE_WALK(btree)

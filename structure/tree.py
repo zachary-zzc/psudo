@@ -2,7 +2,6 @@
 
 class Node:
     __name__ = 'Node'
-    __class__ = 'Node'
 
     def __init__(self, value='default', children=[]):
         self._value = value
@@ -10,13 +9,13 @@ class Node:
 
     def __str__(self):
         ret = '['
-        if self.value != None:
-            ret += str(self.value)
-        else:
-            ret += 'None'
+        ret += str(self.value)
         if self.hasChild:
             for child in self.children:
-                ret += str(child)
+                if isinstance(child, Tree):
+                    ret += str(child)
+                else:
+                    ret += '[' + str(child) + ']'
         ret += ']'
         return ret
 
@@ -101,7 +100,6 @@ class Node:
 
 class Tree(Node):
     __name__ = 'Tree'
-    __class__ = 'Tree'
     def __init__(self, value=None, children=[]):
         self._value = value
         self._children = children

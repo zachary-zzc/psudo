@@ -460,7 +460,7 @@ PseudoCode.prototype.plotTree = function(tree, level, pos_x)
                  0);
     }
     level ++;
-    var thisFloorWidth = TREE_TYPE_FLOOR_WIDTH * Math.pow(0.25, level-1);
+    var thisFloorWidth = TREE_TYPE_FLOOR_WIDTH * Math.pow(0.5, level-1);
     pos_x = pos_x - thisFloorWidth / 2;
     for (var i = 0; i < tree.children.length; i ++)
     {
