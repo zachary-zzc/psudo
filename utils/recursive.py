@@ -142,7 +142,6 @@ def getModuleIndx(content, index):
 
 @plot.refresh
 def execute(extoken, module):
-    # first module is global module
     print(extoken)
     varList_bak = {}
     varList_bak.update(module.varList)
@@ -153,5 +152,3 @@ def execute(extoken, module):
     for key in module.varList.keys():
         if (key not in varList_bak) and (key.find('__') != 0):
             module.localVarList.append(key)
-
-    return module

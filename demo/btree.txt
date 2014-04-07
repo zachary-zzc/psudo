@@ -7,12 +7,36 @@ function TREE_INSERT(tree, node)
             x = x.left
         else
             x = x.right
+    node.parent = y
     if y == None
         tree = node
     else if node.value < y.value
         y.left = node
     else
         y.right = node
+    return tree
+
+
+function TREE_SEARCH(tree, value)
+    ret = None
+    if (tree == None) or (tree.value == value)
+        ret = tree
+    else if value < tree.value
+        ret = TREE_SEARCH(tree.left, value)
+    else
+        ret = TREE_SEARCH(tree.right, value)
+    return ret
+
+
+function TREE_MINIMUM(tree)
+    while tree.left != None
+        tree = tree.left
+    return tree
+
+
+function TREE_MAXIMUM(tree)
+    while tree.right != None
+        tree = tree.right
     return tree
 
 
@@ -44,6 +68,11 @@ btree = None
 for value in elem
     node = BTree(value)
     btree = TREE_INSERT(btree, node)
+
+search = TREE_SEARCH(btree, 15)
+
+min = TREE_MINIMUM(btree)
+max = TREE_MAXIMUM(btree)
 
 preorder = Stack()
 inorder = Stack()

@@ -17,9 +17,10 @@ def node2btree(node):
 
 class BTree(Tree):
     __name__ = 'BTree'
-    def __init__(self, value='default', left=None, right=None):
+    def __init__(self, value='default', left=None, right=None, parent=None):
         self._value = value
         self._children = [left, right]
+        self._parent = parent
         if self.hasLeft:
             self.left = node2btree(self.left)
         if self.hasRight:

@@ -193,9 +193,11 @@ var FOREGROUND_COLOR = "#007700";
 var BACKGROUND_COLOR = "EEFFEE";
 var PRINT_COLOR = FOREGROUND_COLOR;
 
-var SINGLE_TYPE = ['int', 'str', 'double', 'float']
+var SINGLE_TYPE = ['int', 'str', 'double', 'float', 'NoneType']
 var ARRAY_TYPE = ['list', 'tuple', 'dict', 'set', 'Stack', 'Queue']
 var TREE_TYPE = ['Tree', 'Node', 'BTree']
+var GRAPH_TYPE = ['Graph']
+var DIGRAPH_TYPE = ['DIGraph']
 
 PseudoCode.prototype.init = function(am, w, h)
 {

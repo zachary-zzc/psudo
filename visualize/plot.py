@@ -86,14 +86,17 @@ def refresh(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         module = func(*args, **kwargs)
-        for module in glb.moduleStack:
+        for indx, module in enumerate(glb.moduleStack):
+            print('module index : {}'.format(indx))
+            print('module type : {}'.format(type(module)))
+            print('module var list keys : {}'.format(module.varList.keys()))
             for key in module.localVarList:
                 outputVar = '{}: {}'.format(key,
-                        eval(key, globals(), module.varList))
+                            eval(key, globals(), module.varList))
                 print(outputVar)
         print('\n')
         record_to_xml()
-        time.sleep(0.5)
+        time.sleep(0.1)
         #input()
         return module
     return wrapper

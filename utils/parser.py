@@ -303,14 +303,14 @@ def parse(block, module):
                 varType = tokens[0][1]
                 varName = tokens[1][1]
                 paramList.append(varName)
-                token = varName + '=' + varType
+                token = varName + ' = ' + varType
                 if len(tokens) == 2:
                     token += '()'
                 else:
                     if tokens[2][1] == '=':
                         token += '('
                         for indx in range(3, len(tokens)):
-                            token = token + tokens[indx][1]
+                            token += tokens[indx][1] + ' '
                         token += ')'
             # elif tokens[1][1] == '=':
             #     grammType = 'defination'
@@ -321,7 +321,7 @@ def parse(block, module):
             else:
                 grammType = 'exp'
                 for indx in range(len(tokens)):
-                    token = token + tokens[indx][1] + ''
+                    token += tokens[indx][1] + ' '
         elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
             grammType = 'statement'
             if tokens[0][1] == 'for':
@@ -339,7 +339,7 @@ def parse(block, module):
                     expInd = 3
                     startExp = ''
                     while tokens[expInd][1] != 'to':
-                        startExp += tokens[expInd][1]
+                        startExp += tokens[expInd][1] + ' '
                         expInd += 1
                     execute('__startpos__ = ' + startExp, module)
                     # skip 'to'
@@ -347,7 +347,7 @@ def parse(block, module):
                     endExp = ''
                     while expInd < len(tokens):
                         if tokens[expInd][1] != 'step':
-                            endExp += tokens[expInd][1]
+                            endExp += tokens[expInd][1] + ' '
                             expInd += 1
                         else:
                             break
@@ -359,7 +359,7 @@ def parse(block, module):
                         expInd += 1
                         stepExp = ''
                         while expInd < len(tokens):
-                            stepExp += tokens[expInd][1]
+                            stepExp += tokens[expInd][1] + ' '
                             expInd += 1
                         execute('__step__ = ' + stepExp, module)
                     paramList.append((varName,
@@ -376,14 +376,14 @@ def parse(block, module):
                 for indx in range(len(tokens)):
                     if tokens[indx][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
                         continue
-                    token = token + tokens[indx][1]
+                    token += tokens[indx][1] + ' '
                 if token == '':
                     token = 'True'
                 paramList.append(token)
         else:
             grammType = 'exp'
             for indx in range(len(tokens)):
-                token = token + tokens[indx][1]
+                token += tokens[indx][1] + ' '
     return grammType, tokens, token, paramList
 
 def runFuncs(tokens, module):

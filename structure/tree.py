@@ -3,9 +3,12 @@
 class Node:
     __name__ = 'Node'
 
-    def __init__(self, value='default', children=[]):
+    def __init__(self, value='default', children=[], parent=None):
         self._value = value
         self._children = children
+        self._parent = parent
+        for child in self._children:
+            child.parent = self
 
     def __str__(self):
         ret = '['
@@ -80,6 +83,27 @@ class Node:
             raise Exception('Children should be list type')
 
     @property
+    def parent(self):
+        return self._parent
+
+
+    @parent.setter
+    def parent(self, parent):
+        # fix this
+        self._parent = parent
+
+
+    @property
+    def hasParent(self):
+        return (self._parent != None)
+
+
+    @property
+    def isRoot(self):
+        return self.hasParent
+
+
+    @property
     def hasChild(self):
         return (len(self._children) != 0)
 
@@ -95,7 +119,8 @@ class Node:
                 childHeight.append(0)
         return (max(childHeight) + 1)
 
-    def add_child(self, child):
+
+    def addChild(self, child):
         self._children.append(child)
 
 class Tree(Node):
