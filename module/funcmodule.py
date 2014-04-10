@@ -19,8 +19,6 @@ class funcmodule(basemodule):
 
     def passParam(self, actParamList, funcList):
         glb.moduleStack.append(self)
-        # print('act param list : {}'.format(actParamList))
-        # print('formal param list : {}'.format(self.formalParamList))
         self.funcList = funcList
         self.localVarList = []
         self.localFuncList = []

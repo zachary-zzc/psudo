@@ -1,11 +1,9 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="elem" type="list">[12, 5, 9, 2, 18, 15, 13, 17, 19]</var>
-<var name="btree" type="BTree">[12[5[2][9]][18[15[13][17]][19]]]</var>
-<var name="search" type="BTree">[15[13][17]]</var>
-<var name="min" type="BTree">[2]</var>
-<var name="max" type="BTree">[19]</var>
-<var name="preorder" type="Stack">[12, 5, 2, 9, 18, 15, 13, 17, 19]</var>
-<var name="inorder" type="Stack">[2, 5, 9, 12, 13, 15, 17, 18, 19]</var>
-<var name="postorder" type="Stack">[2, 9, 5, 13, 17, 15, 19, 18, 12]</var>
+<var name="vertexs" type="tuple">('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')</var>
+<var name="edges" type="tuple">(('r', 'v'), ('r', 's'), ('s', 'w'), ('w', 't'), ('w', 'x'), ('t', 'x'), ('t', 'u'), ('x', 'u'), ('x', 'y'), ('u', 'y'))</var>
+<var name="graph" type="Graph">{[w, ['s', 't', 'x'], [1, 1, 1]], [v, ['r'], [1]], [u, ['t', 'x', 'y'], [1, 1, 1]], [t, ['w', 'x', 'u'], [1, 1, 1]], [s, ['r', 'w'], [1, 1]], [r, ['v', 's'], [1, 1]], [y, ['x', 'u'], [1, 1]], [x, ['w', 't', 'u', 'y'], [1, 1, 1, 1]]}</var>
+<var name="bfs_visit_list" type="Stack">['s', 'r', 'w', 'v', 't', 'x', 'u', 'y', 's', 'r', 'w', 'v', 't', 'x', 'u', 'y']</var>
+<var name="dfs_visit_list" type="Stack">['v', 'r', 's', 'y', 'u', 'x', 't', 'w']</var>
+<var name="s_y_shortest_path" type="Stack">['y', 'x', 'w', 's']</var>
 </Params>

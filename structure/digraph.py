@@ -9,26 +9,24 @@ class DiGraph(Graph):
     __name__ = 'DiGraph'
 
 
-    def getTailList(self, vex, withWeight=False):
-        return self.getAjacentList(vex, withWeight)
+    def getTails(self, vex):
+        return self.getAjds(vex)
 
 
-    def getHeadList(self, vex, withWeight=False):
+    def getHeads(self, vex):
+        """
         headList = []
-        weightList = []
         try:
-            if vex not in self._graph:
-                raise NameError
-            for v, e in self._graph.items():
-                if vex in e[0]:
-                    headList.append(v)
-                    weightList.append(e[1][e[0].index(vex)])
-            if withWeight:
-                return tuple([headList, weightList])
+            if vex in self._graph:
+                for vex in self.vexs():
+                    if vex in vex.adjs:
+
             else:
-                return tuple(headList)
+                raise NameError
         except NameError as e:
             print('vertex name {} cannot be found in this graph'.format(vex))
+        """
+        pass
 
 
     def setWeight(self, edge, weight):

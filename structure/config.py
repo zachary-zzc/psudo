@@ -11,5 +11,8 @@ from structure.tree import Tree, Node
 from structure.btree import BTree
 
 # Graph
-from structure.graph import Graph
+from structure.graph import Graph, Vertex
 from structure.digraph import DiGraph
+
+# Matrix
+from structure.matrix import Matrix

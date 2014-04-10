@@ -142,13 +142,13 @@ def getModuleIndx(content, index):
 
 @plot.refresh
 def execute(extoken, module):
-    print(extoken)
+    print('exec token : {}'.format(extoken))
     varList_bak = {}
     varList_bak.update(module.varList)
-    try:
-        exec(extoken, glb.globalVarList, module.varList)
-    except NameError:
-        pass
+    # try:
+    exec(extoken, glb.globalVarList, module.varList)
+    # except NameError:
+    #     pass
     for key in module.varList.keys():
         if (key not in varList_bak) and (key.find('__') != 0):
             module.localVarList.append(key)

@@ -28,12 +28,13 @@ class formodule(basemodule):
         glb.moduleStack.append(self)
 
         iterVarName = self.exp[0]
-        for i in range(len(self.exp[1])):
-            execute(iterVarName + '=' + str(self.exp[1][i]), self)
+        for value in self.exp[1]:
+            # self.localVarList.append(iterVarName)
+            self.varList[iterVarName] = value
             recursive(self.content, 0, self)
             if self.continueFlag:
                 self.resetEnd()
                 self.resetContinue()
-
+        self.varList.pop(iterVarName)
         self._end_module()
         glb.moduleStack.pop()

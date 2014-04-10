@@ -23,6 +23,7 @@ class ifelsemodule(basemodule):
 
         for i in range(len(self.exps)):
             execute('__judge__ = ' + self.exps[i], self)
+            # assert(isinstance(self.varList['__judge__'], bool))
             if self.varList['__judge__']:
                 recursive(self.contents[i], 0, self)
                 break

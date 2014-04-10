@@ -2,5 +2,9 @@
 
 import numpy as np
 
-class Matrix(np.array):
+class Matrix(np.ndarray):
     __name__ = 'Matrix'
+
+
+
+

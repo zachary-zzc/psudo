@@ -87,9 +87,9 @@ def refresh(func):
     def wrapper(*args, **kwargs):
         module = func(*args, **kwargs)
         for indx, module in enumerate(glb.moduleStack):
-            print('module index : {}'.format(indx))
-            print('module type : {}'.format(type(module)))
-            print('module var list keys : {}'.format(module.varList.keys()))
+            # print('module index : {}'.format(indx))
+            # print('module type : {}'.format(type(module)))
+            # print('module var list keys : {}'.format(module.varList.keys()))
             for key in module.localVarList:
                 outputVar = '{}: {}'.format(key,
                             eval(key, globals(), module.varList))

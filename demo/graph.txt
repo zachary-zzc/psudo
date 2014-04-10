@@ -1,0 +1,63 @@
+function BFS(G, s)
+    s = G.getVertex(s)
+    for vex in (G.V - {s})
+        vex.color = 'WHITE'
+        vex.distance = INFINITE
+        vex.pi = None
+    s.color = 'GRAY'
+    s.distance = 0
+    s.pi = None
+    Queue Q
+    Q.enque(s)
+    while Q
+        u = Q.deque()
+        for vex in G.getAdjs(u)
+            if vex.color == 'WHITE'
+                vex.color = 'GRAY'
+                vex.distance = u.distance + 1
+                vex.pi = u
+                Q.enque(vex)
+        u.color = 'BLACK'
+        bfs_visit_list.push(u.value)
+
+function SHORTEST_PATH(G, s, v)
+    BFS(G, s)
+    Stack path
+    u = G.getVertex(v)
+    while u.pi != None
+        path.push(u.value)
+        u = u.pi
+    path.push(s)
+    return path
+
+
+
+function DFS(G)
+    for vex in G.V
+        vex.color = 'WHITE'
+        vex.pi = None
+    for vex in G.V
+        if vex.color == 'WHITE'
+            DFS_VISIT(G, vex)
+
+
+function DFS_VISIT(G, u)
+    print(u.value)
+    u.color = 'GRAY'
+    for v in G.getAdjs(u)
+        if v.color == 'WHITE'
+            v.pi = u
+            DFS_VISIT(G, v)
+    u.color = 'BLACK'
+    dfs_visit_list.push(u.value)
+
+
+vertexs = ('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')
+edges = (('r', 'v'), ('r', 's'), ('s', 'w'), ('w', 't'), ('w', 'x'), ('t', 'x'), ('t', 'u'), ('x', 'u'), ('x', 'y'), ('u', 'y'))
+graph = Graph(vertexs, edges)
+Stack bfs_visit_list
+dfs_visit_list = Stack()
+
+BFS(graph, 's')
+DFS(graph)
+s_y_shortest_path = SHORTEST_PATH(graph, 's', 'y')

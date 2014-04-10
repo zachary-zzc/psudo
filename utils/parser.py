@@ -265,7 +265,7 @@ def parse(block, module):
            funcList, for convinient use, should not appear here
     Output:
     1. grammType: 'defination', 'statement', 'exp'
-    2. token: executable tokens for python, for execute function use
+    2. token: executable tokens for execute function use
     3. paramList: Due to grammType.
         If block is var defination, paramList[0] = varName
         If block is function defination, paramList[0] = funcName
@@ -328,13 +328,19 @@ def parse(block, module):
                 from utils.recursive import execute
                 varName = tokens[1][1]
                 if tokens[2][1] == 'in':
+                    loopToken = '__loop__ = '
+                    for indx in range(3, len(tokens)):
+                        loopToken += tokens[indx][1]
+                    execute(loopToken, module)
+                    paramList.append((varName, list(eval('__loop__', module.varList))))
+                    module.varList.pop('__loop__')
+                    """
                     if tokens[3][1] in module.varList:
-                        paramList.append((varName, module.varList[tokens[3][1]]))
-                    elif tokens[3][1] in module.varList:
                         paramList.append((varName, module.varList[tokens[3][1]]))
                     else:
                         pass
                     #    raise VarNotDefinedError
+                    """
                 elif tokens[2][1] == '=':
                     expInd = 3
                     startExp = ''

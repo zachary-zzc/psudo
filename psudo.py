@@ -43,8 +43,8 @@ class psudo(threading.Thread):
             for func in glb.globalFuncList:
                 if func == 'Main':
                     glb.globalFuncList[func].run()
-        except Exception as e:
-            print('Run compiler fail: {}'.format(e))
+        # except Exception as e:
+        #     print('Run compiler fail: {}'.format(e))
         finally:
             self.status = False
 
@@ -83,7 +83,7 @@ class monitor(threading.Thread):
 if __name__ == '__main__':
     lock = threading.Lock()
     glb.taskQueue.append('start')
-    with open('demo/btree.txt', 'r') as f:
+    with open('demo/graph.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
     monitor.start()
