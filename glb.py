@@ -5,4 +5,3 @@ moduleStack = []
 
 taskQueue = []
 
-INFINITE = float('inf')

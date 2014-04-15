@@ -1,6 +1,9 @@
 import sys
 sys.path.append('..')
 
+# constants
+INFINITE = float('inf')
+
 # list type
 from structure.stack import Stack
 from structure.queue import Queue

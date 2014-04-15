@@ -16,7 +16,8 @@ class graphTest(unittest.TestCase):
 
     def test_str(self):
         # if init success, addEdge should work OK, no need test
-        self.assertTrue(str(self.graph) == '{[1, [2, 3], [5, 1]], [2, [1], [5]], [3, [1], [1]]}')
+        print(str(self.graph))
+        self.assertTrue(str(self.graph) == '[[1, [2, 3], [5, 1]], [2, [1], [5]], [3, [1], [1]]]')
         self.assertTrue(len(self.graph) == 3)
 
 
@@ -62,7 +63,7 @@ class graphTest(unittest.TestCase):
 
     def test_delEdge(self):
         self.graph.delEdge((1, 3))
-        self.assertTrue(str(self.graph) == '{[1, [2], [5]], [2, [1], [5]], [3, [], []]}')
+        self.assertTrue(str(self.graph) == '[[1, [2], [5]], [2, [1], [5]], [3, [], []]]')
 
     def test_addVertex(self):
         self.graph.addVertex(5)

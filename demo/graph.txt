@@ -53,7 +53,7 @@ function DFS_VISIT(G, u)
 
 
 vertexs = ('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')
-edges = (('r', 'v'), ('r', 's'), ('s', 'w'), ('w', 't'), ('w', 'x'), ('t', 'x'), ('t', 'u'), ('x', 'u'), ('x', 'y'), ('u', 'y'))
+edges = (('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))
 graph = Graph(vertexs, edges)
 Stack bfs_visit_list
 dfs_visit_list = Stack()

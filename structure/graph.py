@@ -191,7 +191,23 @@ class Graph():
 
 
     def __str__(self):
-        return str(self._graph)
+        """
+        use adj_matrix format for conv use
+        format:
+            fst row: list of all vex name
+            sec row: adj_matrix
+
+        import numpy as np
+        ret = '['
+        vex_list = [vex.value for vex in self.vexs()]
+        adj_matrix = np.ones((len(vex_list), len(vex_list))) * -1
+        for ind, vex in enumerate(self.vexs()):
+            for adj, weight in zip_longest(vex.adjs, vex.weights):
+                adj_matrix[ind][vex_list.index(adj)] = weight
+        ret += str(vex_list) + ', \n' + str(adj_matrix) + ']'
+        return ret
+        """
+        return str(list(self._graph))
 
 
     __repr__ = __str__

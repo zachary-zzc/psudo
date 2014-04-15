@@ -24,137 +24,7 @@
 // authors and should not be interpreted as representing official policies, either expressed
 // or implied, of the University of San Francisco
 
-// Data Structure 
-// Tree
-//------------------------------------------------------------------------------------------
 
-function Node(value=null, children=[], objID=-1, parentID=-1)
-{
-    this.init(value, children, objID, parentID)
-}
-
-Node.prototype.init = function(value, children, objID, parentID)
-{
-    this.value = value;
-    this.children = children;
-    this.objID = objID;
-    this.parentID = parentID;
-}
-
-Node.prototype.setValue = function(value)
-{
-    this.value = value;
-}
-
-Node.prototype.setChildren = function(children)
-{
-    this.children = children;
-}
-
-Node.prototype.setChild = function(child, indx)
-{
-    this.children[indx] = child;
-}
-
-Node.prototype.setID = function(objID)
-{
-    this.objID = objID;
-}
-
-Node.prototype.setParentID = function(parentID)
-{
-    this.parentID = objID;
-}
-
-Node.prototype.addChild = function(child)
-{
-    this.children.push(child)
-}
-
-Node.prototype.getValue = function()
-{
-    return this.value;
-}
-
-Node.prototype.getChildren = function()
-{
-    return this.children;
-}
-
-Node.prototype.getChild = function(indx)
-{
-    return this.children[indx];
-}
-
-Node.prototype.getID = function()
-{
-    return this.objID;
-}
-
-Node.prototype.getParentID = function()
-{
-    return this.parentID;
-}
-
-Node.prototype.getHeight = function()
-{
-    if (this.children.length == 0)
-    {
-        return 1;
-    }
-    var childHeight = new Array(this.children.length);
-    for (var i = 0; i < this.children.length; i ++)
-    {
-        childHeight[i] = this.children[i].getHeight();
-    }
-    // console.log(Math.max.apply(null, childHeight) + 1);
-    return Math.max.apply(null, childHeight) + 1;
-}
-
-Node.prototype.toString = function()
-{
-    var ret = '[' + this.value;
-    for (var i = 0; i < this.children.length; i ++)
-    {
-        ret += this.children[i].toString();
-    }
-    ret += ']';
-    return ret;
-}
-
-// function Tree(value=null, children=[], objID=0)
-// {
-//     this.init(value, children, objID)
-// }
-// 
-// Tree.prototype = new Node();
-// Tree.prototype.constructor = Tree;
-// Tree.superclass = Node.prototype;
-// 
-// 
-// Tree.prototype.init = function(value, children, objID)
-// {
-//    var sc = Tree.superclass;
-//    var fn = sc.init;
-//    fn.call(this, value, children, objID);
-// }
-// 
-// 
-// Tree.prototype.preorderTraversal(func, level=0)
-// {
-//     func(this.value, this.children, level);
-//     for (var i = 0; i < this.children.length, i ++)
-//     {
-//         this.children[i].preorderTraversal(func, ++level);
-//     }
-// }
-// 
-// Tree.prototype.postorderTraversal(func)
-// {
-// 
-// }
-// 
-//------------------------------------------------------------------------------------------
 
 function PseudoCode(am, w, h)
 {
@@ -187,17 +57,26 @@ var TREE_ELEM_WIDTH_SMALL = 30;
 var TREE_ELEM_HEIGHT_SMALL = 30;
 var TREE_TYPE_NODE_INTERVAL_WIDTH = 50;
 
+var GRAPH_X_INTERVAL = 200;
+var GRAPH_Y_INTERVAL = 100;
+var SMALL_GRAPH_GROUP_SIZE = 5;
+var GRAPH_TYPE_HEIGHT = 50;
+
+var VERTEX_INDEX_COLOR = "#0000FF";
+var EDGE_COLOR = "#007700";
 var LINK_COLOR = "#007700";
 var HIGHLIGHT_CIRCLE_COLOR = "#007700";
 var FOREGROUND_COLOR = "#007700";
 var BACKGROUND_COLOR = "EEFFEE";
 var PRINT_COLOR = FOREGROUND_COLOR;
 
-var SINGLE_TYPE = ['int', 'str', 'double', 'float', 'NoneType']
-var ARRAY_TYPE = ['list', 'tuple', 'dict', 'set', 'Stack', 'Queue']
-var TREE_TYPE = ['Tree', 'Node', 'BTree']
-var GRAPH_TYPE = ['Graph']
-var DIGRAPH_TYPE = ['DIGraph']
+var SINGLE_TYPE = ['int', 'str', 'double', 'float', 'NoneType'];
+var ARRAY_TYPE = ['list', 'tuple', 'dict', 'set', 'Stack', 'Queue'];
+var TREE_TYPE = ['Tree', 'Node', 'BTree'];
+var GRAPH_TYPE = ['Graph', 'DIGraph'];
+
+var SPLITSTARTTOKEN = ['[', '{', '('];
+var SPLITENDTOKEN = [']', '}', ')'];
 
 PseudoCode.prototype.init = function(am, w, h)
 {
@@ -215,11 +94,8 @@ PseudoCode.prototype.init = function(am, w, h)
 	this.animationManager.skipForward();
 	this.animationManager.clearHistory();
 
-    // this.implementAction(this.refresh.bind(this), "");
     var t = this;
     setInterval(function(){t.implementAction(t.refresh.bind(t), "")}, 50);
-    // this.refresh();
-    
 }
 
 PseudoCode.prototype.addControls =  function()
@@ -233,7 +109,6 @@ PseudoCode.prototype.addControls =  function()
 PseudoCode.prototype.reset = function()
 {
 	this.nextIndex = 0;
-    this.commands = [];
     this.pos_x = ANIMATOR_INITIAL_X;
     this.pos_y = ANIMATOR_INITIAL_Y;
 }
@@ -268,6 +143,7 @@ PseudoCode.prototype.refresh = function()
 {
     // read varlist from server
     this.clearAnimator();
+    this.reset();
 
     // read file
     var xmldoc = readTextFile("varList.xml");
@@ -282,20 +158,33 @@ PseudoCode.prototype.refresh = function()
                        varNode.nodeValue]
         this.pos_x = ANIMATOR_INITIAL_X;
         this.plotVar(varInfo);
+        console.log("Finish Plot : " + varInfo[0]);
     }
-    return this.commands;
+
+    this.animationManager.setAllLayers([0, this.currentLayer]);
+	this.animationManager.StartNewAnimation(this.commands);
+	this.animationManager.skipForward();
+	this.animationManager.clearHistory();
+    this.clearHistory();
+
 }
 
 PseudoCode.prototype.clearAnimator = function()
 {
-    var tmpIndex = this.nextIndex;
-    this.reset();
+    this.commands = [];
     var alertMsg = "";
-    for(var i = 0; i < tmpIndex; i ++)
+    for(var i = 0; i < this.nextIndex; i ++)
     {
-        alertMsg = "Delete: " + String(i);
-        //console.log(alertMsg);
-        this.cmd("Delete", i);
+        try
+        {
+            alertMsg = "Delete: " + String(i);
+            console.log(alertMsg);
+            this.cmd("Delete", i);
+        }
+        catch(err)
+        {
+            console.log("ID : " + i + " doesn't exist");
+        }
     }
 }
     
@@ -322,19 +211,15 @@ PseudoCode.prototype.plotVar = function(varInfo)
     {
         varType = "GRAPH_TYPE";
     }
-    else if (DIGRAPH_TYPE.indexOf(varType) != -1)
-    {
-        varType = "DIGRAPH_TYPE";
-    }
 
     alertMsg = "CreateLabel: " + varName + ", Index: " + String(this.nextIndex);
-    // console.log(alertMsg);
+    console.log(alertMsg);
     this.cmd("CreateLabel", this.nextIndex, varName, this.pos_x, this.pos_y);
     this.pos_x += LABEL_DATA_INSTANCE;
     this.nextIndex ++;
     if (varType == "SINGLE_TYPE")
     {
-        var varValue = varInfo[2].trim();
+        var varValue = varInfo[2].trim().replace(/\'/g, "").replace(/\"/g, "");
         alertMsg = "CreateCircle: " + this.data + ", Index: " + String(this.nextIndex);
         // console.log(alertMsg);
         this.cmd("CreateCircle", this.nextIndex, varValue, this.pos_x, this.pos_y);
@@ -343,14 +228,16 @@ PseudoCode.prototype.plotVar = function(varInfo)
     }
     else if (varType == "ARRAY_TYPE")
     {
-        var varValue = varInfo[2].slice(1, varInfo[2].length-1) 
+        // var varValue = varInfo[2].slice(1, varInfo[2].length-1) 
         // remove '[' in first space and ']' in last space
-        varValue = varValue.split(", ")
-        for (var i = 0; i < varValue.length; i ++)
+        // varValue = varValue.split(", ")
+        var strValue = varInfo[2];
+        var arr = this.parseArray(strValue)
+        for (var i = 0; i < arr.length; i ++)
         {
-            alertMsg = "CreateRectangle: " + varValue[i] + ", Index: " + String(this.nextIndex);
+            alertMsg = "CreateRectangle: " + arr[i] + ", Index: " + String(this.nextIndex);
             // console.log(alertMsg);
-            this.cmd("CreateRectangle", this.nextIndex, varValue[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
+            this.cmd("CreateRectangle", this.nextIndex, arr[i], ARRAY_ELEM_WIDTH_SMALL, ARRAY_ELEM_HEIGHT_SMALL, this.pos_x, this.pos_y);
             this.nextIndex ++;
             this.pos_x += ARRAY_ELEM_WIDTH_SMALL;
         }
@@ -359,39 +246,151 @@ PseudoCode.prototype.plotVar = function(varInfo)
     else if (varType == "TREE_TYPE")
     {
         //generate tree
-        var optStack = [];
-        var nodeStack = [];
         var strValue = varInfo[2];
-        var tree = new Node();
-        var token = "";
-        // for (var indx = 0; indx < strValue.length; indx ++)
-        var indx = 0;
-        while (indx < strValue.length)
-        {  
-            var ch = strValue[indx];
-            if (ch == "[")
+        var tree = this.parseTree(strValue)
+        // plot tree
+        this.pos_x += TREE_ROOT_MIDDLE_X;
+        this.plotTree(tree, 0, this.pos_x+TREE_ROOT_MIDDLE_X);
+        this.pos_y += (tree.getHeight()-1) * TREE_TYPE_FLOOR_HEIGHT + TREE_TYPE_HEIGHT;
+        console.log("Height : " + tree.getHeight());
+    }
+    else if (varType == "GRAPH_TYPE")
+    {
+        var strValue = varInfo[2];
+        var graph = this.parseGraph(strValue);
+        var max_y = this.plotGraph(graph);
+        this.pos_y += max_y + GRAPH_TYPE_HEIGHT;
+    }
+    else
+    {
+        var errorMsg = "error!";
+        for (var i = 0; i < varInfo.length; i ++)
+        {
+            errorMsg += varInfo[i] + " ";
+        }
+        alert(errorMsg);
+    }
+    return this.commands;
+}
+
+
+PseudoCode.prototype.parseArray = function(strValue)
+{
+    var optStack = [];
+    var indx = 0;
+    var arr = new Array();
+    var token = "";
+    while (indx < strValue.length)
+    {
+        var ch = strValue[indx];
+        if (SPLITSTARTTOKEN.indexOf(ch) != -1)
+        {
+            optStack.push(ch);
+            if (optStack.length > 1)
             {
-                // start of a node
-                optStack.push(ch);
-                token = "";
-                ch = strValue[++indx];
-                while(ch != '[' && ch != ']')
+                token += ch;
+            }
+        }
+        else if (SPLITENDTOKEN.indexOf(ch) != -1)
+        {
+            var startToken = optStack.pop();
+            if (SPLITSTARTTOKEN.indexOf(startToken) != SPLITENDTOKEN.indexOf(ch))
+            {
+                alert('Mismatch : ' + startToken + ' and ' + ch)
+            }
+            else
+            {
+                if (optStack.length >= 1)
                 {
                     token += ch;
-                    ch = strValue[++indx];
                 }
-                var parentID = -1;
-                if (nodeStack.length > 0)
+                else
                 {
-                    parentID = nodeStack[nodeStack.length-1].getID();
+                    arr.push(token.trim().replace(/\'/g, "").replace(/\"/g, ""));
+                    token = "";
                 }
+            }
+        }
+        else if (ch == ',')
+        {
+            if (optStack.length > 1)
+            {
+                token += ch;
+            }
+            else
+            {
+                arr.push(token.trim().replace(/\'/g, "").replace(/\"/g, ""));
+                token = "";
+            }
+        }
+        else
+        {
+            token += ch;
+        }
+        indx ++;
+    }
+    // check if strVar is legal
+    if (optStack.length != 0)
+    {
+        alert('var value illegal!');
+    }
+    alertMsg = "Get Array : " + arr.toString();
+    console.log(alertMsg);
+
+    return arr;
+}
+
+
+
+PseudoCode.prototype.parseTree = function(strValue)
+{
+    var optStack = [];
+    var nodeStack = [];
+    var tree = new Node();
+    var token = "";
+    // for (var indx = 0; indx < strValue.length; indx ++)
+    var indx = 0;
+    while (indx < strValue.length)
+    {  
+        var ch = strValue[indx];
+        if (SPLITSTARTTOKEN.indexOf(ch) != -1)
+        {
+            // start of a node
+            optStack.push(ch);
+            token = "";
+            ch = strValue[++indx];
+            while(SPLITSTARTTOKEN.indexOf(ch) == -1 && SPLITENDTOKEN.indexOf(ch) == -1)
+            {
+                token += ch;
+                ch = strValue[++indx];
+            }
+            var parentID = -1;
+            if (nodeStack.length > 0)
+            {
+                parentID = nodeStack[nodeStack.length-1].getID();
+            }
+            if (token.trim() != "None")
+            {
+                token = token.trim().replace(/\'/g, "").replace(/\"/g, "");
                 nodeStack.push(new Node(token, [], this.nextIndex, parentID));
                 this.nextIndex ++;
             }
-            else if (ch == "]")
+            else
             {
-                // end of a node
-                optStack.pop();
+                token = token.trim().replace(/\'/g, "").replace(/\"/g, "");
+                nodeStack.push(new Node(token, [], -1, parentID));
+            }
+        }
+        else if (SPLITENDTOKEN.indexOf(ch) != -1)
+        {
+            // end of a node
+            var startToken = optStack.pop();
+            if (SPLITSTARTTOKEN.indexOf(startToken) != SPLITENDTOKEN.indexOf(ch))
+            {
+                alert('Mismatch : ' + startToken + ' and ' + ch)
+            }
+            else
+            {
                 if (optStack.length == 0)
                 {
                     // last node in nodeStack, root node
@@ -403,41 +402,40 @@ PseudoCode.prototype.plotVar = function(varInfo)
                     var node = nodeStack.pop();
                     nodeStack[nodeStack.length-1].addChild(node);
                 }
-                ++indx;
             }
-            else
-            {
-                ++indx;
-            }
+            ++indx;
         }
-        // check if strVar is legal
-        if ((nodeStack.length != 0) || (optStack.length != 0))
+        else
         {
-            alert('var value illegal!');
+            ++indx;
         }
-        alertMsg = "Get tree : " + tree.toString();
-        console.log(alertMsg);
-        // plot tree
-        this.pos_x += TREE_ROOT_MIDDLE_X;
-        this.plotTree(tree, 0, this.pos_x+TREE_ROOT_MIDDLE_X);
-        this.pos_y += (tree.getHeight()-1) * TREE_TYPE_FLOOR_HEIGHT + TREE_TYPE_HEIGHT;
-        console.log("Height : " + tree.getHeight());
     }
-    else if (this.varType == "GraphType")
+    // check if strVar is legal
+    if ((nodeStack.length != 0) || (optStack.length != 0))
     {
+        alert('var value illegal!');
     }
-    else if (this.varType == "DiGraphType")
+    alertMsg = "Get tree : " + tree.toString();
+    console.log(alertMsg);
+
+    return tree;
+}
+
+
+PseudoCode.prototype.parseGraph = function(strValue)
+{
+    var graph = new Graph();
+    var vertexs = this.parseArray(strValue);
+    for (var i = 0; i < vertexs.length; i ++)
     {
+        var vertex = new Vertex();
+        var tmp = this.parseArray(vertexs[i]);
+        vertex.setValue(tmp[0]);
+        vertex.setAdjs(this.parseArray(tmp[1]));
+        vertex.setWeights(this.parseArray(tmp[2]));
+        graph.addVertex(vertex);
     }
-    else
-    {
-        var errorMsg = "error!";
-        for (var i = 0; i < varInfo.length; i ++)
-        {
-            errorMsg += varInfo[i] + " ";
-        }
-        alert(errorMsg);
-    }
+    return graph;
 }
 
 
@@ -447,19 +445,22 @@ PseudoCode.prototype.plotTree = function(tree, level, pos_x)
     if (tree.getParentID() == -1)
         // root node
     {
-        this.cmd("CreateRectangle", tree.objID, tree.value, TREE_ELEM_WIDTH_SMALL, TREE_ELEM_HEIGHT_SMALL, pos_x, pos_y);
+        this.cmd("CreateCircle", tree.objID, tree.value, pos_x, pos_y);
     }
     else
     {
-        this.cmd("CreateRectangle", tree.objID, tree.value, TREE_ELEM_WIDTH_SMALL, TREE_ELEM_HEIGHT_SMALL, pos_x, pos_y);
-        this.cmd("Connect", 
-                 tree.getParentID(), 
-                 tree.objID, 
-                 FOREGROUND_COLOR,
-                 0, // curve
-                 0, // directed
-                 "", //label
-                 0);
+         if (tree.getValue() != 'None')
+         {
+            this.cmd("CreateCircle", tree.objID, tree.value, pos_x, pos_y);
+            this.cmd("Connect", 
+                     tree.getParentID(), 
+                     tree.objID, 
+                     FOREGROUND_COLOR,
+                     0, // curve
+                     1, // directed
+                     "", //label
+                     0);
+         }
     }
     level ++;
     var thisFloorWidth = TREE_TYPE_FLOOR_WIDTH * Math.pow(0.5, level-1);
@@ -474,8 +475,162 @@ PseudoCode.prototype.plotTree = function(tree, level, pos_x)
         this.plotTree(tree.children[i], level, node_x, pos_y);
     }
 }
-        
+       
 
+// plot graph
+PseudoCode.prototype.plotGraph = function(graph, 
+                                          showEdgeCosts=false, 
+                                          directed=false)
+{
+    var size = graph.getSize();
+    var circleID = new Array(size);
+    var pos_logical = this.generateLogicalPos(size);
+    var x_pos_logical = pos_logical[0];
+    var y_pos_logical = pos_logical[1];
+    var curve = pos_logical[2];
+    var values = graph.getVertexValues();
+    console.log(y_pos_logical);
+    for (var i = 0; i < size; i ++)
+    {
+        circleID[i] = this.nextIndex ++;
+        this.cmd("CreateCircle", circleID[i], values[i], this.pos_x + x_pos_logical[i], this.pos_y + y_pos_logical[i]);
+        this.cmd("SetTextColor", circleID[i], VERTEX_INDEX_COLOR, 0);
+        // this.cmd("SetLayer", circleID[i], 1);
+    }
+    var adj_matrix = graph.toMatrix();
+    var adj_matrixID = new Array(size);
+    for (var i = 0; i < size; i ++)
+    {
+        adj_matrixID[i] = new Array(size);
+    }
+    for (var i = 0; i < size; i ++)
+    {
+        for (var j = 0; j < size; j ++)
+        {
+            adj_matrixID[i][j] = this.index++;
+        }
+    }
+    this.buildEdges(adj_matrix, x_pos_logical, y_pos_logical, curve, circleID, size, showEdgeCosts, directed);   
+    return Math.max(y_pos_logical);
+}
+
+
+PseudoCode.prototype.generateLogicalPos = function(size)
+{
+    var x_pos_logical = new Array(size);
+    var y_pos_logical = new Array(size);
+    var curve = new Array(size);
+    var group_size = 0;
+    for (var i = 0; i < size; i++)
+    {
+        curve[i] = new Array(size);
+    }
+    if (size <= 10) // small size graph
+    {
+        group_size = SMALL_GRAPH_GROUP_SIZE;
+    }
+    else
+    {
+        group_size = Math.ceil(size / 2);
+    }
+    for (var i = 0; i < size; i++)
+    {
+        ingroup_index = i % group_size;
+        group_index = Math.floor(i / group_size);
+        x_pos_logical[i] = GRAPH_X_INTERVAL * 
+                           ((ingroup_index % Math.ceil(group_size / 2)) + 
+                             0.5 * Math.floor(ingroup_index / Math.ceil(group_size / 2)));
+        y_pos_logical[i] = GRAPH_Y_INTERVAL * (2 * group_index + Math.floor(ingroup_index / Math.ceil(group_size / 2)));
+        for (var j = 0; j < size; j ++)
+        {
+            if (group_index == Math.floor(j / group_size)) // i and j in same group, only consider in same line
+            {
+                if (Math.abs(i - j) >= 2 && 
+                    Math.floor((i % group_size) / Math.ceil(group_size / 2)) == 
+                    Math.floor((j % group_size) / Math.ceil(group_size / 2)))
+                    // i and j in same line
+                {
+                    if (group_index < 1)
+                    {
+                        // curve up
+                        curve[i][j] = 0.25 * Math.sign(i - j);
+                    }
+                    else
+                    {
+                        // curve down
+                        curve[i][j] = 0.25 * Math.sign(j - 1);
+                    }
+                }
+                else
+                {
+                    curve[i][j] = 0;
+                }
+            }
+            // only have for columns, 2 groups, don't need to consider column curve
+            else // don't consider italian case in this version
+            {
+                curve[i][j] = 0;
+            }
+        }
+    }
+    return [x_pos_logical, y_pos_logical, curve];
+}
+
+
+PseudoCode.prototype.buildEdges = function(adj_matrix, 
+                                           x_pos_logical,
+                                           y_pos_logical,
+                                           curve, 
+                                           circleID,
+                                           size, 
+                                           showEdgeCosts=true, 
+                                           directed=false)
+{
+    for (var i = 0; i < size; i ++)
+    {
+        for (var j = 0; j < size; j++)
+        {
+            if (adj_matrix[i][j] >= 0)
+            {
+                var edgeLabel;
+                if (showEdgeCosts)
+                {
+                    edgeLabel = String(this.adj_matrix[i][j]);
+                }
+                else
+                {
+                    edgeLabel = "";
+                }
+                if (directed)
+                {
+                    this.cmd("Connect", 
+                             circleID[i], 
+                             circleID[j], 
+                             EDGE_COLOR, 
+                             // this.adjustCurveForDirectedEdges([x_pos_logical[i], y_pos_logical[i]],
+                             //                                  [x_pos_logical[j], y_pos_logical[j]],
+                             //                                  adj_matrix),
+                             0, 
+                             1,
+                             edgeLabel);
+                }
+                else if (i < j)
+                {
+                    this.cmd("Connect",
+                             circleID[i],
+                             circleID[j],
+                             EDGE_COLOR,
+                             curve[i][j], 
+                             0,
+                             edgeLabel);
+                }
+            }
+        }
+    }
+}
+
+
+// PseudoCode.prototype.adjustCurveForDirectedEdges(x_coordinate, y_coordinate, adj_matrix)
 ////////////////////////////////////////////////////////////
 // Script to start up your function, called from the webapge:
 ////////////////////////////////////////////////////////////

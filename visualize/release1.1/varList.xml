@@ -1,9 +1,16 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="vertexs" type="tuple">('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')</var>
-<var name="edges" type="tuple">(('r', 'v'), ('r', 's'), ('s', 'w'), ('w', 't'), ('w', 'x'), ('t', 'x'), ('t', 'u'), ('x', 'u'), ('x', 'y'), ('u', 'y'))</var>
-<var name="graph" type="Graph">{[w, ['s', 't', 'x'], [1, 1, 1]], [v, ['r'], [1]], [u, ['t', 'x', 'y'], [1, 1, 1]], [t, ['w', 'x', 'u'], [1, 1, 1]], [s, ['r', 'w'], [1, 1]], [r, ['v', 's'], [1, 1]], [y, ['x', 'u'], [1, 1]], [x, ['w', 't', 'u', 'y'], [1, 1, 1, 1]]}</var>
-<var name="bfs_visit_list" type="Stack">['s', 'r', 'w', 'v', 't', 'x', 'u', 'y', 's', 'r', 'w', 'v', 't', 'x', 'u', 'y']</var>
-<var name="dfs_visit_list" type="Stack">['v', 'r', 's', 'y', 'u', 'x', 't', 'w']</var>
-<var name="s_y_shortest_path" type="Stack">['y', 'x', 'w', 's']</var>
+<var name="seq1" type="str">ABCBDAB</var>
+<var name="seq2" type="str">BDCABA</var>
+<var name="lcs" type="Stack">['B', 'C', 'B', 'A']</var>
+<var name="b" type="Matrix">[[' ' ' ' ' ' ' ' ' ' ' ' ' ']
+ [' ' '|' '|' '|' '\\' '-' '\\']
+ [' ' '\\' '-' '-' '|' '\\' '-']
+ [' ' '|' '|' '\\' '-' '|' '|']
+ [' ' '\\' '|' '|' '|' '\\' '-']
+ [' ' '|' '\\' '|' '|' '|' '|']
+ [' ' '|' '|' '|' '\\' '|' '\\']
+ [' ' '\\' '|' '|' '|' '\\' '|']]</var>
+<var name="i" type="int">7</var>
+<var name="j" type="int">6</var>
 </Params>
