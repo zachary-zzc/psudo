@@ -6,7 +6,6 @@ function BUBBLE_SORT(arr)
                 arr[j] = arr[j+1]
                 arr[j+1] = tmp
 
-
 a = [5, 12, 4, 9, 6, 15, 19, 3]
 
 BUBBLE_SORT(a)
