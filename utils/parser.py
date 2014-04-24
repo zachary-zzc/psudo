@@ -294,9 +294,10 @@ def parse(block, module):
         paramList.append(funcName)
         paramList.append(formalParamList)
         token = funcName
-    # if not define function, run prog defined function and replace these tokens with there return, this part sucks
     else:
+        # run function part, this part sucks
         tokens = runFuncs(tokens, module)
+
         if tokens[0][0] == 1:
             if tokens[1][0] == 1:
                 grammType = 'defination'
@@ -312,18 +313,16 @@ def parse(block, module):
                         for indx in range(3, len(tokens)):
                             token += tokens[indx][1] + ' '
                         token += ')'
-            # elif tokens[1][1] == '=':
-            #     grammType = 'defination'
-            #     varName = tokens[0][1]
-            #     paramList.append(varName)
-            #     for indx in range(len(tokens)):
-            #         token = token + tokens[indx][1] + ' '
             else:
                 grammType = 'exp'
                 for indx in range(len(tokens)):
                     token += tokens[indx][1] + ' '
+
         elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
             grammType = 'statement'
+
+            # need to fix to generator
+
             if tokens[0][1] == 'for':
                 from utils.recursive import execute
                 varName = tokens[1][1]
@@ -334,13 +333,6 @@ def parse(block, module):
                     execute(loopToken, module)
                     paramList.append((varName, list(eval('__loop__', module.varList))))
                     module.varList.pop('__loop__')
-                    """
-                    if tokens[3][1] in module.varList:
-                        paramList.append((varName, module.varList[tokens[3][1]]))
-                    else:
-                        pass
-                    #    raise VarNotDefinedError
-                    """
                 elif tokens[2][1] == '=':
                     expInd = 3
                     startExp = ''
@@ -378,6 +370,9 @@ def parse(block, module):
                 else:
                     pass
                 #    raise forStatementError
+
+            # while and if module add statement attribution
+
             else:
                 for indx in range(len(tokens)):
                     if tokens[indx][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
@@ -415,6 +410,9 @@ def runFuncs(tokens, module):
                     #     raise ParamUndefinedError
                 func.passParam(actParamValue, module.funcList)
                 func.run()
+
+                # run function part, fix return
+
                 newTokens.append((3, '__return__'))
         else:
             newTokens.append(token)

@@ -5,39 +5,41 @@ sys.path.append('..')
 import glb
 
 class basemodule:
-    __global__ = False
+    __name__ = 'BaseModule'
+
     def __init__(self):
         pass
 
     def _var_inc(self, varName, varValue):
-        if varName not in self.varList:
-            self.localVarList.append(varName)
-            self.varList[varName] = varValue
-        # else:
-        #    raise(DeclareError)
+        try:
+            if varName not in self.varList:
+                self.localVarList.append(varName)
+                self.varList[varName] = varValue
+            else:
+                raise NameError
+        except NameError as e:
+            print('NameError: variable name \'{}\' already exist, conflict defination'.format(varName))
+            sys.exit(1)
 
     def _func_inc(self, funcName, funcModule):
-        if funcName not in self.funcList:
-            self.localFuncList.append(funcName)
-            self.funcList[funcName] = funcModule
+        try:
+            if funcName not in self.funcList:
+                self.localFuncList.append(funcName)
+                self.funcList[funcName] = funcModule
+            else:
+                raise NameError
+        except NameError as e:
+            print('NameError: function name \'{}\' already exist, conflect definition'.format(funcName))
+            sys.exit(1)
+
 
     def _end_module(self):
-        if not self.isGlobal():
-            for key in self.localVarList:
-                if key in self.varList:
-                    self.varList.pop(key)
-            for key in self.localFuncList:
-                if key in self.funcList:
-                    self.funcList.pop(key)
-
-    def setGlobal(self):
-        self.__global__ = True
-
-    def resetGlobal(self):
-        self.__global__ = False
-
-    def isGlobal(self):
-        return self.__global__
+        for key in self.localVarList:
+            if key in self.varList:
+                self.varList.pop(key)
+        for key in self.localFuncList:
+            if key in self.funcList:
+                self.funcList.pop(key)
 
     def isEnd(self):
         return self.endRecursive
@@ -59,13 +61,6 @@ class basemodule:
         for key in self.localVarList:
             localVarList[key] = self.varList[key]
         return localVarList
-
-    def get_returnVar(self):
-        if '__return__' in glb.globalVarList:
-            return glb.globalVarList.pop('__return__')
-        else:
-            return None
-
 
     def run(self):
         pass

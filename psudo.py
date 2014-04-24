@@ -31,22 +31,22 @@ class psudo(threading.Thread):
 
     def run(self):
         self.status = True
-        try:
-            contents = parser.preprocess(self.contents)
-            glb.globalVarList.update(globals())
-            self.globalModule = commodule.commodule(glb.globalVarList,
-                                                    glb.globalFuncList,
-                                                    contents)
-            self.globalModule.setGlobal()
-            self.globalModule.run()
+        # set force stop label to false
+        glb.forceStop = False
 
-            for func in glb.globalFuncList:
-                if func == 'Main':
-                    glb.globalFuncList[func].run()
-        # except Exception as e:
-        #     print('Run compiler fail: {}'.format(e))
-        finally:
-            self.status = False
+        # run compiler
+        contents = parser.preprocess(self.contents)
+        glb.globalVarList.update(globals())
+        self.globalModule = commodule.commodule(glb.globalVarList,
+                                                glb.globalFuncList,
+                                                contents)
+        self.globalModule.run()
+
+        for func in glb.globalFuncList:
+            if func == 'Main':
+                glb.globalFuncList[func].run()
+
+        self.status = False
 
 class monitor(threading.Thread):
     def __init__(self, contents, lock):
@@ -83,7 +83,7 @@ class monitor(threading.Thread):
 if __name__ == '__main__':
     lock = threading.Lock()
     glb.taskQueue.append('start')
-    with open('demo/btree.txt', 'r') as f:
+    with open('demo/graph.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
     monitor.start()

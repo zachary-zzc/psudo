@@ -12,7 +12,7 @@ class funcmodule(basemodule):
         self.content = content
         self.formalParamList = formalParamList
         self.endRecursive = False
-        self.hasVarList = True
+        self.returnList = []
 
     def get_FuncName(self):
         return self.funcName
@@ -25,6 +25,9 @@ class funcmodule(basemodule):
         assert(len(actParamList) == len(self.formalParamList))
         for i in range(len(actParamList)):
             self.varList[self.formalParamList[i]] = actParamList[i]
+
+    def getReturnList(self):
+        return tuple(self.returnList)
 
     def run(self):
         from utils.recursive import recursive

@@ -58,12 +58,14 @@ def recursive(content, index, module):
             moduleIndx = len(glb.moduleStack) - 1
             # continue, break, and return
             if tokens[0][1] == 'return':
-                glb.globalVarList['__return__'] = eval(extoken, glb.globalVarList, module.varList)
-                # execute('__returnList__ = '+extoken, module)
-                    # else:
-                    #     raise VarNotDefinedError
+                try:
+                    # test return multiple values
+                    module.returnList.append(eval(extoken, glb.globalVarList, module.varList))
+                except AttributeError:
+                    print('SyntaxError: return statement should be in a function')
+                    sys.exit(1)
                 while moduleIndx >= 0:
-                    if isinstance(glb.moduleStack[moduleIndx], function) == False:
+                    if not isinstance(glb.moduleStack[moduleIndx], function):
                         glb.moduleStack[moduleIndx].setEnd()
                     else:
                         glb.moduleStack[moduleIndx].setEnd()
@@ -72,7 +74,7 @@ def recursive(content, index, module):
                 return
             if (tokens[0][1] == 'continue') or (tokens[0][1] == 'break'):
                 while moduleIndx >= 0:
-                    if isinstance(glb.moduleStack[moduleIndx], loop) == False:
+                    if not isinstance(glb.moduleStack[moduleIndx], loop):
                         glb.moduleStack[moduleIndx].setEnd()
                     else:
                         glb.moduleStack[moduleIndx].setEnd()
@@ -145,10 +147,10 @@ def execute(extoken, module):
     print('exec token : {}'.format(extoken))
     varList_bak = {}
     varList_bak.update(module.varList)
-    # try:
-    exec(extoken, glb.globalVarList, module.varList)
-    # except NameError:
-    #     pass
+    try:
+        exec(extoken, glb.globalVarList, module.varList)
+    except Exception:
+        raise
     for key in module.varList.keys():
         if (key not in varList_bak) and (key.find('__') != 0):
             module.localVarList.append(key)
