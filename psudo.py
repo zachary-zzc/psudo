@@ -38,7 +38,6 @@ class psudo(threading.Thread):
         contents = parser.preprocess(self.contents)
         glb.globalVarList.update(globals())
         self.globalModule = commodule.commodule(glb.globalVarList,
-                                                glb.globalFuncList,
                                                 contents)
         self.globalModule.run()
 
@@ -83,7 +82,7 @@ class monitor(threading.Thread):
 if __name__ == '__main__':
     lock = threading.Lock()
     glb.taskQueue.append('start')
-    with open('demo/graph.txt', 'r') as f:
+    with open('demo/btree.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
     monitor.start()

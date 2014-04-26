@@ -1,8 +1,6 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="vertexs" type="tuple">('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')</var>
-<var name="edges" type="tuple">(('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))</var>
-<var name="graph" type="Graph">[[x, ['y', 'r', 'u'], [1, 1, 1]], [y, ['x'], [1]], [r, ['x', 's'], [1, 1]], [s, ['r', 'w'], [1, 1]], [t, ['w'], [1]], [u, ['x', 'w'], [1, 1]], [v, ['w'], [1]], [w, ['s', 't', 'u', 'v'], [1, 1, 1, 1]]]</var>
-<var name="bfs_visit_list" type="Stack">[]</var>
-<var name="dfs_visit_list" type="Stack">[]</var>
+<var name="elem" type="list">[12, 5, 9, 2, 18, 15, 13, 17, 19]</var>
+<var name="btree" type="NoneType">None</var>
+<var name="node" type="BTree">[12]</var>
 </Params>

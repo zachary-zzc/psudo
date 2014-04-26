@@ -296,7 +296,7 @@ def parse(block, module):
         token = funcName
     else:
         # run function part, this part sucks
-        tokens = runFuncs(tokens, module)
+        # tokens = runFuncs(tokens, module)
 
         if tokens[0][0] == 1:
             if tokens[1][0] == 1:
@@ -387,9 +387,10 @@ def parse(block, module):
                 token += tokens[indx][1] + ' '
     return grammType, tokens, token, paramList
 
+
+"""
+# don't need to runFuncs
 def runFuncs(tokens, module):
-    """
-    """
     newTokens = []
     for token in tokens:
         if token[0] == 2:
@@ -413,10 +414,11 @@ def runFuncs(tokens, module):
 
                 # run function part, fix return
 
-                newTokens.append((3, '__return__'))
+                newTokens.append((3, func.getReturnList()))
         else:
             newTokens.append(token)
     return tuple(newTokens)
+"""
 
 def getFunc(token):
     funcName = ''

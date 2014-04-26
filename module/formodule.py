@@ -7,11 +7,9 @@ import glb
 from module.basemodule import basemodule
 
 class formodule(basemodule):
-    def __init__(self, varList, funcList, exp, content):
+    def __init__(self, varList, exp, content):
         self.varList = varList
-        self.funcList = funcList
         self.localVarList = []
-        self.localFuncList = []
         self.content = content
         self.exp = exp
         self.endRecursive = False

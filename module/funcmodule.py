@@ -6,17 +6,16 @@ from module.basemodule import basemodule
 
 class funcmodule(basemodule):
 
-    def __init__(self, funcName, formalParamList, content):
+    def __init__(self, func_name, param_list, content):
+        self.func_name = func_name
         self.varList = {}
-        self.funcName = funcName
+        self.localVarList = []
         self.content = content
-        self.formalParamList = formalParamList
+        self.param_list = param_list
         self.endRecursive = False
-        self.returnList = []
+        self.return_list = []
 
-    def get_FuncName(self):
-        return self.funcName
-
+    """
     def passParam(self, actParamList, funcList):
         glb.moduleStack.append(self)
         self.funcList = funcList
@@ -26,19 +25,34 @@ class funcmodule(basemodule):
         for i in range(len(actParamList)):
             self.varList[self.formalParamList[i]] = actParamList[i]
 
+
     def getReturnList(self):
         return tuple(self.returnList)
+    """
 
-    def run(self):
+    def __call__(self, *args, **kwargs):
         from utils.recursive import recursive
 
-        # one line can only deliver one function... should be fixed later
-        glb.globalVarList['__return__'] = None
-        recursive(self.content, 0, self)
-        for formalParam in self.formalParamList:
-            self.localVarList.append(formalParam)
-        # for formalParam in self.formalParamList:
-        #     self.varList.pop(formalParam)
-        self._end_module()
+        # register function params
+        try:
+            if not (len(args) + len(kwargs)) == len(self.param_list):
+                raise(TypeError('{} positional arguments but {} given').format(
+                                                    len(self.param_list),
+                                                    len(args) + len(kwargs)))
+            else:
+                from itertools import zip_longest
+                args = list(args) + list(kwargs.values())
+                for param, arg in zip_longest(self.param_list, args):
+                    self.varList[param] = arg
+                    # don't know if it is possible...consider formal params as local variable
+                    self.localVarList.append(param)
 
-        glb.moduleStack.pop()
+                recursive(self.content, 0, self)
+                self._end_module()
+
+                glb.moduleStack.pop()
+
+                return tuple(self.return_list)
+        except TypeError as e:
+            print('TypeError: {}() take {}'.format(self.func_name, e))
+            sys.exit(1)

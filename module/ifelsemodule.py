@@ -7,12 +7,10 @@ import glb
 from module.basemodule import basemodule
 
 class ifelsemodule(basemodule):
-    def __init__(self, varList, funcList, exps, contents):
+    def __init__(self, varList, exps, contents):
         assert(len(exps) == len(contents))
         self.varList = varList
-        self.funcList = funcList
         self.localVarList = []
-        self.localFuncList = []
         self.exps = exps
         self.contents = contents
         self.endRecursive = False

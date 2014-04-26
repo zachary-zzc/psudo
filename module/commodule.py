@@ -8,13 +8,10 @@ from module.basemodule import basemodule
 
 class commodule(basemodule):
 
-    def __init__(self, varList, funcList, content):
+    def __init__(self, varList, content):
         self.varList = varList
-        self.funcList = funcList
         self.localVarList = []
-        self.localFuncList = []
         self.content = content
-        self.returnList = []
         self.endRecursive = False
 
     def run(self):

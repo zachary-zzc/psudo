@@ -106,7 +106,6 @@ def recursive(content, index, module):
                         grammType, tokens, extoken, paramList = parser.parse(content[index],
                                                                              module)
                 ifModule = ifelsemodule(module.varList,
-                                        module.funcList,
                                         exps,
                                         contents)
                 ifModule.run()
@@ -114,14 +113,12 @@ def recursive(content, index, module):
 
             elif tokens[0][1] == 'for':
                 forModule = formodule(module.varList,
-                                      module.funcList,
                                       exp,
                                       moduleContent)
                 forModule.run()
 
             elif tokens[0][1] == 'while':
                 whileModule = whilemodule(module.varList,
-                                          module.funcList,
                                           exp,
                                           moduleContent)
                 whileModule.run()

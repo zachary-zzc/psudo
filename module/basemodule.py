@@ -23,9 +23,10 @@ class basemodule:
 
     def _func_inc(self, funcName, funcModule):
         try:
-            if funcName not in self.funcList:
-                self.localFuncList.append(funcName)
-                self.funcList[funcName] = funcModule
+            if funcName not in self.varList:
+                # register function in varList
+                self.varList[funcName] = \
+                    lambda *args, **kwargs: funcModule.__call__(*args, **kwargs)
             else:
                 raise NameError
         except NameError as e:
@@ -37,9 +38,7 @@ class basemodule:
         for key in self.localVarList:
             if key in self.varList:
                 self.varList.pop(key)
-        for key in self.localFuncList:
-            if key in self.funcList:
-                self.funcList.pop(key)
+
 
     def isEnd(self):
         return self.endRecursive
