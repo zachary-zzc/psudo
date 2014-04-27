@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="elem" type="list">[12, 5, 9, 2, 18, 15, 13, 17, 19]</var>
-<var name="btree" type="NoneType">None</var>
-<var name="node" type="BTree">[12]</var>
+<var name="elem" type="list">[12, 5, 9, 2, 18]</var>
+<var name="btree" type="BTree">[12[5[2][9]][18]]</var>
 </Params>

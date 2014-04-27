@@ -61,14 +61,14 @@ function POSTORDER_TREE_WALK(tree)
         postorder.push(tree.value)
 
 
-elem = [12, 5, 9, 2, 18, 15, 13, 17, 19]
+elem = [12, 5, 9, 2, 18]
 btree = None
 
 for value in elem
     node = BTree(value)
     btree = TREE_INSERT(btree, node)
 
-# search = TREE_SEARCH(btree, 15)
+search = TREE_SEARCH(btree, 15)
 
 min = TREE_MINIMUM(btree)
 max = TREE_MAXIMUM(btree)

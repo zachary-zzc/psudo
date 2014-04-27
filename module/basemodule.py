@@ -67,8 +67,9 @@ class basemodule:
          for key in self.local_var_list:
              if key in self.var_list:
                  self.var_list.pop(key)
-         for key in self.func_list.keys():
-             self.var_list.pop(key)
+         # brute fix function register bugs...
+         # for key in self.func_list.keys():
+         #     self.var_list.pop(key)
 
          glb.module_stack.pop()
 
