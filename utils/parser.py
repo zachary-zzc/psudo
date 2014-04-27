@@ -95,7 +95,7 @@ def lexical(block):
     """
     token = ''
     tokens = []
-    # as python, '#' stand for annotation
+    # as python, '#' stands for annotation
     block = block.split('#')[0]
 
     indx = 0
@@ -259,47 +259,52 @@ def lexical(block):
         token = ''
     return tuple(tokens)
 
+
+
+# check to remove module input, as the output of parser should only be determined by
+# input sentence and grammer
+
 def parse(block, module):
     """
     Input: sentence, same with lexical
            funcList, for convinient use, should not appear here
     Output:
-    1. grammType: 'defination', 'statement', 'exp'
+    1. gramm_type: 'defination', 'statement', 'exp'
     2. token: executable tokens for execute function use
-    3. paramList: Due to grammType.
-        If block is var defination, paramList[0] = varName
-        If block is function defination, paramList[0] = funcName
-                                         paramList[1] = formalParamList
-        if block is if or while statement, paramList[0] is there judge exp
-        if block is for statement, paramList[0] is iter varName and iter list
+    3. param_list: Due to gramm_type.
+        If block is var defination, param_list[0] = var_name
+        If block is function defination, param_list[0] = func_name
+                                         param_list[1] = formal_param_list
+        if block is if or while statement, param_list[0] is there judge exp
+        if block is for statement, param_list[0] is iter var_name and iter list
                                    e.g 'for i = 1 to 10, step 1'
-                                   paramList[0] = ('i', (1, 2, 3, ..., 10))
+                                   param_list[0] = ('i', (1, 2, 3, ..., 10))
 
     for statement have two types:
-        1. for [varName] in [iterableList]
-        2. for [varName] = [startpos] to [endpos] step [step]
+        1. for [var_name] in [iterableList]
+        2. for [var_name] = [startpos] to [endpos] step [step]
     """
 
-    grammType = ''
+    gramm_type = ''
     token = ''
-    paramList = []
+    param_list = []
     tokens = lexical(block)
 
     if len(tokens) != 0:
         if tokens[0][1] == 'function':
-            grammType = 'defination'
-            funcName, formalParamList = getFunc(tokens[1][1])
-            paramList.append(funcName)
-            paramList.append(formalParamList)
-            token = funcName
+            gramm_type = 'defination'
+            func_name, formal_param_list = get_func_info(tokens[1][1])
+            param_list.append(func_name)
+            param_list.append(formal_param_list)
+            token = func_name
         else:
             if tokens[0][0] == 1:
                 if tokens[1][0] == 1:
-                    grammType = 'defination'
-                    varType = tokens[0][1]
-                    varName = tokens[1][1]
-                    paramList.append(varName)
-                    token = varName + ' = ' + varType
+                    gramm_type = 'defination'
+                    var_type = tokens[0][1]
+                    var_name = tokens[1][1]
+                    param_list.append(var_name)
+                    token = var_name + ' = ' + var_type
                     if len(tokens) == 2:
                         token += '()'
                     else:
@@ -309,25 +314,25 @@ def parse(block, module):
                                 token += tokens[indx][1] + ' '
                             token += ')'
                 else:
-                    grammType = 'exp'
+                    gramm_type = 'exp'
                     for indx in range(len(tokens)):
                         token += tokens[indx][1] + ' '
 
             elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
-                grammType = 'statement'
+                gramm_type = 'statement'
 
                 # need to fix to generator
 
                 if tokens[0][1] == 'for':
                     from utils.recursive import execute
-                    varName = tokens[1][1]
+                    var_name = tokens[1][1]
                     if tokens[2][1] == 'in':
                         loopToken = '__loop__ = '
                         for indx in range(3, len(tokens)):
                             loopToken += tokens[indx][1]
                         execute(loopToken, module)
-                        paramList.append((varName, list(eval('__loop__', module.varList))))
-                        module.varList.pop('__loop__')
+                        param_list.append((var_name, list(eval('__loop__', module.var_list))))
+                        module.var_list.pop('__loop__')
                     elif tokens[2][1] == '=':
                         expInd = 3
                         startExp = ''
@@ -346,7 +351,7 @@ def parse(block, module):
                                 break
                         execute('__endpos__ = ' + endExp, module)
                         if expInd >= len(tokens):
-                            module.varList['__step__'] = 1
+                            module.var_list['__step__'] = 1
                         else:
                             # skip 'step'
                             expInd += 1
@@ -355,13 +360,13 @@ def parse(block, module):
                                 stepExp += tokens[expInd][1] + ' '
                                 expInd += 1
                             execute('__step__ = ' + stepExp, module)
-                        paramList.append((varName,
-                                         tuple([i for i in range(module.varList['__startpos__'],
-                                                                 module.varList['__endpos__'],
-                                                                 module.varList['__step__'])])))
-                        module.varList.pop('__startpos__')
-                        module.varList.pop('__endpos__')
-                        module.varList.pop('__step__')
+                        param_list.append((var_name,
+                                         tuple([i for i in range(module.var_list['__startpos__'],
+                                                                 module.var_list['__endpos__'],
+                                                                 module.var_list['__step__'])])))
+                        module.var_list.pop('__startpos__')
+                        module.var_list.pop('__endpos__')
+                        module.var_list.pop('__step__')
                     else:
                         pass
                     #    raise forStatementError
@@ -375,22 +380,22 @@ def parse(block, module):
                         token += tokens[indx][1] + ' '
                     if token == '':
                         token = 'True'
-                    paramList.append(token)
+                    param_list.append(token)
             else:
-                grammType = 'exp'
+                gramm_type = 'exp'
                 for indx in range(len(tokens)):
                     token += tokens[indx][1] + ' '
-    return grammType, tokens, token, paramList
+    return gramm_type, tokens, token, param_list
 
 
 
-def getFunc(token):
-    funcName = ''
-    paramList = []
+def get_func_info(token):
+    func_name = ''
+    param_list = []
     tmpList = token.split('(')
-    funcName = tmpList[0].strip()
+    func_name = tmpList[0].strip()
     paramStr = tmpList[1].strip()
-    paramList = paramStr[0:len(paramStr)-1].split(',')
-    for i in range(len(paramList)):
-        paramList[i] = paramList[i].strip()
-    return funcName, tuple(paramList)
+    param_list = paramStr[0:len(paramStr)-1].split(',')
+    for i in range(len(param_list)):
+        param_list[i] = param_list[i].strip()
+    return func_name, tuple(param_list)

@@ -70,9 +70,9 @@ def record_to_xml():
     doc = minidom.Document()
     params = doc.createElement('Params')
     doc.appendChild(params)
-    for module in glb.moduleStack:
-        for varName in module.localVarList:
-            var = eval(varName, glb.globalVarList, module.varList)
+    for module in glb.module_stack:
+        for varName in module.local_var_list:
+            var = eval(varName, glb.global_var_list, module.var_list)
             xmlVar = doc.createElement('var')
             xmlVar.setAttribute('name', varName)
             xmlVar.setAttribute('type', type(var).__name__)
@@ -86,14 +86,13 @@ def refresh(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         module = func(*args, **kwargs)
-        for indx, module in enumerate(glb.moduleStack):
-            if 'TREE_INSERT' in glb.globalVarList:
-                print(glb.globalVarList['TREE_INSERT'])
-            for key in module.localVarList:
+        print(glb.module_stack)
+        for indx, module in enumerate(glb.module_stack):
+            for key in module.local_var_list:
                 outputVar = 'module : {}\n{} : {}'.format(
                         type(module),
                         key,
-                        eval(key, glb.globalVarList, module.varList))
+                        eval(key, glb.global_var_list, module.var_list))
                 print(outputVar)
         print('\n')
         record_to_xml()

@@ -12,11 +12,20 @@ class funcmodule(basemodule):
         self.func_name = func_name
         self.var_list = {}
         self.func_list = {}
-        # self.localVarList = []
+        self.local_var_list = []
         self.content = content
         self.param_list = param_list
         self.end_recursive = False
         self.return_list = None
+
+    def _end_module(self):
+        self.var_list = {}
+        self.func_list = {}
+        self.local_var_list = []
+        self.end_recursive = False
+        self.return_list = None
+
+        glb.module_stack.pop()
 
 
     def __call__(self, *args, **kwargs):
@@ -29,18 +38,19 @@ class funcmodule(basemodule):
                                                     len(self.param_list),
                                                     len(args) + len(kwargs)))
             else:
-                # register function params
+                # register function formal param list
+                # temp and brutial method
+                # maybe should set up params when init function module
                 from itertools import zip_longest
                 args = list(args) + list(kwargs.values())
                 for param, arg in zip_longest(self.param_list, args):
                     self.var_list[param] = arg
-
-                    # self.localVarList.append(param)
+                    self.local_var_list.append(param)
 
                 recursive(self.content, 0, self)
-                self._end_module()
 
                 return self.return_list
+
         except TypeError as e:
             print('TypeError: {}() take {}'.format(self.func_name, e))
             sys.exit(1)

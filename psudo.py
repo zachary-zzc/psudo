@@ -14,19 +14,19 @@ class psudo(threading.Thread):
         self.lock = lock
         self.status = False
         self.contents = contents
-        self.globalModule = None
+        self.global_module = None
 
     def getStatus(self):
         return self.status
 
     def getParamList(self):
-        if self.globalModule is None:
+        if self.global_module is None:
             raise Exception('Psuedo code compiler haven\' started yet!')
         else:
             ret = {}
-            for module in glb.moduleStack:
-                for key in module.localVarList:
-                    ret[key] = module.varList[key]
+            for module in glb.module_stack:
+                for key in module.local_var_list:
+                    ret[key] = module.var_list[key]
             return ret
 
     def run(self):
@@ -36,14 +36,15 @@ class psudo(threading.Thread):
 
         # run compiler
         contents = parser.preprocess(self.contents)
-        glb.globalVarList.update(globals())
-        self.globalModule = commodule.commodule(glb.globalVarList,
-                                                contents)
-        self.globalModule.run()
+        glb.global_var_list.update(globals())
+        self.global_module = commodule.commodule(glb.global_var_list,
+                                                 glb.global_func_list,
+                                                 contents)
+        self.global_module.run()
 
-        for func in glb.globalFuncList:
+        for func in glb.global_func_list:
             if func == 'Main':
-                glb.globalFuncList[func].run()
+                glb.global_func_list[func].__call__()
 
         self.status = False
 
@@ -64,12 +65,12 @@ class monitor(threading.Thread):
                 import os
                 if os.path.exists(r'tasks.txt'):
                     with open(r'tasks.txt', 'r') as f:
-                        glb.taskQueue = (''.join(f.readlines())).split('\n')
+                        glb.task_queue = (''.join(f.readlines())).split('\n')
                 with open(r'tasks.txt', 'w') as f:
                     f.write('')
                 """
-                while glb.taskQueue:
-                    task = glb.taskQueue.pop(0)
+                while glb.task_queue:
+                    task = glb.task_queue.pop(0)
                     if task == 'start':
                         self.pseudoCompiler.start()
                     elif task == 'get_status':
@@ -81,7 +82,7 @@ class monitor(threading.Thread):
 
 if __name__ == '__main__':
     lock = threading.Lock()
-    glb.taskQueue.append('start')
+    glb.task_queue.append('start')
     with open('demo/btree.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)

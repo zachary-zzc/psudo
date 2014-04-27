@@ -17,7 +17,7 @@ class commodule(basemodule):
     def __init__(self, var_list, func_list, content):
         self.var_list = var_list
         self.func_list = func_list
-        # self.localVarList = []
+        self.local_var_list = []
         self.content = content
         self.end_recursive = False
 

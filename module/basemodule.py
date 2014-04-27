@@ -37,37 +37,39 @@ class basemodule:
     def __init__(self):
         pass
 
-    def _var_inc(self, varName, varValue):
+    def _var_inc(self, var_name, var_value):
         try:
-            if varName not in self.var_list:
-                # self.localVarList.append(varName)
-                self.var_list[varName] = varValue
+            if var_name not in self.var_list:
+                self.local_var_list.append(var_name)
+                self.var_list[var_name] = var_value
             else:
                 raise NameError
         except NameError as e:
-            print('NameError: variable name \'{}\' already exist, conflict defination'.format(varName))
+            print('NameError: variable name \'{}\' already exist, conflict defination'.format(var_name))
             sys.exit(1)
 
-    def _func_inc(self, funcName, funcModule):
+    def _func_inc(self, func_name, func_module):
         try:
-            if funcName not in self.var_list:
+            if func_name not in self.var_list:
                 # need to save function in this module
                 # register function in var_list for easy python function call
-                self.func_list[funcName] = funcModule
-                # self.localVarList.append(funcName)
-                self.var_list[funcName] = \
-                    lambda *args, **kwargs: self.func_list[funcName].__call__(*args, **kwargs)
+                self.func_list[func_name] = func_module
+                self.var_list[func_name] = \
+                    lambda *args, **kwargs: self.func_list[func_name].__call__(*args, **kwargs)
             else:
                 raise NameError
         except NameError as e:
-            print('NameError: function name \'{}\' already exist, conflect definition'.format(funcName))
+            print('NameError: function name \'{}\' already exist, conflect definition'.format(func_name))
             sys.exit(1)
 
 
     def _end_module(self):
-         # for key in self.localVarList:
-         #     if key in self.var_list:
-         #         self.var_list.pop(key)
+         for key in self.local_var_list:
+             if key in self.var_list:
+                 self.var_list.pop(key)
+         for key in self.func_list.keys():
+             self.var_list.pop(key)
+
          glb.module_stack.pop()
 
 
@@ -78,20 +80,6 @@ class basemodule:
     def resetEnd(self):
         self.end_recursive = False
 
-
-    """
-    def get_localFuncList(self):
-        localFuncList = {}
-        for key in self.localFuncList:
-            localFuncList[key] = self.funcList[key]
-        return localFuncList
-
-    def get_localVar(self):
-        localVarList = {}
-        for key in self.localVarList:
-            localVarList[key] = self.var_list[key]
-        return localVarList
-    """
 
     def run(self):
         pass

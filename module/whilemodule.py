@@ -12,25 +12,23 @@ class whilemodule(basemodule):
 
     def __init__(self, var_list, func_list, exp, content):
         """
-        var_list:    Vars from last module
-        exp:        Tokens stand for expression
-        content:    Loop content
         """
         self.var_list = var_list
         self.func_list = func_list
-        # self.localVarList = []
+        self.local_var_list = []
         self.exp = exp
         self.content = content
         self.end_recursive = False
         self.continue_flag = False
 
-    @property
+
     def setContinue(self):
         self.continue_flag = True
 
-    @property
+
     def resetContinue(self):
         self.continue_flag = False
+
 
     def run(self):
         from utils.recursive import recursive, execute
