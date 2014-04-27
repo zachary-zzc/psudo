@@ -61,23 +61,30 @@ function POSTORDER_TREE_WALK(tree)
         postorder.push(tree.value)
 
 
-elem = [12, 5, 9, 2, 18, 15, 13, 17, 19]
+# elem = [12, 5, 9, 2, 18, 15, 13, 17, 19]
+# elem = [12, 3, 9]
 
 btree = None
 
-for value in elem
-    node = BTree(value)
-    btree = TREE_INSERT(btree, node)
+node = BTree(12)
+btree = TREE_INSERT(btree, node)
+node = BTree(3)
+btree = TREE_INSERT(btree, node)
+node = BTree(9)
+btree = TREE_INSERT(btree, node)
+# for value in elem
+#     node = BTree(value)
+#     btree = TREE_INSERT(btree, node)
 
-search = TREE_SEARCH(btree, 15)
+# search = TREE_SEARCH(btree, 15)
 
-min = TREE_MINIMUM(btree)
-max = TREE_MAXIMUM(btree)
+# min = TREE_MINIMUM(btree)
+# max = TREE_MAXIMUM(btree)
 
-preorder = Stack()
-inorder = Stack()
-postorder = Stack()
+# preorder = Stack()
+# inorder = Stack()
+# postorder = Stack()
 
-PREORDER_TREE_WALK(btree)
-INORDER_TREE_WALK(btree)
-POSTORDER_TREE_WALK(btree)
+# PREORDER_TREE_WALK(btree)
+# INORDER_TREE_WALK(btree)
+# POSTORDER_TREE_WALK(btree)

@@ -7,37 +7,41 @@ import glb
 from module.basemodule import basemodule
 
 class whilemodule(basemodule):
-    def __init__(self, varList, funcList, exp, content):
+
+    __name__ = 'WhileModule'
+
+    def __init__(self, var_list, func_list, exp, content):
         """
-        varList:    Vars from last module
+        var_list:    Vars from last module
         exp:        Tokens stand for expression
         content:    Loop content
         """
-        self.varList = varList
-        self.funcList = funcList
-        self.localVarList = []
-        self.localFuncList = []
+        self.var_list = var_list
+        self.func_list = func_list
+        # self.localVarList = []
         self.exp = exp
         self.content = content
-        self.endRecursive = False
-        self.continueFlag = False
+        self.end_recursive = False
+        self.continue_flag = False
 
+    @property
     def setContinue(self):
-        self.continueFlag = True
+        self.continue_flag = True
 
+    @property
     def resetContinue(self):
-        self.continueFalg = False
+        self.continue_flag = False
 
     def run(self):
         from utils.recursive import recursive, execute
-        glb.moduleStack.append(self)
+        glb.module_stack.append(self)
 
         execute('__judge__ = ' + self.exp, self)
-        while self.varList['__judge__']:
+        while self.var_list['__judge__']:
             recursive(self.content, 0, self)
             execute('__judge__ = ' + self.exp, self)
-            if self.continueFlag:
+            if self.continue_flag:
                 self.resetEnd()
                 self.resetContinue()
+
         self._end_module()
-        glb.moduleStack.pop()

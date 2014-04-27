@@ -7,32 +7,36 @@ import glb
 from module.basemodule import basemodule
 
 class formodule(basemodule):
-    def __init__(self, varList, exp, content):
-        self.varList = varList
-        self.localVarList = []
+
+    __name__ = 'ForModule'
+
+    def __init__(self, var_list, func_list, exp, content):
+        self.var_list = var_list
+        self.func_list = func_list
+        # self.localVarList = []
         self.content = content
         self.exp = exp
-        self.endRecursive = False
-        self.continueFlag= False
+        self.end_recursive = False
+        self.continue_flag= False
 
     def setContinue(self):
-        self.continueFlag = True
+        self.continue_flag = True
 
     def resetContinue(self):
-        self.continueFlag = False
+        self.continue_flag = False
 
     def run(self):
         from utils.recursive import recursive, execute
-        glb.moduleStack.append(self)
+        glb.module_stack.append(self)
 
         iterVarName = self.exp[0]
         for value in self.exp[1]:
             # self.localVarList.append(iterVarName)
-            self.varList[iterVarName] = value
+            self.var_list[iterVarName] = value
             recursive(self.content, 0, self)
-            if self.continueFlag:
+            if self.continue_flag:
                 self.resetEnd()
                 self.resetContinue()
-        self.varList.pop(iterVarName)
+        self.var_list.pop(iterVarName)
+
         self._end_module()
-        glb.moduleStack.pop()

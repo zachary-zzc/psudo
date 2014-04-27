@@ -7,16 +7,24 @@ import glb
 from module.basemodule import basemodule
 
 class commodule(basemodule):
+    """
+    maybe this should be called glbmodule...
+    basically is a instanced basicmodule
+    """
 
-    def __init__(self, varList, content):
-        self.varList = varList
-        self.localVarList = []
+    __name__ = 'CommonModule'
+
+    def __init__(self, var_list, func_list, content):
+        self.var_list = var_list
+        self.func_list = func_list
+        # self.localVarList = []
         self.content = content
-        self.endRecursive = False
+        self.end_recursive = False
 
     def run(self):
         import utils.recursive as recursive
-        glb.moduleStack.append(self)
+        glb.module_stack.append(self)
 
         recursive.recursive(self.content, 0, self)
-        glb.moduleStack.pop()
+
+        self._end_module()

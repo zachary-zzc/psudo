@@ -72,7 +72,7 @@ def record_to_xml():
     doc.appendChild(params)
     for module in glb.moduleStack:
         for varName in module.localVarList:
-            var = eval(varName, globals(), module.varList)
+            var = eval(varName, glb.globalVarList, module.varList)
             xmlVar = doc.createElement('var')
             xmlVar.setAttribute('name', varName)
             xmlVar.setAttribute('type', type(var).__name__)
@@ -87,16 +87,17 @@ def refresh(func):
     def wrapper(*args, **kwargs):
         module = func(*args, **kwargs)
         for indx, module in enumerate(glb.moduleStack):
-            # print('module index : {}'.format(indx))
-            # print('module type : {}'.format(type(module)))
-            # print('module var list keys : {}'.format(module.varList.keys()))
+            if 'TREE_INSERT' in glb.globalVarList:
+                print(glb.globalVarList['TREE_INSERT'])
             for key in module.localVarList:
-                outputVar = '{}: {}'.format(key,
-                            eval(key, globals(), module.varList))
+                outputVar = 'module : {}\n{} : {}'.format(
+                        type(module),
+                        key,
+                        eval(key, glb.globalVarList, module.varList))
                 print(outputVar)
         print('\n')
         record_to_xml()
-        time.sleep(0.5)
+        time.sleep(0.1)
         #input()
         return module
     return wrapper

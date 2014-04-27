@@ -285,140 +285,104 @@ def parse(block, module):
     paramList = []
     tokens = lexical(block)
 
-    if len(tokens) == 0:
-        return
-
-    if tokens[0][1] == 'function':
-        grammType = 'defination'
-        funcName, formalParamList = getFunc(tokens[1][1])
-        paramList.append(funcName)
-        paramList.append(formalParamList)
-        token = funcName
-    else:
-        # run function part, this part sucks
-        # tokens = runFuncs(tokens, module)
-
-        if tokens[0][0] == 1:
-            if tokens[1][0] == 1:
-                grammType = 'defination'
-                varType = tokens[0][1]
-                varName = tokens[1][1]
-                paramList.append(varName)
-                token = varName + ' = ' + varType
-                if len(tokens) == 2:
-                    token += '()'
+    if len(tokens) != 0:
+        if tokens[0][1] == 'function':
+            grammType = 'defination'
+            funcName, formalParamList = getFunc(tokens[1][1])
+            paramList.append(funcName)
+            paramList.append(formalParamList)
+            token = funcName
+        else:
+            if tokens[0][0] == 1:
+                if tokens[1][0] == 1:
+                    grammType = 'defination'
+                    varType = tokens[0][1]
+                    varName = tokens[1][1]
+                    paramList.append(varName)
+                    token = varName + ' = ' + varType
+                    if len(tokens) == 2:
+                        token += '()'
+                    else:
+                        if tokens[2][1] == '=':
+                            token += '('
+                            for indx in range(3, len(tokens)):
+                                token += tokens[indx][1] + ' '
+                            token += ')'
                 else:
-                    if tokens[2][1] == '=':
-                        token += '('
+                    grammType = 'exp'
+                    for indx in range(len(tokens)):
+                        token += tokens[indx][1] + ' '
+
+            elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
+                grammType = 'statement'
+
+                # need to fix to generator
+
+                if tokens[0][1] == 'for':
+                    from utils.recursive import execute
+                    varName = tokens[1][1]
+                    if tokens[2][1] == 'in':
+                        loopToken = '__loop__ = '
                         for indx in range(3, len(tokens)):
-                            token += tokens[indx][1] + ' '
-                        token += ')'
+                            loopToken += tokens[indx][1]
+                        execute(loopToken, module)
+                        paramList.append((varName, list(eval('__loop__', module.varList))))
+                        module.varList.pop('__loop__')
+                    elif tokens[2][1] == '=':
+                        expInd = 3
+                        startExp = ''
+                        while tokens[expInd][1] != 'to':
+                            startExp += tokens[expInd][1] + ' '
+                            expInd += 1
+                        execute('__startpos__ = ' + startExp, module)
+                        # skip 'to'
+                        expInd += 1
+                        endExp = ''
+                        while expInd < len(tokens):
+                            if tokens[expInd][1] != 'step':
+                                endExp += tokens[expInd][1] + ' '
+                                expInd += 1
+                            else:
+                                break
+                        execute('__endpos__ = ' + endExp, module)
+                        if expInd >= len(tokens):
+                            module.varList['__step__'] = 1
+                        else:
+                            # skip 'step'
+                            expInd += 1
+                            stepExp = ''
+                            while expInd < len(tokens):
+                                stepExp += tokens[expInd][1] + ' '
+                                expInd += 1
+                            execute('__step__ = ' + stepExp, module)
+                        paramList.append((varName,
+                                         tuple([i for i in range(module.varList['__startpos__'],
+                                                                 module.varList['__endpos__'],
+                                                                 module.varList['__step__'])])))
+                        module.varList.pop('__startpos__')
+                        module.varList.pop('__endpos__')
+                        module.varList.pop('__step__')
+                    else:
+                        pass
+                    #    raise forStatementError
+
+                # while and if module add statement attribution
+
+                else:
+                    for indx in range(len(tokens)):
+                        if tokens[indx][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
+                            continue
+                        token += tokens[indx][1] + ' '
+                    if token == '':
+                        token = 'True'
+                    paramList.append(token)
             else:
                 grammType = 'exp'
                 for indx in range(len(tokens)):
                     token += tokens[indx][1] + ' '
-
-        elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
-            grammType = 'statement'
-
-            # need to fix to generator
-
-            if tokens[0][1] == 'for':
-                from utils.recursive import execute
-                varName = tokens[1][1]
-                if tokens[2][1] == 'in':
-                    loopToken = '__loop__ = '
-                    for indx in range(3, len(tokens)):
-                        loopToken += tokens[indx][1]
-                    execute(loopToken, module)
-                    paramList.append((varName, list(eval('__loop__', module.varList))))
-                    module.varList.pop('__loop__')
-                elif tokens[2][1] == '=':
-                    expInd = 3
-                    startExp = ''
-                    while tokens[expInd][1] != 'to':
-                        startExp += tokens[expInd][1] + ' '
-                        expInd += 1
-                    execute('__startpos__ = ' + startExp, module)
-                    # skip 'to'
-                    expInd += 1
-                    endExp = ''
-                    while expInd < len(tokens):
-                        if tokens[expInd][1] != 'step':
-                            endExp += tokens[expInd][1] + ' '
-                            expInd += 1
-                        else:
-                            break
-                    execute('__endpos__ = ' + endExp, module)
-                    if expInd >= len(tokens):
-                        module.varList['__step__'] = 1
-                    else:
-                        # skip 'step'
-                        expInd += 1
-                        stepExp = ''
-                        while expInd < len(tokens):
-                            stepExp += tokens[expInd][1] + ' '
-                            expInd += 1
-                        execute('__step__ = ' + stepExp, module)
-                    paramList.append((varName,
-                                     tuple([i for i in range(module.varList['__startpos__'],
-                                                             module.varList['__endpos__'],
-                                                             module.varList['__step__'])])))
-                    module.varList.pop('__startpos__')
-                    module.varList.pop('__endpos__')
-                    module.varList.pop('__step__')
-                else:
-                    pass
-                #    raise forStatementError
-
-            # while and if module add statement attribution
-
-            else:
-                for indx in range(len(tokens)):
-                    if tokens[indx][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
-                        continue
-                    token += tokens[indx][1] + ' '
-                if token == '':
-                    token = 'True'
-                paramList.append(token)
-        else:
-            grammType = 'exp'
-            for indx in range(len(tokens)):
-                token += tokens[indx][1] + ' '
     return grammType, tokens, token, paramList
 
 
-"""
-# don't need to runFuncs
-def runFuncs(tokens, module):
-    newTokens = []
-    for token in tokens:
-        if token[0] == 2:
-            funcName, paramList = getFunc(token[1])
-            if funcName in module.funcList:
-                import copy
-                func = copy.deepcopy(module.funcList[funcName])
-            else:
-                func = None
-
-            if func == None:
-                newTokens.append(token)
-            else:
-                actParamValue = []
-                for param in paramList:
-                    actParamValue.append( eval(param, globals(), module.varList) )
-                    # else:
-                    #     raise ParamUndefinedError
-                func.passParam(actParamValue, module.funcList)
-                func.run()
-
-                # run function part, fix return
-
-                newTokens.append((3, func.getReturnList()))
-        else:
-            newTokens.append(token)
-    return tuple(newTokens)
-"""
 
 def getFunc(token):
     funcName = ''
