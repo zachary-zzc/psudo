@@ -8,52 +8,62 @@ class funcmodule(basemodule):
 
     __name__ = 'FunctionModule'
 
+
     def __init__(self, func_name, param_list, content):
         self.func_name = func_name
         self.var_list = {}
         self.func_list = {}
         self.local_var_list = []
-        self.content = content
         self.param_list = param_list
+        self.content = content
         self.end_recursive = False
         self.return_list = None
 
-    def _end_module(self):
-        self.var_list = {}
-        self.func_list = {}
-        self.local_var_list = []
-        self.end_recursive = False
-        self.return_list = None
 
-        glb.module_stack.pop()
+    @staticmethod
+    def function_factory(obj):
+        ret = funcmodule(obj.func_name, obj.param_list, obj.content)
+        return ret
 
 
     def __call__(self, *args, **kwargs):
+        """
+        __call__ function will actually exec a copy of this funcmodule, to void
+        recursive function call error
+        """
         from utils.recursive import recursive
-        glb.module_stack.append(self)
+
+        function = funcmodule.function_factory(self)
+        print(function.var_list is self.var_list)
+
+        glb.module_stack.append(function)
 
         try:
-            if not (len(args) + len(kwargs)) == len(self.param_list):
-                raise(TypeError('{} positional arguments but {} given').format(
-                                                    len(self.param_list),
-                                                    len(args) + len(kwargs)))
+            if not (len(args) + len(kwargs)) == len(function.param_list):
+                raise(TypeError('{} positional arguments but {} given'.format(
+                                                    len(function.param_list),
+                                                    len(args) + len(kwargs))))
             else:
                 # register function formal param list
                 # temp and brutial method
                 # maybe should set up params when init function module
                 from itertools import zip_longest
                 args = list(args) + list(kwargs.values())
-                for param, arg in zip_longest(self.param_list, args):
-                    self.var_list[param] = arg
-                    self.local_var_list.append(param)
+                for param, arg in zip_longest(function.param_list, args):
+                    function.var_list[param] = arg
+                    function.local_var_list.append(param)
+                    print('function: {}'.format(function.local_var_list))
+                    print('self: {}'.format(self.local_var_list))
+                    print('function keys: {}'.format(list(function.var_list.keys())))
+                    print('self keys: {}'.format(list(self.var_list.keys())))
 
-                recursive(self.content, 0, self)
+                recursive(function.content, 0, function)
 
-                return self.return_list
+                return function.return_list
 
         except TypeError as e:
-            print('TypeError: {}() take {}'.format(self.func_name, e))
+            print('TypeError: {}() take {}'.format(function.func_name, e))
             sys.exit(1)
         finally:
-            self._end_module()
+            function._end_module()
 
