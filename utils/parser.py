@@ -7,24 +7,23 @@ import glb
 
 import string
 
-STATEMENTRANGE = (4, 13)
+STATEMENTRANGE = (3, 12)
 
-keywords = {'if':       4,
-            'else':     5,
-            'for':      6,
-            'while':    7,
-            'break':    8,
-            'continue': 9,
-            'return':   10,
-            'repeat':   11,
-            'until':    12,
-            'function': 13,
-            'is':       14,
-            'in':       15,
-            'or':       16,
-            'and':      17,
-            'not':      18,
-            'swap':     19,
+keywords = {'if':       3,
+            'else':     4,
+            'for':      5,
+            'while':    6,
+            'break':    7,
+            'continue': 8,
+            'return':   9,
+            'repeat':   10,
+            'until':    11,
+            'function': 12,
+            'is':       13,
+            'in':       14,
+            'or':       15,
+            'and':      16,
+            'not':      17,
             }
 
 opts = {'+':            41,
@@ -88,9 +87,8 @@ def lexical(block):
 
         syn coding table:
         VarID:      1
-        FuncID:     2
-        Constant    3
-        Keywords    4-40
+        Constant    2
+        Keywords    3-40
         Opts        41-
     """
     token = ''
@@ -113,6 +111,7 @@ def lexical(block):
                     ch = block[indx]
                 else:
                     break
+            # don't need to specify functions
             if ch == '(':
                 bracket_stack.append(ch)
                 if token in keywords:
@@ -143,6 +142,7 @@ def lexical(block):
                         break
                 token += ch
                 tokens.append((1, token))
+
             else:
                 indx -= 1
                 if token in keywords:
@@ -159,7 +159,7 @@ def lexical(block):
                 else:
                     break
             indx -= 1
-            tokens.append((3, token))
+            tokens.append((2, token))
 
         elif ch == '\'':
             token += ch
@@ -173,7 +173,7 @@ def lexical(block):
                 else:
                     break
             token += ch
-            tokens.append((3, token))
+            tokens.append((2, token))
 
         elif ch == '\"':
             token += ch
@@ -187,7 +187,7 @@ def lexical(block):
                 else:
                     break
             token += ch
-            tokens.append((3, tokens))
+            tokens.append((2, tokens))
 
         else:
             token += ch
@@ -266,8 +266,8 @@ def lexical(block):
 
 def parse(block, module):
     """
-    Input: sentence, same with lexical
-           funcList, for convinient use, should not appear here
+    Input: block
+           module
     Output:
     1. gramm_type: 'defination', 'statement', 'exp'
     2. token: executable tokens for execute function use
@@ -281,7 +281,7 @@ def parse(block, module):
                                    param_list[0] = ('i', (1, 2, 3, ..., 10))
 
     for statement have two types:
-        1. for [var_name] in [iterableList]
+        1. for [var_name] in [iter_list]
         2. for [var_name] = [startpos] to [endpos] step [step]
     """
 
@@ -290,39 +290,47 @@ def parse(block, module):
     param_list = []
     tokens = lexical(block)
 
-    if len(tokens) != 0:
+    if tokens:
+        # define function, e.g. function TREE_INSERT(...)
         if tokens[0][1] == 'function':
             gramm_type = 'defination'
+            print(tokens[1][1])
             func_name, formal_param_list = get_func_info(tokens[1][1])
             param_list.append(func_name)
             param_list.append(formal_param_list)
             token = func_name
-        else:
-            if tokens[0][0] == 1:
-                if tokens[1][0] == 1:
-                    gramm_type = 'defination'
-                    var_type = tokens[0][1]
-                    var_name = tokens[1][1]
-                    param_list.append(var_name)
-                    token = var_name + ' = ' + var_type
-                    if len(tokens) == 2:
-                        token += '()'
-                    else:
-                        if tokens[2][1] == '=':
-                            token += '('
-                            for indx in range(3, len(tokens)):
-                                token += tokens[indx][1] + ' '
-                            token += ')'
+
+        # maybe var defination
+        elif tokens[0][0] == 1:
+            # Stack S -> S = Stack()
+            # Stack S = ... -> S = Stack(...)
+            if tokens[1][0] == 1:
+                gramm_type = 'defination'
+                var_type = tokens[0][1]
+                var_name = tokens[1][1]
+                param_list.append(var_name)
+                token = var_name + ' = ' + var_type
+                if len(tokens) == 2:
+                    token += '()'
                 else:
-                    gramm_type = 'exp'
-                    for indx in range(len(tokens)):
-                        token += tokens[indx][1] + ' '
+                    if tokens[2][1] == '=':
+                        token += '('
+                        for indx in range(3, len(tokens)):
+                            token += tokens[indx][1] + ' '
+                        token += ')'
+            #
+            else:
+                gramm_type = 'exp'
+                for indx in range(len(tokens)):
+                    token += tokens[indx][1] + ' '
 
-            elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
-                gramm_type = 'statement'
+        # statements
+        elif tokens[0][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
+            gramm_type = 'statement'
 
-                # need to fix to generator
+            # need to fix to generator
 
+            try:
                 if tokens[0][1] == 'for':
                     from utils.recursive import execute
                     var_name = tokens[1][1]
@@ -371,20 +379,31 @@ def parse(block, module):
                         pass
                     #    raise forStatementError
 
-                # while and if module add statement attribution
-
+                # besides "for", [if, else, while, break, continue, return, repeat, until]
                 else:
-                    for indx in range(len(tokens)):
-                        if tokens[indx][0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
+                    # for "if/else, while" statement, get judge condition
+                    for t in tokens:
+                        if t[0] in range(STATEMENTRANGE[0], STATEMENTRANGE[1]):
                             continue
-                        token += tokens[indx][1] + ' '
+                        token += t[1] + ' '
                     if token == '':
                         token = 'True'
                     param_list.append(token)
-            else:
-                gramm_type = 'exp'
-                for indx in range(len(tokens)):
-                    token += tokens[indx][1] + ' '
+
+                # temp raise SyntaxError before define own error types
+                # else:
+                #     raise SyntaxError(tokens[0][1])
+
+            # define statement errors
+            except Exception:
+                raise
+
+        # all other situations
+        else:
+            gramm_type = 'exp'
+            for t in tokens:
+                token += t[1] + ' '
+
     return gramm_type, tokens, token, param_list
 
 
@@ -392,10 +411,14 @@ def parse(block, module):
 def get_func_info(token):
     func_name = ''
     param_list = []
-    tmpList = token.split('(')
-    func_name = tmpList[0].strip()
-    paramStr = tmpList[1].strip()
-    param_list = paramStr[0:len(paramStr)-1].split(',')
-    for i in range(len(param_list)):
-        param_list[i] = param_list[i].strip()
+    tmp_list = token.split('(')
+    func_name = tmp_list[0].strip()
+    param_str = tmp_list[1].strip()
+
+    # check if function formal param list is legal, raise error
+    # '^[a-zA-Z][a-z A-Z 0-9 _]*'
+
+    param_list = param_str[0:len(param_str)-1].split(',')
+    param_list = list(map(str.strip, param_list))
     return func_name, tuple(param_list)
+

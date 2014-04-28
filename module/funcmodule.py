@@ -34,7 +34,6 @@ class funcmodule(basemodule):
         from utils.recursive import recursive
 
         function = funcmodule.function_factory(self)
-        print(function.var_list is self.var_list)
 
         glb.module_stack.append(function)
 
@@ -52,10 +51,6 @@ class funcmodule(basemodule):
                 for param, arg in zip_longest(function.param_list, args):
                     function.var_list[param] = arg
                     function.local_var_list.append(param)
-                    print('function: {}'.format(function.local_var_list))
-                    print('self: {}'.format(self.local_var_list))
-                    print('function keys: {}'.format(list(function.var_list.keys())))
-                    print('self keys: {}'.format(list(self.var_list.keys())))
 
                 recursive(function.content, 0, function)
 
