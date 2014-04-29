@@ -82,7 +82,7 @@ class monitor(threading.Thread):
 
 if __name__ == '__main__':
     lock = threading.Lock()
-    glb.task_queue.append('start')
+    # glb.task_queue.append('start')
     with open('demo/btree.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
