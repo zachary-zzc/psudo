@@ -1,28 +1,18 @@
-# -*- coding: utf-8 -*-
+# -*-coding: utf-8 -*-
 
-class Queue(list):
-    __name__ = 'Queue'
+from Queue import Queue
 
-    @property
-    def front(self):
-        try:
-            return self[0]
-        except IndexError:
-            print('Queue is Empty!')
-
-    @property
-    def back(self):
-        try:
-            return self[len(self)-1]
-        except IndexError:
-            print('Queue is Empty!')
-
+class Queue(Queue):
+    """Self-defined Queue"""
+    
+    __name__="Queue"
+    
     @property
     def isEmpty(self):
-        return not self
-
-    def enque(self, item):
-        self.append(item)
-
-    def deque(self):
-        return self.pop(0)
+        return self.empty()
+    
+    def enqueue(self,item):
+        self._put(item)
+    
+    def dequeue(self):
+        return self._get()

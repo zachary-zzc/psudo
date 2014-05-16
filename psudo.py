@@ -22,7 +22,7 @@ class psudo(threading.Thread):
     def getParamList(self):
         if self.global_module is None:
             raise Exception('Psuedo code compiler haven\' started yet!')
-        else:
+        else:           
             ret = {}
             for module in glb.module_stack:
                 for key in module.local_var_list:
