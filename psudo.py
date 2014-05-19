@@ -22,7 +22,7 @@ class psudo(threading.Thread):
     def getParamList(self):
         if self.global_module is None:
             raise Exception('Psuedo code compiler haven\' started yet!')
-        else:           
+        else:
             ret = {}
             for module in glb.module_stack:
                 for key in module.local_var_list:
@@ -78,11 +78,11 @@ class monitor(threading.Thread):
                     elif task == 'get_params':
                         print(self.pseudoCompiler.getParamList())
                 # self.lock.notify()
-            time.sleep(0.5)
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     lock = threading.Lock()
-    # glb.task_queue.append('start')
+    glb.task_queue.append('start')
     with open('demo/btree.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
