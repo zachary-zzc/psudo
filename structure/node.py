@@ -15,7 +15,7 @@ class Node:
         ret += str(self.value)
         if self.hasChild:
             for child in self.children:
-                if isinstance(child, Tree):
+                if isinstance(child, Node):
                     ret += str(child)
                 else:
                     ret += '[' + str(child) + ']'
