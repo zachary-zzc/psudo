@@ -149,6 +149,8 @@ class Vertex():
             else:
                 raise KeyError
         except KeyError:
+            glb.current_line
+            glb.current_content
             print('vertex {} already exist in adj list'.format(vex))
 
 

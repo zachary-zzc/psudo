@@ -46,6 +46,8 @@ class psudo(threading.Thread):
             if func == 'Main':
                 glb.global_func_list[func].__call__()
 
+        print(self.contents)
+
         self.status = False
 
 class monitor(threading.Thread):
@@ -72,7 +74,10 @@ class monitor(threading.Thread):
                 while glb.task_queue:
                     task = glb.task_queue.pop(0)
                     if task == 'start':
-                        self.pseudoCompiler.start()
+                        try:
+                            self.pseudoCompiler.start()
+                        except Error:
+                            print('{}: {}'.format(glb.current_line, glb.current_content))
                     elif task == 'get_status':
                         print('current status : {}'.format(self.pseudoCompiler.getStatus()))
                     elif task == 'get_params':
@@ -83,7 +88,7 @@ class monitor(threading.Thread):
 if __name__ == '__main__':
     lock = threading.Lock()
     glb.task_queue.append('start')
-    with open('demo/btree.txt', 'r') as f:
+    with open('demo/sort.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
     monitor.start()

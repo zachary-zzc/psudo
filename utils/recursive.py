@@ -34,6 +34,8 @@ def recursive(content, index, module):
         return
     else:
         if (index < len(content)) and (content[index]):
+            glb.current_content = content[index]
+            glb.current_index = index
             print('compile content : {}'.format(content[index]))
             # preprocess should remove all annotations and useless whitespaces as well as blank lines
             gramm_type, tokens, extoken, param_list = parser.parse(content[index], module)
@@ -171,7 +173,10 @@ def execute(extoken, module):
     try:
         exec(extoken, glb.global_var_list, module.var_list)
     except Exception:
-        raise
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print('Compiler Error!')
+        print('TraceBack:\n line: {}, {}\n{}: {}'.format(glb.current_index, glb.current_content.strip(), exc_type.__name__, exc_obj))
+        sys.exit(1)
 
     for key in module.var_list.keys():
         if (key not in var_list_bak) and (key.find('__') != 0):
