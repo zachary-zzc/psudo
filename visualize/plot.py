@@ -78,6 +78,15 @@ def record_to_xml():
             xmlVar.setAttribute('type', type(var).__name__)
             xmlVar.appendChild(doc.createTextNode(str(var)))
             params.appendChild(xmlVar)
+            """for attr in :
+                var = 
+                xmlAttr=doc.createElement('attr')
+                xmlAttr.setAttribute('name',)
+                xmlAttr.appendChild(doc.createTextNode(str()))
+                xmlVar.appendChild(xmlAttr)"""
+
+
+
 
     with open(r'visualize/release1.1/varList.xml', 'w') as f:
         f.write(doc.toprettyxml(indent = ''))
