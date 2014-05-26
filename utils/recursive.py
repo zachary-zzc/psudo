@@ -35,7 +35,7 @@ def recursive(content, index, module):
     else:
         if (index < len(content)) and (content[index]):
             glb.current_content = content[index]
-            glb.current_line = index
+            glb.current_line = module.line + index
             print('compile content : {}'.format(content[index]))
             # preprocess should remove all annotations and useless whitespaces as well as blank lines
             gramm_type, tokens, extoken, param_list = parser.parse(content[index], module)
@@ -46,7 +46,8 @@ def recursive(content, index, module):
                     module_content = [content[index+i] for i in range(1, count)]
                     func_name = param_list[0]
                     param_list = param_list[1]
-                    funcModule = funcmodule(func_name, param_list, module_content)
+                    glb.current_line+=1
+                    funcModule = funcmodule(func_name, param_list, module_content,glb.current_line)
                     module._func_inc(func_name, funcModule)
                     index += count
                 else:
@@ -119,25 +120,31 @@ def recursive(content, index, module):
                             gramm_type, tokens, extoken, param_list = parser.parse(content[index],
                                     module)
 
+                    glb.current_line+=1
                     ifModule = ifelsemodule(module.var_list,
                                             module.func_list,
                                             exps,
-                                            contents)
+                                            contents,
+                                            glb.current_line)
                     ifModule.run()
                     index -= count
 
                 elif tokens[0][1] == 'for':
+                    glb.current_line+=1
                     forModule = formodule(module.var_list,
                                           module.func_list,
                                           exp,
-                                          module_content)
+                                          module_content,
+                                          glb.current_line)
                     forModule.run()
 
                 elif tokens[0][1] == 'while':
+                    # glb.current_line+=1
                     whileModule = whilemodule(module.var_list,
                                               module.func_list,
                                               exp,
-                                              module_content)
+                                              module_content,
+                                              glb.current_line)
                     whileModule.run()
                 # elif tokens[0][1] == 'repeat':
                 #     pass

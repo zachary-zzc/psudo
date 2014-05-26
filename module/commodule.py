@@ -14,12 +14,13 @@ class commodule(basemodule):
 
     __name__ = 'CommonModule'
 
-    def __init__(self, var_list, func_list, content):
+    def __init__(self, var_list, func_list, content,line):
         self.var_list = var_list
         self.func_list = func_list
         self.local_var_list = []
         self.content = content
         self.end_recursive = False
+        self.line = line
 
     def run(self):
         import utils.recursive as recursive

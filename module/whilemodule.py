@@ -10,7 +10,7 @@ class whilemodule(basemodule):
 
     __name__ = 'WhileModule'
 
-    def __init__(self, var_list, func_list, exp, content):
+    def __init__(self, var_list, func_list, exp, content,line):
         """
         """
         self.var_list = var_list
@@ -20,7 +20,7 @@ class whilemodule(basemodule):
         self.content = content
         self.end_recursive = False
         self.continue_flag = False
-
+        self.line = line
 
     def setContinue(self):
         self.continue_flag = True

@@ -30,8 +30,6 @@ function SHORTEST_PATH(G, s, v)
     path.push(s)
     return path
 
-
-
 function DFS(G)
     for vex in G.V
         vex.color = 'WHITE'
@@ -55,6 +53,7 @@ function DFS_VISIT(G, u)
 vertexs = ('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')
 edges = (('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))
 graph = Graph(vertexs, edges)
+
 Stack bfs_visit_list
 dfs_visit_list = Stack()
 

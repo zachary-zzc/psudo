@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<Params>
+<var name="a" type="list">[5, 4, 4, 9, 6, 15, 19, 3]</var>
+<var name="arr" type="list">[5, 4, 4, 9, 6, 15, 19, 3]</var>
+<var name="i" type="int">1</var>
+<var name="j" type="int">1</var>
+<var name="tmp" type="int">12</var>
+</Params>

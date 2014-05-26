@@ -39,13 +39,12 @@ class psudo(threading.Thread):
         glb.global_var_list.update(globals())
         self.global_module = commodule.commodule(glb.global_var_list,
                                                  glb.global_func_list,
-                                                 contents)
+                                                 contents,
+                                                 line = 1)
         self.global_module.run()
-
         for func in glb.global_func_list:
             if func == 'Main':
                 glb.global_func_list[func].__call__()
-
         print(self.contents)
 
         self.status = False

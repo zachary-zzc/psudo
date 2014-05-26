@@ -9,7 +9,7 @@ class funcmodule(basemodule):
     __name__ = 'FunctionModule'
 
 
-    def __init__(self, func_name, param_list, content):
+    def __init__(self, func_name, param_list, content, line):
         self.func_name = func_name
         self.var_list = {}
         self.func_list = {}
@@ -18,11 +18,11 @@ class funcmodule(basemodule):
         self.content = content
         self.end_recursive = False
         self.return_list = None
-
+        self.line = line
 
     @staticmethod
     def function_factory(obj):
-        ret = funcmodule(obj.func_name, obj.param_list, obj.content)
+        ret = funcmodule(obj.func_name, obj.param_list, obj.content, obj.line)
         return ret
 
 

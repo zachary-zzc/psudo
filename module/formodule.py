@@ -10,14 +10,15 @@ class formodule(basemodule):
 
     __name__ = 'ForModule'
 
-    def __init__(self, var_list, func_list, exp, content):
+    def __init__(self, var_list, func_list, exp, content,line):
         self.var_list = var_list
         self.func_list = func_list
         self.local_var_list = []
         self.content = content
         self.exp = exp
         self.end_recursive = False
-        self.continue_flag= False
+        self.continue_flag = False
+        self.line = line
 
     def setContinue(self):
         self.continue_flag = True

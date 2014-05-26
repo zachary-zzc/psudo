@@ -10,7 +10,7 @@ class ifelsemodule(basemodule):
 
     __name__ = 'IfElseModule'
 
-    def __init__(self, var_list, func_list, exps, contents):
+    def __init__(self, var_list, func_list, exps, contents,line):
         assert(len(exps) == len(contents))
         self.var_list = var_list
         self.func_list = func_list
@@ -18,6 +18,7 @@ class ifelsemodule(basemodule):
         self.exps = exps
         self.contents = contents
         self.end_recursive = False
+        self.line = line
 
     def run(self):
         from utils.recursive import recursive, execute

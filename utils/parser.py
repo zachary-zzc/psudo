@@ -59,8 +59,8 @@ def preprocess(strContent):
     for line in orig:
         line = line.rstrip()
         if '#' in line:
-            line = line.split('#')[0]
-        if line:
+            line = line.split('#')[0]   
+        if  line:
             contents.append(line)
     return contents
 
