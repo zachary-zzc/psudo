@@ -17,7 +17,7 @@ def node2btree(node):
 
 class BTree(Tree):
     __name__ = 'BTree'
-    def __init__(self, value='default', left=None, right=None, parent=None):
+    def __init__(self, value=None, left=None, right=None, parent=None):
         self._value = value
         self._children = [left, right]
         self._parent = parent
@@ -53,3 +53,29 @@ class BTree(Tree):
     @property
     def hasRight(self):
         return (self.right != None)
+
+    def insert(self, node):
+        node = node2btree(node)
+        y = None
+        x = self
+        while (x != None) and (x.value != None):
+            y = x
+            if node.value < x.value:
+                x = x.left
+            else:
+                x = x.right
+        node.parent = y
+        if y == None:
+            self = node
+        elif node.value < y.value:
+            y.left = node
+        else:
+            y.right = node
+        return self
+            
+    def delete():
+        pass
+    
+    def search():
+        pass
+
