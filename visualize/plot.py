@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import re
 sys.path.append('..')
 
 from module.funcmodule import funcmodule
@@ -66,7 +67,7 @@ def toString(var, var_type):
 
 def record_to_xml():
     from xml.dom import minidom, Node
-
+    from copy import deepcopy
     doc = minidom.Document()
     params = doc.createElement('Params')
     doc.appendChild(params)
@@ -76,17 +77,21 @@ def record_to_xml():
             xmlVar = doc.createElement('var')
             xmlVar.setAttribute('name', varName)
             xmlVar.setAttribute('type', type(var).__name__)
-            xmlVar.appendChild(doc.createTextNode(str(var)))
+            tempVar=deepcopy(var)
+            if hasattr(tempVar,'__iter__'):
+                tempVar = tuple(tempVar)
+            xmlVar.appendChild(doc.createTextNode(str(tempVar)))
             params.appendChild(xmlVar)
-            """for attr in :
-                var = 
-                xmlAttr=doc.createElement('attr')
-                xmlAttr.setAttribute('name',)
-                xmlAttr.appendChild(doc.createTextNode(str()))
-                xmlVar.appendChild(xmlAttr)"""
-
-
-
+            for name in dir(var):
+                attr=getattr(var,name)
+                if(not hasattr(attr,'__call__')) and (not re.search(r'^_',name)):
+                    xmlAttr=doc.createElement('attr')
+                    xmlAttr.setAttribute('name',name)
+                    tempAttr=deepcopy(attr)
+                    if hasattr(tempAttr,'__iter__'):
+                        tempAttr = tuple(tempAttr)
+                    xmlAttr.appendChild(doc.createTextNode(str(tempAttr)))
+                    xmlVar.appendChild(xmlAttr)
 
     with open(r'visualize/release1.1/varList.xml', 'w') as f:
         f.write(doc.toprettyxml(indent = ''))
