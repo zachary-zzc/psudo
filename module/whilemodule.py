@@ -18,6 +18,7 @@ class whilemodule(basemodule):
         self.local_var_list = []
         self.exp = exp
         self.content = content
+        self._judge = False
         self.end_recursive = False
         self.continue_flag = False
         self.line = line
@@ -34,10 +35,10 @@ class whilemodule(basemodule):
         from utils.recursive import recursive, execute
         glb.module_stack.append(self)
 
-        execute('__judge__ = ' + self.exp, self)
-        while self.var_list['__judge__']:
+        self._judge = eval(self.exp, self.var_list, glb.global_var_list)
+        while self._judge:
             recursive(self.content, 0, self)
-            execute('__judge__ = ' + self.exp, self)
+            self._judge = eval(self.exp, self.var_list, glb.global_var_list)
             if self.continue_flag:
                 self.resetEnd()
                 self.resetContinue()
