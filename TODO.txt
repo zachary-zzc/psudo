@@ -1,0 +1,15 @@
+Compiler: M & Z  INTENDED COMPLETE DATE: 10th/Jun/2014
+1. Add bintrees library to structures, change __repr__? Show them to Xi and ask for advise
+
+2. Fix blank line bug (recursive call in utils/recursive.py)
+
+3. Demo for structures and check out xml format list for Xi
+
+4. Other bugs need to be fixed
+
+5. ?
+
+Visualization: Xi 
+
+
+Server & Client: FZ
