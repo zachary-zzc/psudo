@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 
-from structure.node import Node
+from structure.node_mod import Node
 
 class LinkedList(Node):
 

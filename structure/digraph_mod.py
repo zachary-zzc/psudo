@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 
-from structure.graph import Graph
+from structure.graph_mod import Graph
 
 class DiGraph(Graph):
     __name__ = 'DiGraph'
