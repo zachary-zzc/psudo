@@ -3,7 +3,7 @@
 class Node:
     __name__ = 'Node'
 
-    def __init__(self, value='default', children=[], parent=None):
+    def __init__(self, value=None, children=[], parent=None):
         self._value = value
         self._children = children
         self._parent = parent

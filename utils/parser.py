@@ -60,8 +60,8 @@ def preprocess(strContent):
         line = line.rstrip()
         if '#' in line:
             line = line.split('#')[0]   
-        if  line:
-            contents.append(line)
+        #if  line:
+        contents.append(line)
     return contents
 
 

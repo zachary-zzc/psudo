@@ -53,7 +53,8 @@ class Vertex():
             return self.value > obj
 
     def __str__(self):
-        return '[' + str(self.value) + ', ' + str(self.adjs) + ', ' + str(self.weights) + ']'
+        return '[' + str(self.value) + ']'
+        #return '[' + str(self.value) + ', ' + str(self.adjs) + ', ' + str(self.weights) + ']'
 
 
     __repr__ = __str__
@@ -198,7 +199,7 @@ class Graph():
         format:
             fst row: list of all vex name
             sec row: adj_matrix
-
+        
         import numpy as np
         ret = '['
         vex_list = [vex.value for vex in self.vexs()]
@@ -209,8 +210,14 @@ class Graph():
         ret += str(vex_list) + ', \n' + str(adj_matrix) + ']'
         return ret
         """
-        return str(list(self._graph))
-
+        
+        ret='('
+        for vex in  self.vexs():
+            ret+= '[' + str(vex.value) + ', ' + str(vex.adjs) + ', ' + str(vex.weights) + ']'+','
+        ret=ret[:-1]
+        ret+=')'
+        return ret
+        #return str(list(self._graph))
 
     __repr__ = __str__
 
@@ -229,7 +236,7 @@ class Graph():
 
     @property
     def V(self):
-        return set(list(self.vexs()))
+        return list(self.vexs())
 
 
     def vexs(self):
@@ -238,7 +245,7 @@ class Graph():
 
     @property
     def E(self):
-        return set(list(self.edges()))
+        return list(self.edges())
 
 
     def edges(self):

@@ -33,125 +33,131 @@ def recursive(content, index, module):
     if module.end_recursive:
         return
     else:
-        if (index < len(content)) and (content[index]):
-            glb.current_content = content[index]
-            glb.current_line = module.line + index
-            print('compile content : {}'.format(content[index]))
-            # preprocess should remove all annotations and useless whitespaces as well as blank lines
-            gramm_type, tokens, extoken, param_list = parser.parse(content[index], module)
-            #----------DEFINATION---------
-            if gramm_type == 'defination':
-                if tokens[0][1] == 'function':
-                    count = get_module_index(content, index)
-                    module_content = [content[index+i] for i in range(1, count)]
-                    func_name = param_list[0]
-                    param_list = param_list[1]
-                    glb.current_line+=1
-                    funcModule = funcmodule(func_name, param_list, module_content,glb.current_line)
-                    module._func_inc(func_name, funcModule)
-                    index += count
-                else:
-                    var_name = param_list[0]
-                    module._var_inc(var_name, 0)
+        if (index < len(content)):
+            if not content[index]:
+                index += 1
+            else:# and (content[index]):
+                glb.current_content = content[index]
+                glb.current_line = module.line + index
+                print('compile content : {}'.format(content[index]))
+                # preprocess should remove all annotations and useless whitespaces as well as blank lines
+                gramm_type, tokens, extoken, param_list = parser.parse(content[index], module)
+                #----------DEFINATION---------
+                if gramm_type == 'defination':
+                    if tokens[0][1] == 'function':
+                        count = get_module_index(content, index)
+                        module_content = [content[index+i] for i in range(1, count)]
+                        func_name = param_list[0]
+                        param_list = param_list[1]
+                        glb.current_line+=1
+                        funcModule = funcmodule(func_name, param_list, module_content,glb.current_line)
+                        module._func_inc(func_name, funcModule)
+                        index += count
+                    else:
+                        var_name = param_list[0]
+                        module._var_inc(var_name, 0)
+                        execute(extoken, module)
+                        index += 1
+                #---------EXPRESSION----------
+                elif gramm_type == 'exp':
                     execute(extoken, module)
                     index += 1
-            #---------EXPRESSION----------
-            elif gramm_type == 'exp':
-                execute(extoken, module)
-                index += 1
-                #---------STATEMENT----------
-            elif gramm_type == 'statement':
+                    #---------STATEMENT----------
+                elif gramm_type == 'statement':
 
-                # continue, break, and return
-                # haven't tested yet, waiting for debug
+                    # continue, break, and return
+                    # haven't tested yet, waiting for debug
 
-                # deal with "return" statement:
-                #    reverse stop modules in module_stack until meet last function module
-                if tokens[0][1] == 'return':
-                    try:
-                        # test return multiple values
-                        module.return_list = eval(extoken, glb.global_var_list, module.var_list)
-                    except AttributeError:
-                        print('SyntaxError: return statement should be in a function')
-                        sys.exit(1)
-                    for module in reversed(glb.module_stack):
-                        if not isinstance(module, function_module):
-                            module.setEnd()
-                        else:
-                            break
-                    return
-
-                # deal with "break" and "continue "statement:
-                #   similiar with "return" statement
-                if (tokens[0][1] == 'break') or (tokens[0][1] == 'continue'):
-                    for module in reversed(glb.module_stack):
-                        if not isinstance(module, loop_module):
-                            module.setEnd()
-                        else:
-                            # first "not loop" module
-                            module.setEnd()
-                            if tokens[0][1] == 'continue':
-                                module.setContinue()
-                            break
-                    return
-
-                # if, while, and for
-                count = get_module_index(content, index)
-                module_content = [content[index+i] for i in range(1, count)]
-                exp = param_list[0]
-
-                if tokens[0][1] == 'if':
-                    exps = [exp]
-                    contents = [module_content]
-                    index += count
-
-                    # find better way to write this part, a little bit ugly
-                    if index < len(content):
-                        gramm_type, tokens, extoken, param_list = parser.parse(content[index],
-                                module)
-                        while tokens[0][1] == 'else':
-                            count = get_module_index(content, index)
-                            contents.append([content[index+i] for i in range(1, count)])
-                            index += count
-                            exp = param_list[0]
-                            exps.append(exp)
-                            if index >= len(content):
+                    # deal with "return" statement:
+                    #    reverse stop modules in module_stack until meet last function module
+                    if tokens[0][1] == 'return':
+                        try:
+                            # test return multiple values
+                            module.return_list = eval(extoken, glb.global_var_list, module.var_list)
+                        except AttributeError:
+                            print('SyntaxError: return statement should be in a function')
+                            sys.exit(1)
+                        for module in reversed(glb.module_stack):
+                            if not isinstance(module, function_module):
+                                module.setEnd()
+                            else:
                                 break
+                        return
+
+                    # deal with "break" and "continue "statement:
+                    #   similiar with "return" statement
+                    if (tokens[0][1] == 'break') or (tokens[0][1] == 'continue'):
+                        for module in reversed(glb.module_stack):
+                            if not isinstance(module, loop_module):
+                                module.setEnd()
+                            else:
+                                # first "not loop" module
+                                module.setEnd()
+                                if tokens[0][1] == 'continue':
+                                    module.setContinue()
+                                break
+                        return
+
+                    # if, while, and for
+                    count = get_module_index(content, index)
+                    module_content = [content[index+i] for i in range(1, count)]
+                    exp = param_list[0]
+
+                    if tokens[0][1] == 'if':
+                        exps = [exp]
+                        contents = [module_content]
+                        index += count
+
+                        # find better way to write this part, a little bit ugly
+                        if index < len(content):
                             gramm_type, tokens, extoken, param_list = parser.parse(content[index],
                                     module)
+                            while tokens[0][1] == 'else':
+                                count = get_module_index(content, index)
+                                contents.append([content[index+i] for i in range(1, count)])
+                                index += count
+                                exp = param_list[0]
+                                exps.append(exp)
+                                if index >= len(content):
+                                    break
+                                gramm_type, tokens, extoken, param_list = parser.parse(content[index],
+                                        module)
 
-                    glb.current_line+=1
-                    ifModule = ifelsemodule(module.var_list,
-                                            module.func_list,
-                                            exps,
-                                            contents,
-                                            glb.current_line)
-                    ifModule.run()
-                    index -= count
+                        glb.current_line+=1
+                        ifModule = ifelsemodule(module.var_list,
+                                                module.func_list,
+                                                exps,
+                                                contents,
+                                                glb.current_line)
+                        ifModule.run()
+                        index -= count
 
-                elif tokens[0][1] == 'for':
-                    glb.current_line+=1
-                    forModule = formodule(module.var_list,
-                                          module.func_list,
-                                          exp,
-                                          module_content,
-                                          glb.current_line)
-                    forModule.run()
-
-                elif tokens[0][1] == 'while':
-                    # glb.current_line+=1
-                    whileModule = whilemodule(module.var_list,
+                    elif tokens[0][1] == 'for':
+                        glb.current_line+=1
+                        forModule = formodule(module.var_list,
                                               module.func_list,
                                               exp,
                                               module_content,
                                               glb.current_line)
-                    whileModule.run()
-                # elif tokens[0][1] == 'repeat':
-                #     pass
+                        forModule.run()
 
-                index += count
+                    elif tokens[0][1] == 'while':
+                        # glb.current_line+=1
+                        whileModule = whilemodule(module.var_list,
+                                                  module.func_list,
+                                                  exp,
+                                                  module_content,
+                                                  glb.current_line)
+                        whileModule.run()
+                    # elif tokens[0][1] == 'repeat':
+                    #     pass
+
+                    index += count
 
             recursive(content, index, module)
+            
+            
+
 
 
 
