@@ -53,7 +53,7 @@ class Vertex():
             return self.value > obj
 
     def __str__(self):
-        return '[' + str(self.value) + ']'
+        return '[' + str(self.value) + ', ' + str(self.adjs) + ']'
         #return '[' + str(self.value) + ', ' + str(self.adjs) + ', ' + str(self.weights) + ']'
 
 
@@ -65,8 +65,8 @@ class Vertex():
 
 
     def __iter__(self):
-        for adj, weight in zip_longest(self.adjs, self.weights):
-            yield adj, weight
+        for adj in self.adjs:
+            yield adj
 
 
     def __getitem__(self, ind):
@@ -102,16 +102,6 @@ class Vertex():
         self._adjs = adjs
 
 
-    # @property
-    # def weights(self):
-    #     return self._weights
-
-
-    # @weights.setter
-    # def weights(self, weights):
-    #     self._weights = weights
-
-
     @property
     def color(self):
         return self._color
@@ -142,39 +132,30 @@ class Vertex():
         self._pi = pi
 
 
-    def addAdj(self, vex, weight=1):
-        try:
-            if vex not in self.adjs:
-                self._adjs.append(vex)
-                # self._weights.append(weight)
-            else:
-                raise KeyError
-        except KeyError:
-            glb.current_line
-            glb.current_content
-            print('vertex {} already exist in adj list'.format(vex))
+    def addAdj(self, vex):
+        if vex not in self.adjs:
+            self._adjs.append(vex)
+        else:
+            raise KeyError('vertex {} already exist in adj list'.format(vex))
 
 
     def delAdj(self, vex):
-        try:
-            if vex in self.adjs:
-                indx = self._adjs.index(vex)
-                self._adjs.pop(indx)
-                # self._weights.pop(indx)
-            else:
-                raise KeyError
-        except KeyError:
-            print('vertex {} cannot be found in adj list'.format(vex))
+        if vex in self.adjs:
+            indx = self._adjs.index(vex)
+            self._adjs.pop(indx)
+            # self._weights.pop(indx)
+        else:
+            raise KeyError('vertex {} cannot be found in adj list'.format(vex))
 
 
 class Edge():
     __name__ = 'Edge'
 
-    def __init__(self, pair, weight=1, ordered=False):
+    def __init__(self, pair, weight=None, ordered=False):
         assert(len(pair) == 2)
         self._pair = tuple(pair)
+        self._weight = weight or 1
         self._ordered = False
-        self._weight = weight
 
 
     def __str__(self):
@@ -189,10 +170,13 @@ class Edge():
 
 
     def __eq__(self, obj):
-        return self._pair == obj._pair
+        if isinstance(obj, Edge):
+            return self._pair == obj._pair
+        else:
+            return self._pair[0] == obj[0] and self._pair[1] == obj[1]
 
 
-    def __hash__(self, obj):
+    def __hash__(self):
         return hash(self._pair)
 
 
@@ -207,7 +191,7 @@ class Edge():
 
 
     @property
-    def vetex_pair(self):
+    def vertex_pair(self):
         return self._pair
 
 
@@ -229,7 +213,7 @@ class Graph():
     def __init__(self, vexs=[], edges=[], weights=[]):
         assert(len(set(vexs)) == len(vexs))
         from itertools import zip_longest
-        self._vertexs = [Vertex(value, [], []) for value in vexs]
+        self._vertexs = [Vertex(value, []) for value in vexs]
         self._edges = [Edge(edge, weight, False) for edge, weight in zip_longest(edges,weights)]
 
         # weights should not longer than edges
@@ -245,37 +229,22 @@ class Graph():
 
     def __eq__(self, obj):
         if isinstance(obj, Graph):
-            return self._vertexs == obj._vertexs
+            return self._vertexs == obj._vertexs and self._edges == obj._edges
         else:
             return False
 
 
     def __str__(self):
         """
-        use adj_matrix format for conv use
-        format:
-            fst row: list of all vex name
-            sec row: adj_matrix
-
-        import numpy as np
-        ret = '['
-        vex_list = [vex.value for vex in self.vexs()]
-        adj_matrix = np.ones((len(vex_list), len(vex_list))) * -1
-        for ind, vex in enumerate(self.vexs()):
-            for adj, weight in zip_longest(vex.adjs, vex.weights):
-                adj_matrix[ind][vex_list.index(adj)] = weight
-        ret += str(vex_list) + ', \n' + str(adj_matrix) + ']'
-        return ret
         """
 
-        ret='('
+        ret = '['
         for vex in  self.vexs():
             # ret+= '[' + str(vex.value) + ', ' + str(vex.adjs) + ', ' + str(vex.weights) + ']'+','
-            ret+= '[' + str(vex.value) + ', ' + str(vex.adjs) + ']'+','
-        ret=ret[:-1]
-        ret+=')'
+            ret += '[' + str(vex.value) + ', ' + str(vex.adjs) + ']'+', '
+        ret = ret[:-2]
+        ret += ']'
         return ret
-        #return str(list(self._vertexs))
 
     __repr__ = __str__
 
@@ -294,7 +263,7 @@ class Graph():
 
     @property
     def V(self):
-        return list(self.vexs())
+        return set(list(self.vexs()))
 
 
     def vexs(self):
@@ -303,7 +272,7 @@ class Graph():
 
     @property
     def E(self):
-        return list(self.edges())
+        return set(list(self.edges()))
 
 
     def edges(self):
@@ -312,15 +281,7 @@ class Graph():
 
 
     def getVertex(self, vex):
-        try:
-            if vex in self._vertexs:
-                for v in self._vertexs:
-                    if v.value == vex:
-                        return v
-            else:
-                raise KeyError
-        except KeyError:
-            print('vertex {} cannot be found in this graph'.format(vex))
+        return self._vertexs[self._vertexs.index(vex)]
 
 
 
@@ -330,32 +291,11 @@ class Graph():
 
 
     def getWeight(self, edge):
-        # assert(len(edge) == 2)
-        # vex1, vex2 = edge
-        # try:
-        #     if not self.checkEdge(edge):
-        #         raise KeyError
-        #     edgeIndx = self.getAdjs(vex1).index(vex2)
-        #     return self.getVertex(vex1).weights[edgeIndx]
-        # except KeyError as e:
-        #     print(e, 'edge {} cannot be found in this graph'.format(edge))
         if edge in self._edges:
             return self._edges[self._edges.index(edge)].weight
 
 
     def setWeight(self, edge, weight):
-        # assert(len(edge) == 2)
-        # vex1, vex2 = edge
-        # try:
-        #     if not (self.checkEdge([vex1, vex2]) and
-        #             self.checkEdge([vex2, vex1])):
-        #         raise KeyError
-        #     edgeIndx1 = self.getAdjs(vex1).index(vex2)
-        #     self.getVertex(vex1).weights[edgeIndx1] = weight
-        #     edgeIndx2 = self.getAdjs(vex2).index(vex1)
-        #     self.getVertex(vex2).weights[edgeIndx2] = weight
-        # except KeyError as e:
-        #     print(e, 'edge {} cannot be found in this graph'.format(edge))
         if edge in self._edges:
             self._edges[self._edges.index(edge)].weight = weight
 
@@ -366,67 +306,55 @@ class Graph():
 
     def checkEdge(self, edge):
         assert(len(edge) == 2)
+
         vex1, vex2 = edge
-        try:
-            if not ((self.checkVex(vex1)) and (self.checkVex(vex2))):
-                raise NameError
-            return (vex2 in self.getAdjs(vex1)) and (edge in self._edges)
-        except NameError as e:
-            print(e, 'edge illegal, vertex cannot be found in this graph')
+
+        if not ((self.checkVex(vex1)) and (self.checkVex(vex2))):
+            raise NameError('edge illegal, vertex cannot be found')
+
+        return (vex2 in self.getAdjs(vex1)) and (edge in self._edges)
 
 
-    def addEdge(self, edge, weight=1):
+    def addEdge(self, edge, weight):
         assert(len(edge) == 2)
         vex1, vex2 = edge
-        try:
-            if (self.checkEdge([vex1, vex2])) or (self.checkEdge([vex2, vex1])):
-                raise KeyError
-            self.getVertex(vex1).addAdj(vex2, weight)
-            self.getVertex(vex2).addAdj(vex1, weight)
-            if isinstance(edge, Edge):
-                self._edge.append(edge)
-            else:
-                self._edge.append(Edge(edge))
-        except KeyError as e:
-            print(e, 'edge {} already in this graph'.format(edge))
+
+        if (self.checkEdge([vex1, vex2])) or (self.checkEdge([vex2, vex1])):
+            raise KeyError('edge {} already'.format(edge))
+        self.getVertex(vex1).addAdj(vex2)
+        self.getVertex(vex2).addAdj(vex1)
+        self._edges.append(Edge(edge, weight))
 
 
     def delEdge(self, edge):
         assert(len(edge) == 2)
+
         vex1, vex2 = edge
-        try:
-            if not ((self.checkEdge([vex1, vex2])) and
-                    (self.checkEdge([vex2, vex1]))):
-                raise KeyError
-            self.getVertex(vex1).delAdj(vex2)
-            self.getVertex(vex2).delAdj(vex1)
-            self._edge.pop(self._edge.index(edge))
-        except KeyError as e:
-            print(e, 'edge {} cannot be found in this graph'.format(edge))
+        if not self.checkEdge((vex1, vex2)):
+            raise KeyError('edge {} cannot be found'.format(edge))
+
+        self.getVertex(vex1).delAdj(vex2)
+        self.getVertex(vex2).delAdj(vex1)
+        self._edges.pop(self._edges.index(edge))
 
 
     def addVertex(self, vex):
-        from itertools import ifilter
-        try:
-            if vex in self._vertexs:
-                raise NameError
-            self._vertexs.update({Vertex(vex, [], [])})
-        except NameError as e:
-            print(e, 'vertex {} already in this graph'.format(vex))
+        if vex in self._vertexs:
+            raise NameError('vertex {} already'.format(vex))
+        self._vertexs.append(Vertex(vex, []))
 
 
     def delVertex(self, vex):
-        try:
-            if vex not in self._vertexs:
-                raise NameError
-            self._vertexs = self._vertexs - {vex}
-            for v in self._vertexs:
-                if vex in v.adjs:
-                    v.delAdj(vex)
-            del_map = []
-            for index, edge in enumerate(self._edges):
-                if vex in edge.vertex_pair:
-                    del_map.append()
-            map(self._edge.pop, del_map)
-        except NameError as e:
-            print(e, 'vertex {} cannot be found in this graph'.format(vex))
+        if vex not in self._vertexs:
+            raise NameError('vertex {} cannot be found'.format(vex))
+
+        self._vertexs.pop(self._vertexs.index(vex))
+
+        for v in self._vertexs:
+            if vex in v.adjs:
+                v.delAdj(vex)
+        del_map = []
+        for index, edge in enumerate(self._edges):
+            if vex in edge.vertex_pair:
+                del_map.append(index)
+        map(self._edges.pop, del_map)
