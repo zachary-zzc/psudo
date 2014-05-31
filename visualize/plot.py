@@ -88,7 +88,7 @@ def record_to_xml():
                     xmlAttr=doc.createElement('attr')
                     xmlAttr.setAttribute('name',name)
                     tempAttr=deepcopy(attr)
-                    if hasattr(tempAttr,'__iter__'):
+                    if not isinstance(tempAttr, str) and hasattr(tempAttr,'__iter__'):
                         tempAttr = tuple(tempAttr)
                     xmlAttr.appendChild(doc.createTextNode(str(tempAttr)))
                     xmlVar.appendChild(xmlAttr)

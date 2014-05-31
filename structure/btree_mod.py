@@ -2,7 +2,7 @@
 import sys
 sys.path.append('..')
 
-from structure.tree import Tree, Node
+from structure.tree_mod import Tree, Node
 
 def node2btree(node):
     btree = BTree(node.value)

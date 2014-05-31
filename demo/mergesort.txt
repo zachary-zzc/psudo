@@ -1,0 +1,35 @@
+function MERGE_SORT(A)
+    n=len(A)
+    if n<2
+    	return
+    mid=n/2
+    left=A[0:mid]
+    right=A[mid:len(A)]
+    MERGE_SORT(left)
+    MERGE_SORT(right)
+    MERGE(left,right,A)
+
+
+function MERGE(left,right,A)
+	nl=len(left)
+	nr=len(right)
+	i=0
+	j=0
+	k=0
+	while i<nl and j<nr
+		if left[i]<=right[j]
+			A[k]=left[i]
+			i=i+1
+		else
+			A[k]=right[j]
+			j=j+1
+		k=k+1
+
+
+a = [5, 12, 4, 9, 6, 15, 19, 3]
+
+MERGE_SORT(a)
+
+
+
+

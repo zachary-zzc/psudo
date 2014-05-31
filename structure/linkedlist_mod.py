@@ -3,7 +3,11 @@
 import sys
 sys.path.append('..')
 
-from structure.node import Node
+# from structure.node_mod import Node
+
+from collections import namedtuple
+
+Node = namedtuple('Node', ['value', 'prev', 'next'])
 
 class LinkedList(Node):
 
