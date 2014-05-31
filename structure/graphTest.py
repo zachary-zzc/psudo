@@ -2,7 +2,7 @@
 
 # unit test for graph structure
 
-from graph import Vertex, Graph
+from graph_mod import Vertex, Graph
 
 import unittest
 
@@ -17,7 +17,7 @@ class graphTest(unittest.TestCase):
     def test_str(self):
         # if init success, addEdge should work OK, no need test
         print(str(self.graph))
-        self.assertTrue(str(self.graph) == '[[1, [2, 3], [5, 1]], [2, [1], [5]], [3, [1], [1]]]')
+        self.assertTrue(str(self.graph) == '[[1, [2, 3]], [2, [1]], [3, [1]]]')
         self.assertTrue(len(self.graph) == 3)
 
 
@@ -37,7 +37,7 @@ class graphTest(unittest.TestCase):
             self.assertTrue(vex.value == ind+1)
             self.assertTrue(vex == ind+1)
         self.assertTrue(self.graph.V == {1, 2, 3})
-        self.assertTrue(self.graph.E == {(1, 2), (1, 3), (2, 1), (3, 1)})
+        self.assertTrue(self.graph.E == {(1, 2), (1, 3)})
         for edge in self.graph.edges():
             self.assertTrue(edge in self.graph.E)
 
@@ -53,6 +53,7 @@ class graphTest(unittest.TestCase):
 
     def test_getWeight(self):
         self.assertTrue(self.graph.getWeight((1, 2)) == 5)
+        print(self.graph.getWeight((1, 3)))
         self.assertTrue(self.graph.getWeight((1, 3)) == 1)
 
 
@@ -62,16 +63,19 @@ class graphTest(unittest.TestCase):
 
 
     def test_delEdge(self):
+        print(self.graph)
         self.graph.delEdge((1, 3))
-        self.assertTrue(str(self.graph) == '[[1, [2], [5]], [2, [1], [5]], [3, [], []]]')
+        print(self.graph)
+        self.assertTrue(str(self.graph) == '[[1, [2]], [2, [1]], [3, []]]')
 
     def test_addVertex(self):
         self.graph.addVertex(5)
+        print(self.graph._vertexs)
         self.assertTrue(self.graph.getVertex(5) == 5)
 
     def test_delVertex(self):
         self.graph.delVertex(2)
-        self.assertTrue(str(self.graph)) == '{[1, [3], [1]], [3, [1], [1]]}'
+        self.assertTrue(str(self.graph)) == '{[1, [3]], [3, [1]]}'
 
 
 
