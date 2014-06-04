@@ -15,7 +15,8 @@ class formodule(basemodule):
         self.func_list = func_list
         self.local_var_list = []
         self.content = content
-        self.exp = exp
+        self.iter_var = exp[0]
+        self.loop = exp[1]
         self.end_recursive = False
         self.continue_flag = False
         self.line = line
@@ -30,10 +31,8 @@ class formodule(basemodule):
         from utils.recursive import recursive, execute
         glb.module_stack.append(self)
 
-        iterVarName = self.exp[0]
-        self.local_var_list.append(iterVarName)
-        for value in self.exp[1]:
-            self.var_list[iterVarName] = value
+        for value in self.loop:
+            self.var_list[self.iter_var] = value
             recursive(self.content, 0, self)
             if self.continue_flag:
                 self.resetEnd()
