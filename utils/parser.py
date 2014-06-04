@@ -59,7 +59,7 @@ def preprocess(strContent):
     for line in orig:
         line = line.rstrip()
         if '#' in line:
-            line = line.split('#')[0]   
+            line = line.split('#')[0]
         #if  line:
         contents.append(line)
     return contents
@@ -334,50 +334,43 @@ def parse(block, module):
                 if tokens[0][1] == 'for':
                     from utils.recursive import execute
                     var_name = tokens[1][1]
+                    loop = None
                     if tokens[2][1] == 'in':
-                        loopToken = '__loop__ = '
-                        for indx in range(3, len(tokens)):
-                            loopToken += tokens[indx][1]
-                        execute(loopToken, module)
-                        param_list.append((var_name, list(eval('__loop__', module.var_list))))
-                        module.var_list.pop('__loop__')
+                        from itertools import islice
+                        loop = eval(' '.join([token[1] for token in tokens[3:]]), module.var_list, glb.global_var_list)
                     elif tokens[2][1] == '=':
-                        expInd = 3
-                        startExp = ''
-                        while tokens[expInd][1] != 'to':
-                            startExp += tokens[expInd][1] + ' '
-                            expInd += 1
-                        execute('__startpos__ = ' + startExp, module)
+                        start = 0
+                        end = 0
+                        step = 1
+                        exp_indx = 3
+                        start_exp = ''
+                        while tokens[exp_indx][1] != 'to':
+                            start_exp += tokens[exp_indx][1] + ' '
+                            exp_indx += 1
+
+                        start = eval(start_exp, module.var_list, glb.global_var_list)
                         # skip 'to'
-                        expInd += 1
-                        endExp = ''
-                        while expInd < len(tokens):
-                            if tokens[expInd][1] != 'step':
-                                endExp += tokens[expInd][1] + ' '
-                                expInd += 1
+                        exp_indx += 1
+                        end_exp = ''
+                        while exp_indx < len(tokens):
+                            if tokens[exp_indx][1] != 'step':
+                                end_exp += tokens[exp_indx][1] + ' '
+                                exp_indx += 1
                             else:
                                 break
-                        execute('__endpos__ = ' + endExp, module)
-                        if expInd >= len(tokens):
-                            module.var_list['__step__'] = 1
-                        else:
-                            # skip 'step'
-                            expInd += 1
-                            stepExp = ''
-                            while expInd < len(tokens):
-                                stepExp += tokens[expInd][1] + ' '
-                                expInd += 1
-                            execute('__step__ = ' + stepExp, module)
-                        param_list.append((var_name,
-                                         tuple([i for i in range(module.var_list['__startpos__'],
-                                                                 module.var_list['__endpos__'],
-                                                                 module.var_list['__step__'])])))
-                        module.var_list.pop('__startpos__')
-                        module.var_list.pop('__endpos__')
-                        module.var_list.pop('__step__')
+                        end = eval(end_exp, module.var_list, glb.global_var_list)
+                        if exp_indx < len(tokens):
+                            exp_indx += 1
+                            step_exp = ''
+                            while exp_indx < len(tokens):
+                                step_exp += tokens[exp_indx][1] + ' '
+                                exp_indx += 1
+                            step = eval(step_exp, module.var_list, glb.global_var_list)
+                        loop = range(start, end, step)
                     else:
                         pass
                     #    raise forStatementError
+                    param_list.append((var_name, loop))
 
                 # besides "for", [if, else, while, break, continue, return, repeat, until]
                 else:
