@@ -17,3 +17,9 @@ class PriorityQueue(Queue)
 
 	def dequeue(self):
 		return heappop(self.queue)
+
+	def extract_min(self):
+		return heappop(self.queue)
+
+
+	def 

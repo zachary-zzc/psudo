@@ -9,8 +9,6 @@ from structure.config import *
 List_type = [Array, list, Stack]  #Queue
 
 def random_factory(cls):
-    
-    
 
     if cls is Graph:
         
@@ -27,7 +25,7 @@ def random_factory(cls):
                 temp=id_generator()
             vertex.append(temp)
 
-        for i in range(0,num_vertex-1,1)
+        for i in range(0,num_vertex-1,1):
             edge.append([vertex[i],vertex[i+1]])
 
         for y in range(0,num_edge):             #denominate the edges based on the vertexex above
@@ -67,24 +65,49 @@ def random_factory(cls):
 
         return  DiGraph(vertex,edge)
 
-    elif cls is BTree:
-
-        num_node=random.randrange(8,15)             
-        btree=BTree()
-
-        for z in range(0,num_node):
-            temp=random.randrange(1,50)
-            btree=btree.insert(Node(temp))
-        return btree
 
     elif cls in List_type:
         temp=[int(id_generator(chars=string.digits)) for i in range(int(id_generator(chars=string.digits)))]
-        if cls is LinkedList:
-            ret = LinkedList()
-            map(ret.list_insert, ret)
-            return ret
-        else:
-            return cls(temp)
+        # if cls is LinkedList:
+        #     ret = LinkedList()
+        #     map(ret.insert, ret)
+        #     return ret
+        # else:
+        return cls(temp)
+
+    elif cls is BinaryTree:
+        temp = BinaryTree()
+        num_node=random.randrange(5,10)
+        for i in range(num_node):
+            tmpvalue=int(id_generator(1,string.digits))
+            temp.insert(tmpvalue,tmpvalue)
+        return temp
+    elif cls is AVLTree:
+        temp=AVLTree()
+        num_node=random.randrange(5,10)
+        for i in range(num_node):
+            tmpvalue=int(id_generator(1,string.digits))
+            temp.insert(tmpvalue,tmpvalue)
+        return temp
+    elif cls is RBTree:
+        temp=RBTree()
+        num_node=random.randrange(5,10)
+        for i in range(num_node):
+            tmpvalue=int(id_generator(1,string.digits))
+            temp.insert(tmpvalue,tmpvalue)
+        return temp
+    elif cls is LinkedList:
+        linkedlist=LinkedList()
+        temp=[int(id_generator(chars=string.digits)) for i in range(int(id_generator(chars=string.digits)))]
+        for item in temp:
+            linkedlist.insert(item)
+        return linkedlist
+    elif cls is Heap:
+        heap=Heap()
+        temp=[int(id_generator(chars=string.digits)) for i in range(int(id_generator(chars=string.digits)))]
+        for item in temp:
+            heap.push(item)
+        return heap
     else:
         pass
 

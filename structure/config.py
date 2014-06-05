@@ -1,6 +1,8 @@
 import sys
 sys.path.append('..')
 
+from operator import itemgetter
+
 # constants
 INFINITE = float('inf')
 
@@ -10,14 +12,17 @@ from structure.node_mod import Node
 # list type
 Array = list
 from structure.stack_mod import Stack
-from structure.queue_mod import Queue
-from structure.priorityqueue_mod import PriorityQueue
+#from structure.queue_mod import Queue
+#from structure.priorityqueue_mod import PriorityQueue
 from structure.linkedlist_mod import LinkedList
 from structure.heap_mod import Heap
+from structure.disjointset_mod import DisjointSet
 
 # Tree
-from structure.tree_mod import Tree
-from structure.btree_mod import BTree
+from structure.bintrees.bintrees.abctree import _ABCTree
+from structure.bintrees.bintrees.bintree import BinaryTree
+from structure.bintrees.bintrees.avltree import AVLTree
+from structure.bintrees.bintrees.rbtree import RBTree
 
 
 # Graph

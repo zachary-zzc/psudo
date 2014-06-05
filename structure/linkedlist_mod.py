@@ -3,46 +3,84 @@
 import sys
 sys.path.append('..')
 
-# from structure.node_mod import Node
+# from structure.node_mod import Nodea
 
-from collections import namedtuple
+class Node():
+    def __init__(self, value, prev=None, next=None):
+        self.value = value
+        self.prev = prev
+        self.next = next
 
-Node = namedtuple('Node', ['value', 'prev', 'next'])
+    def __str__(self):
+        return 'value: {}'.format(self.value)
 
-class LinkedList(Node):
 
-    __name__="LinkedList"
+    __repr__ = __str__
+
+
+
+
+class LinkedList(list):
+
+    __name__ = "LinkedList"
 
     def __init__(self):
-        self._length = 0
-        self._head   = None
+        pass
+
+
+    def __str__(self):
+        return str([node.value for node in self])
+
+    @property
+    def length(self):
+        return len(self)
+
 
     @property
     def head(self):
-        return self._head
-
-def list_search(self,key):
-    node=self._head
-    while node != None and node._value != key:
-        node=node._children[0]
-    return node
-
-def list_insert(self,node):
-    node._children[0]=self._head
-    if self._head != None:
-        self._head._parent=node
-    self._head = node
-    node._parent = None
-    self._length += 1
-
-def list_delete(self,node):
-    if self._length != 0:
-        if not node.isRoot:
-            node._parent._children[0] = node._children[0]
+        if self.length:
+            return self[0]
         else:
-            self._head = node._children[0]
-        if node.hasChild:
-            node._children[0]._parent=node._parent
-        self._length -= 1;
-    else:
-        print("The linked list is Empty!")
+            return None
+
+
+    @staticmethod
+    def _get_index(list_obj, condition):
+        return list(map(condition, list_obj)).index(True)
+
+
+    def search(self, key):
+        if self.head == None:
+            return None
+        else:
+            indx = LinkedList._get_index(self, lambda x: x.value == key)
+            if indx >= 0:
+                return self[indx]
+            else:
+                return None
+
+
+    def insert(self, node):
+        if self.head == None:
+            self.append(Node(node, None, None))
+        else:
+            new_node = Node(node, self[self.length-1], None)
+            self[self.length-1].next = new_node
+            self.append(new_node)
+
+
+    def delete(self,node):
+        if self.length != 0:
+            indx = LinkedList._get_index(self, lambda x: x.value == node)
+            if indx == self.length-1 and indx == 0:
+                pass
+            elif indx == self.length-1:
+                self[indx-1].next = None
+            elif indx == 0:
+                self[indx+1].prev = None
+            else:
+                self[indx-1].next = self[indx+1]
+                self[indx+1].prev = self[indx-1]
+            self.pop(indx)
+        else:
+            raise IndexError('Linked List is Empty')
