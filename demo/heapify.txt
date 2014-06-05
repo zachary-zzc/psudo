@@ -1,0 +1,16 @@
+function HEAPIFY(A,i)
+    l=2*i
+    r=2*i+1
+    if l<=A.len(A) and A[l]>A[i]
+    	largest=l
+    else 
+    	largest=i
+    if r<=len(A) and A[r]>A[largest]
+    	largest=r
+    if largest !=i
+    	swap A[i] with A[largest]
+    	HEAPIFY(A,largest)
+
+a = [5, 12, 4, 9, 6, 15, 19, 3]
+
+HEAPIFY(a,0)

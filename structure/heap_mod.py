@@ -11,9 +11,9 @@ import heapq
 
 # <codecell>
 
-class heap(object):
+class Heap(object):
     
-    __name__='heap'
+    __name__='Heap'
     
     def __init__(self, items=None):
         if items is None:
@@ -28,6 +28,18 @@ class heap(object):
     @property
     def isEmpty(self):
         return len(self) == 0
+
+    @property
+    def parent(i):
+        return floor(i/2)
+
+    @property
+    def left(i):
+        return 2*i
+
+    @property
+    def right(i):
+        return 2*i+1    
 
     def pop(self):
         try:

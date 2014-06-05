@@ -16,3 +16,4 @@ class Queue(TemplateQueue):
 
     def dequeue(self):
         return self._get()
+
