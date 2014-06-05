@@ -1,0 +1,23 @@
+function kruskal(graph):
+    forest = DisjointSet()
+    mst = []
+    for n in graph.V:
+        forest.add(n)
+ 
+    sz = len(graph.V) - 1
+ 
+    for e in sorted( graph.E, key=lambda x: x.weight ):
+        n1, n2 = e.vertex_pair
+        t1 = forest.find(n1)
+        t2 = forest.find(n2)
+        if t1 != t2:
+            mst.append(e)
+            sz -= 1
+            if sz == 0:
+                return mst
+         
+            forest.union(t1, t2)
+  
+graph = random_factory(Graph)
+         
+mst = kruskal(graph)

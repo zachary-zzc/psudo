@@ -11,21 +11,15 @@ class Vertex():
         if isinstance(val, Vertex):
             self._value = val._value
             self._adjs = val._adjs
-            # self._weights = val._weights
             self._color = val._color
             self._pi = val._pi
         else:
             self._value = val
             self._adjs = adjs
-            # self._weights = [1] * len(adjs)
             # used in BFS
             self._color = 'white'
             self._distance = sys.maxsize
             self._pi = None
-            # if len(weights) < len(adjs):
-            #     self._weights[:len(weights)] = weights
-            # else:
-            #     self._weights = weights[:len(adjs)]
 
     def __eq__(self, obj):
         if isinstance(obj, Vertex):
@@ -54,7 +48,6 @@ class Vertex():
 
     def __str__(self):
         return '[' + str(self.value) + ', ' + str(self.adjs) + ']'
-        #return '[' + str(self.value) + ', ' + str(self.adjs) + ', ' + str(self.weights) + ']'
 
 
     __repr__ = __str__
@@ -214,6 +207,8 @@ class Graph():
         assert(len(set(vexs)) == len(vexs))
         from itertools import zip_longest
         self._vertexs = [Vertex(value, []) for value in vexs]
+        # self._num_vertex = vexs.__len__
+        # self._num_edge = edges.__len__
         self._edges = [Edge(edge, weight, False) for edge, weight in zip_longest(edges,weights)]
 
         # weights should not longer than edges
@@ -260,10 +255,18 @@ class Graph():
     def __sizeof__(self):
         return self._vertexs.__sizeof__()
 
+    @property
+    def vertex_count(self):
+        return len(self.vexs())
+
+    @property
+    def edge_count(self):
+        return len(self.edges())
+
 
     @property
     def V(self):
-        return set(list(self.vexs()))
+        return set(self.vexs())
 
 
     def vexs(self):
@@ -272,7 +275,7 @@ class Graph():
 
     @property
     def E(self):
-        return set(list(self.edges()))
+        return set(self.edges())
 
 
     def edges(self):
@@ -284,9 +287,27 @@ class Graph():
         return self._vertexs[self._vertexs.index(vex)]
 
 
+    def getEdge(self, from_node, to_node):
+        if isinstance(from_node, Node):
+            from_node = from_node._value
+        if isinstance(to_node, Node):
+            to_node = to_node._value
+        return self._edges[self._edges.index(Edge((from_node， to_node)))]
+
+
+    def getAdjEdges(self, from_node):
+        if isinstance(from_node):
+            from_node = from_node._value
+        from itertools import filterfalse
+        return list(filterfalse(lambda x: from_node in x._pair, self._edges))
+
+
 
     def getAdjs(self, vex):
-        return tuple(list(map(self.getVertex, self.getVertex(vex).adjs)))
+        return list(map(self.getVertex, self.getVertex(vex).adjs))
+
+
+
 
 
 
@@ -306,7 +327,6 @@ class Graph():
 
     def checkEdge(self, edge):
         assert(len(edge) == 2)
-
         vex1, vex2 = edge
 
         if not ((self.checkVex(vex1)) and (self.checkVex(vex2))):
@@ -358,3 +378,4 @@ class Graph():
             if vex in edge.vertex_pair:
                 del_map.append(index)
         map(self._edges.pop, del_map)
+        self._vertexs.pop(self._vertexs.index(vex))

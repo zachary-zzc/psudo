@@ -1,0 +1,47 @@
+Prim(G, w, s)
+
+
+//Input: undirected connected weighted graph G = (V,E) in adj list representation,
+source vertex s in V
+//Output: p[1..|V|], representing the set of edges composing an MST of G
+
+
+for each v in V
+	color(v) <- WHITE
+	key(v) <- infinity
+	p(v) <- NIL
+Q <- empty list // Q keyed by key[v]
+color(s) <- GRAY
+Insert(Q, s)
+key(s) <- 0
+while Q != empty
+	u <- Extract-Min(Q)
+	
+	for v in Adj[u]
+		if color(v) = WHITE
+			then color(v) <- GRAY
+				Insert(Q,v)
+				key(v) <- w(u,v)
+				p(v) <- u
+		elseif color(v) = GRAY
+			then if key(v) > w(u,v)
+					then key(v) <- w(u,v)
+						p(v) <- u
+	color(v) <- BLACK
+return(p)
+
+
+
+MST_PRIM(G,w,r)
+	for each u in Q
+		key[u]:=∞
+		parent[u]:=NIL
+		key[r]:=0; 
+		parent[r]=NIL;
+	Q=V[Q]
+	while Q!={} do
+		u:=EXTRACT_MIN(Q); if parent[u]Nil print (u, parent[u])
+		for each v in Adj[u] do
+			if v in Q and w(u,v)<key[v]
+			then	parent[v]:=u
+				key[v]:=w(u,v)

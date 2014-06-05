@@ -1,10 +1,4 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="vertexs" type="tuple">('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')</var>
-<var name="edges" type="tuple">(('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))</var>
-<var name="graph" type="Graph">
-([u, ['x', 'w'], [1, 1]],[x, ['y', 'r', 'u'], [1, 1, 1]],[r, ['x', 's'], [1, 1]],[t, ['w'], [1]],[w, ['s', 't', 'u', 'v'], [1, 1, 1, 1]],[s, ['r', 'w'], [1, 1]],[v, ['w'], [1]],[y, ['x'], [1]])
-<attr name="E">(('x', 'u'), ('y', 'x'), ('w', 'u'), ('r', 'x'), ('u', 'w'), ('w', 't'), ('x', 'y'), ('w', 'v'), ('x', 'r'), ('u', 'x'), ('t', 'w'), ('s', 'r'), ('v', 'w'), ('r', 's'), ('w', 's'), ('s', 'w'))</attr>
-<attr name="V">([u], [x], [r], [t], [w], [s], [v], [y])</attr>
-</var>
+<var name="a" type="list">(12, 9, 4, 19, 6, 15, 5, 3)</var>
 </Params>

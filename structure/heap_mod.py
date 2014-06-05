@@ -15,11 +15,12 @@ class Heap(object):
     
     __name__='Heap'
     
-    def __init__(self, items=None):
-        if items is None:
-            items = []
+    def __init__(self, items=[]):
         self._items = list(items)
         heapq.heapify(self._items)
+
+    def __str__(self):
+        return str(self._items)
 
     @property
     def top(self):
@@ -29,17 +30,17 @@ class Heap(object):
     def isEmpty(self):
         return len(self) == 0
 
-    @property
-    def parent(i):
+
+    def parent(self,i):
         return floor(i/2)
 
-    @property
-    def left(i):
-        return 2*i
 
-    @property
-    def right(i):
-        return 2*i+1    
+    def left(self,i):
+        return (2*i)
+
+
+    def right(self,i):
+        return (2*i+1)   
 
     def pop(self):
         try:

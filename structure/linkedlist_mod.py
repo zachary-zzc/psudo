@@ -3,7 +3,6 @@
 import sys
 sys.path.append('..')
 
-# from structure.node_mod import Nodea
 
 class Node():
     def __init__(self, value, prev=None, next=None):
@@ -38,7 +37,7 @@ class LinkedList(list):
 
     @property
     def head(self):
-        if self.length:
+        if self:
             return self[0]
         else:
             return None

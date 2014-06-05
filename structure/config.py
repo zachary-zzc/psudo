@@ -13,13 +13,15 @@ from structure.stack_mod import Stack
 from structure.queue_mod import Queue
 from structure.linkedlist_mod import LinkedList
 from structure.priorityqueue_mod import PriorityQueue
+from structure.queue_mod import Queue
 from structure.linkedlist_mod import LinkedList
 from structure.heap_mod import Heap
+from structure.disjointset_mod import DisjointSet
 
 # Tree
-from structure.tree_mod import Tree
-from structure.btree_mod import BTree
-
+from structure.bintrees.bintrees.bintree import BinaryTree
+from structure.bintrees.bintrees.avltree import AVLTree
+from structure.bintrees.bintrees.rbtree import RBTree
 
 # Graph
 from structure.graph_mod import Graph, Vertex

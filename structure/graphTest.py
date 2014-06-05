@@ -53,7 +53,6 @@ class graphTest(unittest.TestCase):
 
     def test_getWeight(self):
         self.assertTrue(self.graph.getWeight((1, 2)) == 5)
-        print(self.graph.getWeight((1, 3)))
         self.assertTrue(self.graph.getWeight((1, 3)) == 1)
 
 
@@ -63,14 +62,12 @@ class graphTest(unittest.TestCase):
 
 
     def test_delEdge(self):
-        print(self.graph)
         self.graph.delEdge((1, 3))
         print(self.graph)
         self.assertTrue(str(self.graph) == '[[1, [2]], [2, [1]], [3, []]]')
 
     def test_addVertex(self):
         self.graph.addVertex(5)
-        print(self.graph._vertexs)
         self.assertTrue(self.graph.getVertex(5) == 5)
 
     def test_delVertex(self):
