@@ -87,7 +87,7 @@ class monitor(threading.Thread):
 if __name__ == '__main__':
     lock = threading.Lock()
     glb.task_queue.append('start')
-    with open('demo/kruskal.txt', 'r') as f:
+    with open('demo/graph.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
     monitor.start()

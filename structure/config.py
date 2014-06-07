@@ -12,8 +12,8 @@ Array = list
 from structure.stack_mod import Stack
 from structure.queue_mod import Queue
 from structure.linkedlist_mod import LinkedList
-from structure.priorityqueue_mod import PriorityQueue
-from structure.queue_mod import Queue
+# from structure.priorityqueue_mod import PriorityQueue
+# from structure.queue_mod import Queue
 from structure.linkedlist_mod import LinkedList
 from structure.heap_mod import Heap
 from structure.disjointset_mod import DisjointSet

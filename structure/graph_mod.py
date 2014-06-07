@@ -257,11 +257,11 @@ class Graph():
 
     @property
     def vertex_count(self):
-        return len(self.vexs())
+        return len(list(self.vexs()))
 
     @property
     def edge_count(self):
-        return len(self.edges())
+        return len(list(self.edges()))
 
 
     @property
@@ -292,7 +292,7 @@ class Graph():
             from_node = from_node._value
         if isinstance(to_node, Node):
             to_node = to_node._value
-        return self._edges[self._edges.index(Edge((from_node， to_node)))]
+        return self._edges[self._edges.index(Edge((from_node, to_node)))]
 
 
     def getAdjEdges(self, from_node):

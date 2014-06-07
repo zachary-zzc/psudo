@@ -1,4 +1,36 @@
 <?xml version="1.0" ?>
 <Params>
-<var name="a" type="list">(12, 9, 4, 19, 6, 15, 5, 3)</var>
+<var name="vertexs" type="tuple">
+<value>('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')</value>
+</var>
+<var name="edges" type="tuple">
+<value>(('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))</value>
+</var>
+<var name="graph" type="Graph">
+<value>[[s, ['r', 'w']], [r, ['x', 's']], [v, ['w']], [w, ['s', 't', 'u', 'v']], [t, ['w']], [x, ['y', 'r', 'u']], [u, ['x', 'w']], [y, ['x']]]</value>
+<attr name="E">
+{('r', 's'), ('x', 'u'), ('t', 'w'), ('u', 'w'), ('x', 'y'), ('x', 'r'), ('v', 'w'), ('s', 'w')}
+<Edge end_point="s" index="0" start_point="r" vertex_pair="('r', 's')" weight="1">('r', 's')</Edge>
+<Edge end_point="u" index="1" start_point="x" vertex_pair="('x', 'u')" weight="1">('x', 'u')</Edge>
+<Edge end_point="w" index="2" start_point="t" vertex_pair="('t', 'w')" weight="1">('t', 'w')</Edge>
+<Edge end_point="w" index="3" start_point="u" vertex_pair="('u', 'w')" weight="1">('u', 'w')</Edge>
+<Edge end_point="y" index="4" start_point="x" vertex_pair="('x', 'y')" weight="1">('x', 'y')</Edge>
+<Edge end_point="r" index="5" start_point="x" vertex_pair="('x', 'r')" weight="1">('x', 'r')</Edge>
+<Edge end_point="w" index="6" start_point="v" vertex_pair="('v', 'w')" weight="1">('v', 'w')</Edge>
+<Edge end_point="w" index="7" start_point="s" vertex_pair="('s', 'w')" weight="1">('s', 'w')</Edge>
+</attr>
+<attr name="V">
+{[w, ['s', 't', 'u', 'v']], [v, ['w']], [u, ['x', 'w']], [t, ['w']], [s, ['r', 'w']], [r, ['x', 's']], [y, ['x']], [x, ['y', 'r', 'u']]}
+<Vertex adjs="['s', 't', 'u', 'v']" color="white" distance="9223372036854775807" index="0" pi="None" value="w">[w, ['s', 't', 'u', 'v']]</Vertex>
+<Vertex adjs="['w']" color="white" distance="9223372036854775807" index="1" pi="None" value="v">[v, ['w']]</Vertex>
+<Vertex adjs="['x', 'w']" color="white" distance="9223372036854775807" index="2" pi="None" value="u">[u, ['x', 'w']]</Vertex>
+<Vertex adjs="['w']" color="white" distance="9223372036854775807" index="3" pi="None" value="t">[t, ['w']]</Vertex>
+<Vertex adjs="['r', 'w']" color="white" distance="9223372036854775807" index="4" pi="None" value="s">[s, ['r', 'w']]</Vertex>
+<Vertex adjs="['x', 's']" color="white" distance="9223372036854775807" index="5" pi="None" value="r">[r, ['x', 's']]</Vertex>
+<Vertex adjs="['x']" color="white" distance="9223372036854775807" index="6" pi="None" value="y">[y, ['x']]</Vertex>
+<Vertex adjs="['y', 'r', 'u']" color="white" distance="9223372036854775807" index="7" pi="None" value="x">[x, ['y', 'r', 'u']]</Vertex>
+</attr>
+<attr name="edge_count">16</attr>
+<attr name="vertex_count">8</attr>
+</var>
 </Params>
