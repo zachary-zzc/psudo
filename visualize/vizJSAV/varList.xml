@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<Params>
+stack/heap
+<var name=”xxx” type =”stack/heap”>(1,2,3)
+	<attr name=”isEmpty>False</attr>
+	<attr name=”top”>3</attr>
+
+</var>
+</Params>

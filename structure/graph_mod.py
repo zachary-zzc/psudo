@@ -47,7 +47,7 @@ class Vertex():
             return self.value > obj
 
     def __str__(self):
-        return '[' + str(self.value) + ', ' + str(self.adjs) + ']'
+        return self._value
 
 
     __repr__ = __str__

@@ -54,6 +54,8 @@ vertexs = ('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')
 edges = (('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))
 graph = Graph(vertexs, edges)
 
+# graph = random(Graph)
+
 Stack bfs_visit_list
 dfs_visit_list = Stack()
 

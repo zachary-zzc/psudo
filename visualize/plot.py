@@ -38,7 +38,9 @@ def record_to_xml():
                 if(not hasattr(attr,'__call__')) and (not re.search(r'^_',name)):
                     xmlAttr=doc.createElement('attr')
                     xmlAttr.setAttribute('name',name)
-                    xmlAttr.appendChild(doc.createTextNode(str(attr)))
+                    xmlAttrValue = doc.createElement('value')
+                    xmlAttrValue.appendChild(doc.createTextNode(str(attr)))
+                    xmlAttr.appendChild(xmlAttrValue)
                     if not isinstance(attr, str) and hasattr(attr, '__iter__'):
                         for index, item in enumerate(attr):
                             add_xml_attr(doc, index, item, xmlAttr)
