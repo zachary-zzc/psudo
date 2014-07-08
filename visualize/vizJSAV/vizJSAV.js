@@ -1,42 +1,56 @@
 var av;
+var jsonPath= 'json_temp.js';
+var jsonContent;
 
 $(document).ready(
- $.getJSON('json_temp.json', readJsonFile(data));
-);
 
-function readJsonFile(data){
+    function(){
+        $.getJSON(jsonPath, function(data){
+            jsonContent = data;
+        }
+        );
+    } 
+ );
+
+function vizJSAV(divID, statIndex){
     var variable;
-    for (var i =0; i<data.length; i++){
-        variable = data[i].Vars; 
+    var statementLabel ="statement_"+statIndex;
+    //alert(statementLabel);
+    var variableList = jsonContent[statementLabel]["Vars"];
+
+    av = new JSAV(document.getElementById(divID));
+
+    for (var i =0; i<variableList.length; i++){
+        variable = variableList[i]; 
+        //alert(variable.type);
         if (variable != null){
-            vizJSAV.pr.plotVar(variable);
+            this.plotVar(variable);
         }
     }
 }
 
 
-function vizJSAV(am, w, h){
-	this.init(am, w, h);
-	av.umsg("Ready!", {"color": "blue"});
- //   vizJSAV.prototype.refresh(); 
+vizJSAV.prototype.setCSSByClass=function(objclass,cssStr){
+    var objs = document.getElementsByClassName(objclass);
+    for (var i=0; i<objs.length;i++){
+        objs[i].css(cssStr);    
+    }
 }
 
-vizJSAV.prototype.setCSS=function(obj,cssStr){
-    obj.css(cssStr);
-}
 //indices is a list of elements to be highligted[1.2,3]
-vizJSAV.prototype.arrayHighlight(array, indices){
+vizJSAV.prototype.arrayHighlight=function(array, indices){
     array.highlight(indices);
 }
-vizJSAV.prototype.arrayUnhighlight(array, indices){
+vizJSAV.prototype.arrayUnhighlight=function(array, indices){
     array.unhighlight(indices);
 }
-vizJSAV.prototype.linkedListHighlight(linkedList, index){
+vizJSAV.prototype.linkedListHighlight=function(linkedList, index){
     linkedList.get(index).highlight();
 }
-vizJSAV.prototype.linkedListUnhighlight(linkedList, index){
+vizJSAV.prototype.linkedListUnhighlight=function(linkedList, index){
     linkedList.get(index).unhighlight();
 }
+
 
 vizJSAV.prototype.plotVar = function(variable){
 /*
@@ -51,28 +65,34 @@ vizJSAV.prototype.plotVar = function(variable){
     switch (varType){
         case "int": 
             varValue = variable.value;
+            avVar =av.ds.array([varValue])
             break;
         case "list": 
             varValue = this.parseList(variable);
-            avVar= av.ds.array(avValue);
+            avVar= av.ds.array(varValue);
+            avVar.addClass("list");
             break;
         case "stack": 
-            varValue = this.parseStack(variable);
-            avVar=av.ds.array(varValue);
+            varValue = this.parseList(variable);
+            avVar=av.ds.array(varValue, {layout:"vertical"});
+            avVar.addClass("stack");
             break;
         case "matrix": 
             varValue = this.parseMatrix(variable);
             avVar=av.ds.matrix(varValue);
+            avVar.addClass("matrix");
             break;
-
         case "BTree": 
             avVar=this.parseBTree(variable);
+            avVar.addClass("BTree");
             break;
         case "Graph": 
             avVar = this.parseGraph(variable);
+            avVar.addClass("Graph");
             break;
-        case "linkedList":
+        case "LinkedList":
             avVar = this.parseLinkedList(variable);
+            avVar.addClass("LinkedList");
         default: break;
     }
 }
@@ -80,50 +100,72 @@ vizJSAV.prototype.plotVar = function(variable){
 
 
 vizJSAV.prototype.parseList=function(variable){
-	var list = new array();
+	var list = [];
 	var len = variable["length"];
     var valueStr = variable["value"];
-	if (valueStr[0]=='(' && valueStr[len-1]==')' && valueStr.length == (2*len+1)){
-		valueStr = value.substr(1, varValueStr.length-2);
-	}else{
-		alert("Invalid input! \n");
-	}
-    var valueCharList = value.split(',');
+    
+    //alert(valueStr[0]+valueStr[valueStr.length-1]);   
+    
+    var valueCharList = valueStr.substr(1,valueStr.length-1).split(',');
+    
+    removeEmptyElementFromArray(valueCharList);
+
+    if (valueStr[0]!='(' || valueStr[valueStr.length-1]!=')' || valueCharList.length != len){
+        //alert("Invalid array! \n");
+        return [];
+    }
+    //alert("length:"+valueCharList.length);
     for (var i=0; i<len; i++){
         list.push(parseInt(valueCharList[i]));
     }
+    return list;
 }
 
+/*
 vizJSAV.prototype.parseStack=function(variable){
-	var isEmpty =  attrs.getNamedItem("isEmpty");
-	if (isEmpty)
-		alert("Invalid input! \n");
-	else
-		return this.parseList(variable);
+	var isEmpty =  variable["isEmpty"];
+    alert(variable["value"]);
+	if (isEmpty){
+		//alert("Invalid input! \n");
+        return [];
+    }
+	return this.parseList(variable);
 }
-
+*/
+function removeEmptyElementFromArray(array){
+    for (var i =array.length-1; i>=0; i--){
+                    if (array[i]=='')
+                        array.splice(i,1);
+                }
+}
 vizJSAV.prototype.parseMatrix=function(variable){
-	var matrixStr=variable["value"].substr(1, str.len-2);
+	var matrixStr=variable["value"];
+    var matrixVal=matrixStr.substr(2, matrixStr.length-4);
 	var nCols=variable["n_cols"];
 	var nRows=variable["n_rows"];
-	var rows = matrixStr.split(']');
-    rows=rows.join('').split('');
-	var matrix = new array();
+    //alert(matrixVal);
+	var rows = matrixVal.split(']');
+    //alert(rows.length+" rows!");
+	var matrix = new Array();
 	if (rows.length!= nRows){		
-		alert("Invalid input! \n");
+		//alert("Invalid matrix! \n");
 		return;
 	}else{
 		for (var i=0; i<nRows;i++){
-
-            rows[i].replace('[','');
+            rows[i]=rows[i].replace('[','');
+            //alert(rows[i]);
 			var rowsCharList = rows[i].split(',');
-			rowsCharList=rowsCharList.join('').split('');//remove empty cells
+            
+            removeEmptyElementFromArray(rowsCharList);
+
+            //alert(rowsCharList.length);
+
 			if (rowsCharList.length!=nCols){				
-				alert("Invalid input! \n");
+				//alert("Invalid input! \n");
 				return;
 			}
 
-            var tempRow = new array();
+            var tempRow = new Array();
             for (var j=0; j<rowsCharList.length;j++){
                 tempRow.push(parseInt(rowsCharList[j]));
             } 
@@ -135,39 +177,39 @@ vizJSAV.prototype.parseMatrix=function(variable){
 }
 
 vizJSAV.prototype.parseLinkedList=function(variable){
-    var linkedListValue = variable["value"].substr(1, str.length-2).split(',');
+    var linkedListStr = variable["value"];
+    var linkedListValue = (linkedListStr.substr(1, linkedListStr.length-2)).split(',');
     var listLen = variable["length"];
     var head = variable["head"];
 
     var linkedList = av.ds.list();
-    var temp;
+    var tempList, tempNode;
     if (linkedListValue.length!=listLen || linkedListValue.length==0 || parseInt(linkedListValue[0])!=head ){
-        alert("Invalid input! \n");
+        //alert("Invalid input! \n");
         return;
     }
-    temp=linkedList.addFirst(head);
-    for(var i=1; i<listLen;i++){
-        temp=temp.addLast(parseInt(linkedListValue[i]);
-        temp.layout();
+    tempList=linkedList.addFirst(head);
+    for(var i=1; i<listLen; i++){
+        tempNode = parseInt(linkedListValue[i]);
+        tempList=tempList.addLast(tempNode);
+        tempList.layout();
     }
-    return temp;
+    linkedList = tempList;
+    return linkedList;
 }
 
 vizJSAV.prototype.parseGraph=function(variable){
-
+    //alert("Here is a graph!");
     var vertexList = variable["vertexList"];
     var edgeList = variable["edgeList"];
-
     var noVertexes = variable["no_nodes"];
     var noEdges = variable["no_edges"];
-
-    var graph = av.ds.graph({layout: "automatic"});
-    
-    var currentV, currentE, startNode, endNode, startNodeIndex, endNodeIndex, edgeWeight;
-    var vertexList={};
+    var graph = av.ds.graph({width: 800, height: 400, layout: "automatic"});
+    var vertexDict= {};
+    var currentV, currentE, currentEdge, startNode, endNode, edgeWeight;
     
     if (noVertexes != vertexList.length ||noEdges!=edgeList.length ){
-        alert('Invalid input!\n');
+        //alert('Invalid graph!\n');
         return;
     }
 
@@ -175,61 +217,75 @@ vizJSAV.prototype.parseGraph=function(variable){
         currentV=vertexList[i];
         var currentVP = graph.addNode(currentV["value"]);
         currentVP.css("{color:"+currentV["color"]+";}");
-        vertexList[currentV["value"]=currentVP;
+        vertexDict[currentV["value"]]=currentVP;
         graph.layout();
     }
     for (var i=0; i<edgeList.length; i++){
         currentE = edgeList[i];
-        startNode = vertexList[currentE["start"]];
-        endNode = vertexList[currentE["end"]];
-        var currentEdge = graph.addEdge(startNode, endNode, {weight: currentE["weight"]});
+        startNode = vertexDict[currentE["start"]];
+        endNode = vertexDict[currentE["end"]];
+        currentEdge = graph.addEdge(startNode, endNode, {weight: currentE["weight"]});
         currentEdge.label(currentE["weight"]);
         graph.layout();
     }
-    return graph;
 
+    graph.layout();
+    return graph;
 }
 
 vizJSAV.prototype.parseBTree=function(variable){
-	var tree = av.ds.tree();
+	var tree = av.ds.binarytree();
     var optStack = [];
     var nodeStack = [];
     var token = "";
     var parent;
     var node;
     var str = variable["value"];
-
+    var tempLast;
     for (var i=0; i<str.length;i++){
         switch(str[i]){
             case '[': 
                 optStack.push(str[i]);
+                //alert("new node start!");
                 break;
             case ']': 
+                //alert("a node closed!");
+                optStack.pop();
                 if (optStack.length==0){
-                    tree.root(nodeStack.pop());
+                    node=nodeStack.pop();
+                    tree.root(node);
+                    //alert(node.value());
                     tree.layout();
                 }else{
                     node=nodeStack.pop();
-                    if (node.value()<nodeStack[nodeStack.length-1].value()){
-                        nodeStack[nodeStack.length-1].left(node);
+                    //alert(node.value());
+                    tempLast=optStack.length-1;
+                    if (node.value()<nodeStack[tempLast].value()){
+                        nodeStack[tempLast].left(node);
+                        tree.layout();
                     }else{
-                        nodeStack[nodeStack.length-1].right(node);
-                    }
+                        nodeStack[tempLast].right(node);
+                        tree.layout();
+                    }   
                 }
                 break;
             default:
-                while(str[i]!='['&& str[i]!=']'){
+                while(!(str[i]=='[' || str[i]==']')){
                    token=token+str[i];
                    i=i+1;
                 }
                 token = token.trim().replace(/\'/g, "").replace(/\"/g, "");
                 if (token!="None"){
                     node = tree.newNode(token);
-                    tree.layout();
-                    nodeStack.push(node);    
+                    nodeStack.push(node); 
+                    //alert(node.value()+" is created!");   
                 }
+                token="";//reset token
+                i=i-1;//reset i
         }
     }
+    tree.layout();
+    return tree;
 }
 
 
