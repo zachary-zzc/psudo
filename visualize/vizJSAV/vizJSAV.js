@@ -270,6 +270,18 @@ vizJSAV.prototype.parseBTree=function(variable){
                 }
                 break;
             default:
+                token=token+str[i];
+                if (str[i+1]=='[' || str[i+1]==']'){
+                    token = token.trim().replace(/\'/g, "").replace(/\"/g, "");
+                    if (token!="None"){
+                    node = tree.newNode(token);
+                    nodeStack.push(node); 
+                    //alert(node.value()+" is created!");   
+                    }   
+                    token="";//reset token
+                }
+                
+            /*
                 while(!(str[i]=='[' || str[i]==']')){
                    token=token+str[i];
                    i=i+1;
@@ -282,7 +294,7 @@ vizJSAV.prototype.parseBTree=function(variable){
                 }
                 token="";//reset token
                 i=i-1;//reset i
-        }
+*/        }
     }
     tree.layout();
     return tree;
