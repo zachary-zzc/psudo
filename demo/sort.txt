@@ -4,7 +4,7 @@ function BUBBLE_SORT(arr)
             if arr[j] > arr[j+1]
                 tmp = arr[j]
                 arr[j] = arr[j+1]
-                arr[j+100] = tmp
+                arr[j+1] = tmp
 
 a = [5, 12, 4, 9, 6, 15, 19, 3]
 

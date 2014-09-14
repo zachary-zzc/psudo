@@ -7,3 +7,6 @@ task_queue = []
 
 current_line = 0
 current_content = ''
+
+step = 0
+var_dict = {}

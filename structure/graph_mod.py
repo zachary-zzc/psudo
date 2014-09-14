@@ -174,12 +174,12 @@ class Edge():
 
 
     @property
-    def start_point(self):
+    def start(self):
         return self._pair[0]
 
 
     @property
-    def end_point(self):
+    def end(self):
         return self._pair[1]
 
 

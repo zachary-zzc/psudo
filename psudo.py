@@ -34,6 +34,10 @@ class psudo(threading.Thread):
         # set force stop label to false
         glb.forceStop = False
 
+        glb.step = 1
+        glb.var_dict.clear()
+        glb.error_msg = ""
+
         # run compiler
         contents = parser.preprocess(self.contents)
         glb.global_var_list.update(globals())
@@ -87,7 +91,7 @@ class monitor(threading.Thread):
 if __name__ == '__main__':
     lock = threading.Lock()
     glb.task_queue.append('start')
-    with open('demo/graph.txt', 'r') as f:
+    with open('demo/sort.txt', 'r') as f:
         contents = f.readlines()
     monitor = monitor(''.join(contents), lock)
     monitor.start()

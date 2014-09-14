@@ -24,7 +24,7 @@ from structure.bintrees.bintrees.avltree import AVLTree
 from structure.bintrees.bintrees.rbtree import RBTree
 
 # Graph
-from structure.graph_mod import Graph, Vertex
+from structure.graph_mod import Graph, Vertex, Edge
 from structure.digraph_mod import DiGraph
 
 # Matrix
