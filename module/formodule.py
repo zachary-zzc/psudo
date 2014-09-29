@@ -37,6 +37,6 @@ class formodule(basemodule):
             if self.continue_flag:
                 self.resetEnd()
                 self.resetContinue()
-        self.var_list.pop(iterVarName)
+        self.var_list.pop(self.iter_var)
 
         self._end_module()

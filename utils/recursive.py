@@ -155,8 +155,8 @@ def recursive(content, index, module):
                     index += count
 
             recursive(content, index, module)
-            
-            
+
+
 
 
 
@@ -186,10 +186,11 @@ def execute(extoken, module):
     try:
         exec(extoken, glb.global_var_list, module.var_list)
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print('Compiler Error!')
-        print('TraceBack:\n line: {}, {}\n{}: {}'.format(glb.current_line, glb.current_content.strip(), exc_type.__name__, exc_obj))
-        sys.exit(1)
+        raise
+        # exc_type, exc_obj, exc_tb = sys.exc_info()
+        # print('Compiler Error!')
+        # print('TraceBack:\n line: {}, {}\n{}: {}'.format(glb.current_line, glb.current_content.strip(), exc_type.__name__, exc_obj))
+        # sys.exit(1)
 
     for key in module.var_list.keys():
         if (key not in var_list_bak) and (key.find('__') != 0):

@@ -1,5 +1,3 @@
-# Longest common subsequence
-
 function LCS_LENGTH(x, y)
     m = len(x) + 1
     n = len(y) + 1

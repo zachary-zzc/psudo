@@ -5,7 +5,7 @@ sys.path.append('..')
 from structure.tree_mod import Tree, Node
 
 def node2btree(node):
-    btree = BTree(node.value)
+    btree = BTree(node.val)
     if len(node.children) > 2:
         raise Exception('Cannot convert to BTree from a node have more than 2 children!')
     if len(node.children) == 1:
@@ -17,8 +17,8 @@ def node2btree(node):
 
 class BTree(Tree):
     __name__ = 'BTree'
-    def __init__(self, value=None, left=None, right=None, parent=None):
-        self._value = value
+    def __init__(self, val=None, left=None, right=None, parent=None):
+        self._val = val
         self._children = [left, right]
         self._parent = parent
         if self.hasLeft:
@@ -35,8 +35,8 @@ class BTree(Tree):
         return self._children[0]
 
     @left.setter
-    def left(self, value):
-        self._children[0] = value
+    def left(self, val):
+        self._children[0] = val
 
     @property
     def hasLeft(self):
@@ -47,8 +47,8 @@ class BTree(Tree):
         return self._children[1]
 
     @right.setter
-    def right(self, value):
-        self._children[1] = value
+    def right(self, val):
+        self._children[1] = val
 
     @property
     def hasRight(self):
@@ -58,24 +58,24 @@ class BTree(Tree):
         node = node2btree(node)
         y = None
         x = self
-        while (x != None) and (x.value != None):
+        while (x != None) and (x.val != None):
             y = x
-            if node.value < x.value:
+            if node.val < x.val:
                 x = x.left
             else:
                 x = x.right
         node.parent = y
         if y == None:
             self = node
-        elif node.value < y.value:
+        elif node.val < y.val:
             y.left = node
         else:
             y.right = node
         return self
-            
+
     def delete():
         pass
-    
+
     def search():
         pass
 

@@ -13,42 +13,6 @@ import glb
 import time
 import functools
 
-from xml.dom import minidom, Node
-
-def record_to_xml():
-
-    doc = minidom.Document()
-    params = doc.createElement('Params')
-    doc.appendChild(params)
-
-    for module in glb.module_stack:
-        for varName in module.local_var_list:
-            var = eval(varName, glb.global_var_list, module.var_list)
-            xmlVar = doc.createElement('var')
-            xmlVar.setAttribute('name', varName)
-            xmlVar.setAttribute('type', var.__class__.__name__)
-            xmlVarValue = doc.createElement('value')
-            xmlVarValue.appendChild(doc.createTextNode(str(var)))
-            xmlVar.appendChild(xmlVarValue)
-            params.appendChild(xmlVar)
-
-
-            for name in dir(var):
-                attr=getattr(var,name)
-                if(not hasattr(attr,'__call__')) and (not re.search(r'^_',name)):
-                    xmlAttr=doc.createElement('attr')
-                    xmlAttr.setAttribute('name',name)
-                    xmlAttrValue = doc.createElement('value')
-                    xmlAttrValue.appendChild(doc.createTextNode(str(attr)))
-                    xmlAttr.appendChild(xmlAttrValue)
-                    if not isinstance(attr, str) and hasattr(attr, '__iter__'):
-                        for index, item in enumerate(attr):
-                            add_xml_attr(doc, index, item, xmlAttr)
-                    xmlVar.appendChild(xmlAttr)
-
-    with open(r'visualize/release1.1/varList.xml', 'w') as f:
-        f.write(doc.toprettyxml(indent = ''))
-
 
 def trans_vex(vex):
     return {'value': vex.value,
@@ -112,22 +76,6 @@ def list_scanner(l):
 
 
 
-
-
-
-def add_xml_attr(doc, index, item, xmlAttr):
-    xmlVar = doc.createElement(item.__class__.__name__)
-    xmlVar.setAttribute('index',str(index))
-    for name in dir(item):
-        attr = getattr(item, name)
-        if not hasattr(attr, '__call__') and not re.search(r'^_', name):
-            xmlVar.setAttribute(name, str(attr))
-    xmlVar.appendChild(doc.createTextNode(str(item)))
-    # add_xml_attr(doc, item, xmlVar)
-    xmlAttr.appendChild(xmlVar)
-
-
-
 def refresh(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -141,12 +89,9 @@ def refresh(func):
                         eval(key, glb.global_var_list, module.var_list))
                 print(outputVar)
         print('\n')
-        # record_to_xml()
         glb.var_dict['statement_{}'.format(glb.step)] = status_dict()
         glb.step += 1
-        with open(r'visualize/release1.1/varList.json', 'w') as f:
-            json.dump(glb.var_dict, f, sort_keys=True, indent=4)
-        # time.sleep(0.1)
-        # input()
+        # with open(r'visualize/release1.1/varList.json', 'w') as f:
+        #     json.dumps(glb.var_dict, f, sort_keys=True, indent=4)
         return module
     return wrapper

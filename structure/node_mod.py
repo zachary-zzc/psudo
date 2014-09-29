@@ -3,8 +3,8 @@
 class Node:
     __name__ = 'Node'
 
-    def __init__(self, value=None, children=[], parent=None):
-        self._value = value
+    def __init__(self, val=None, children=[], parent=None):
+        self._val = val
         self._children = children
         self._parent = parent
         for child in self._children:
@@ -12,7 +12,7 @@ class Node:
 
     def __str__(self):
         ret = '['
-        ret += str(self.value)
+        ret += str(self.val)
         if self.hasChild:
             for child in self.children:
                 if isinstance(child, Node):
@@ -31,15 +31,15 @@ class Node:
             yield child
 
     def __del__(self):
-        self._value = None
+        self._val = None
         self._children = []
 
     def __eq__(self, obj):
         if isinstance(obj, Node):
-            return ((self._value == obj._value) and \
+            return ((self._val == obj._val) and \
                     (self._children == obj._children))
         else:
-            return (self.value == obj)
+            return (self.val == obj)
 
     def __len__(self):
         return len(self._children)
@@ -64,16 +64,16 @@ class Node:
             self._children.pop(ind)
 
     @property
-    def value(self):
-        return self._value
+    def val(self):
+        return self._val
 
     @property
     def children(self):
         return self._children
 
-    @value.setter
-    def value(self, value):
-        self._value = value
+    @val.setter
+    def val(self, val):
+        self._val = val
 
     @children.setter
     def children(self, children):

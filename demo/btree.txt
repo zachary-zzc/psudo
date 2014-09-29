@@ -3,28 +3,28 @@ function TREE_INSERT(tree, node)
     x = tree
     while x != None
         y = x
-        if node.value < x.value
+        if node.val < x.val
             x = x.left
         else
             x = x.right
     node.parent = y
     if y == None
         tree = node
-    else if node.value < y.value
+    else if node.val < y.val
         y.left = node
     else
         y.right = node
     return tree
 
 
-function TREE_SEARCH(tree, value)
+function TREE_SEARCH(tree, val)
     ret = None
-    if (tree == None) or (tree.value == value)
+    if (tree == None) or (tree.val == val)
         ret = tree
-    else if value < tree.value
-        ret = TREE_SEARCH(tree.left, value)
+    else if val < tree.val
+        ret = TREE_SEARCH(tree.left, val)
     else
-        ret = TREE_SEARCH(tree.right, value)
+        ret = TREE_SEARCH(tree.right, val)
     return ret
 
 
@@ -42,7 +42,7 @@ function TREE_MAXIMUM(tree)
 
 function PREORDER_TREE_WALK(tree)
     if tree != None
-        preorder.push(tree.value)
+        preorder.push(tree.val)
         PREORDER_TREE_WALK(tree.left)
         PREORDER_TREE_WALK(tree.right)
 
@@ -50,7 +50,7 @@ function PREORDER_TREE_WALK(tree)
 function INORDER_TREE_WALK(tree)
     if tree != None
         INORDER_TREE_WALK(tree.left)
-        inorder.push(tree.value)
+        inorder.push(tree.val)
         INORDER_TREE_WALK(tree.right)
 
 
@@ -58,14 +58,14 @@ function POSTORDER_TREE_WALK(tree)
     if tree != None
         POSTORDER_TREE_WALK(tree.left)
         POSTORDER_TREE_WALK(tree.right)
-        postorder.push(tree.value)
+        postorder.push(tree.val)
 
 
 elem = [12, 5, 9, 2, 18]
 btree = None
 
-for value in elem
-    node = BTree(value)
+for val in elem
+    node = BTree(val)
     btree = TREE_INSERT(btree, node)
 
 search = TREE_SEARCH(btree, 15)

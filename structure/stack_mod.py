@@ -5,7 +5,10 @@ class Stack(list):
 
     @property
     def top(self):
-        return self[len(self)-1]
+        if self:
+            return self[len(self)-1]
+        else:
+            return None
 
     @property
     def isEmpty(self):

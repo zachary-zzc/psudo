@@ -19,9 +19,11 @@ from structure.heap_mod import Heap
 from structure.disjointset_mod import DisjointSet
 
 # Tree
-from structure.bintrees.bintrees.bintree import BinaryTree
-from structure.bintrees.bintrees.avltree import AVLTree
-from structure.bintrees.bintrees.rbtree import RBTree
+# from structure.bintrees.bintrees.bintree import BinaryTree
+# from structure.bintrees.bintrees.avltree import AVLTree
+# from structure.bintrees.bintrees.rbtree import RBTree
+from structure.btree_mod import BTree
+from structure.node_mod import Node
 
 # Graph
 from structure.graph_mod import Graph, Vertex, Edge
