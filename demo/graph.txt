@@ -7,16 +7,16 @@ function BFS(G, s)
     s.color = 'GRAY'
     s.distance = 0
     s.pi = None
-    Queue Q
-    Q.enque(s)
+    list Q
+    Q.append(s)
     while Q
-        u = Q.deque()
+        u = Q.pop(0)
         for vex in G.getAdjs(u)
             if vex.color == 'WHITE'
                 vex.color = 'GRAY'
                 vex.distance = u.distance + 1
                 vex.pi = u
-                Q.enque(vex)
+                Q.append(vex)
         u.color = 'BLACK'
         bfs_visit_list.push(u.value)
 
@@ -53,8 +53,6 @@ function DFS_VISIT(G, u)
 vertexs = ('s', 'r', 'v', 'w', 't', 'x', 'u', 'y')
 edges = (('x', 'y'), ('x', 'r'), ('x', 'u'), ('r', 's'), ('s', 'w'), ('t', 'w'), ('u', 'w'), ('v', 'w'))
 graph = Graph(vertexs, edges)
-
-# graph = random(Graph)
 
 Stack bfs_visit_list
 dfs_visit_list = Stack()
