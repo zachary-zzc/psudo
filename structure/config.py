@@ -30,5 +30,6 @@ from structure.graph_mod import Graph, Vertex, Edge
 from structure.digraph_mod import DiGraph
 
 # Matrix
-from structure.pymatrix import Matrix
+# from structure.pymatrix import Matrix
+from structure.matrix_mod import Matrix
 
